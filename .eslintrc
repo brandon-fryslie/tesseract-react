@@ -2,7 +2,8 @@
   "parser": "babel-eslint",
   "plugins": ["react", "jest"],
 //  "plugins": ["react", "jest", "prettier"], Remove prettier for now because its annoying me
-  "extends": ["airbnb", "plugin:prettier/recommended", "prettier/react"],
+  "extends": ["airbnb"],
+//  "extends": ["airbnb", "plugin:prettier/recommended", "prettier/react"],
   "globals": {
     "React": true,
     "document": true,
