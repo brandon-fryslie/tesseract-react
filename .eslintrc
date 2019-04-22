@@ -15,7 +15,36 @@
   },
   "root": true,
   "rules": {
-    "indent": ["error", 2],
+//    "indent": ["error", 2],
+
+    // turn off a bunch of dumb rules that suck for development
+    "no-unused-vars": "off",
+    "class-methods-use-this": "off",
+    "object-curly-newline": "off",
+    "object-curly-spacing": "off",
+    "lines-between-class-members": "off",
+    "prefer-destructuring": "off",
+    "react/destructuring-assignment": "off",
+    "react/forbid-prop-types": "off",
+    "react/no-array-index-key": "off",
+    "react/no-unused-prop-types": "off",
+    "implicit-arrow-linebreak": "off",
+    "comma-dangle": "off",
+    "function-paren-newline": "off",
+    "spaced-comment": "off",
+    "no-multiple-empty-lines": "off",
+    "indent": "off",
+    "quotes": "off",
+    "react/jsx-curly-spacing": "off",
+    "react/jsx-first-prop-new-line": "off",
+    "no-console": "off",
+    "padded-blocks": "off",
+    "no-empty": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "max-len": "off",
+    "no-underscore-dangle": "off",
+    // disabled crap
+
     "react/prefer-stateless-function": "warn",
     "react/self-closing-comp": [
       "warn",
@@ -24,20 +53,20 @@
         "html": false
       }
     ],
-    "react/sort-comp": [
-      1,
-      {
-        "order": [
-          "static-methods",
-          "lifecycle",
-          "everything-else",
-          "rendering"
-        ],
-        "groups": {
-          "rendering": ["/^render.+$/", "render"]
-        }
-      }
-    ],
+//    "react/sort-comp": [ // this wants me to define my class properties after my lifecycle methods.  dumb
+//      1,
+//      {
+//        "order": [
+//          "static-methods",
+//          "lifecycle",
+//          "everything-else",
+//          "rendering"
+//        ],
+//        "groups": {
+//          "rendering": ["/^render.+$/", "render"]
+//        }
+//      }
+//    ],
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
@@ -48,9 +77,9 @@
     "jsx-a11y/anchor-is-valid": ["warn", { "aspects": ["invalidHref"] }],
     "react/jsx-boolean-value": ["warn", "never"],
     "react/jsx-closing-bracket-location": ["warn", "after-props"],
-    "react/jsx-curly-spacing": ["warn", "never"],
+//    "react/jsx-curly-spacing": ["warn", "never"],
     "react/jsx-filename-extension": ["warn", { "extensions": [".jsx"] }],
-    "react/jsx-first-prop-new-line": ["warn", "multiline"],
+//    "react/jsx-first-prop-new-line": ["warn", "multiline"],
     "react/jsx-handler-names": [
       "warn",
       {
