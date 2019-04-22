@@ -2,6 +2,33 @@
 
 UI for the draco art installation
 
+## Setup
+
+Run `yarn install` in the repo directory.  You must have Yarn installed.  On MacOS, this can be accomplished via `brew install yarn`.
+
+## Run it in dev mode
+
+This repo uses a Webpack dev server to provide automatic compilation and hot module reloading.  Run it with `yarn start`.
+
+This will start the Webpack dev server and allow you to see the UI on localhost:8080.  However, by default you will only be able to access the server
+from your local computer.
+
+To make the Webpack server accessible to all devices on your network, run `yarn start-all`.  This allows easily testing changes on any
+device (e.g., iPad) on your local network with automatic hot loading of any changes, etc.
+
+*WARNING:* Opening access to the dev server to anyone on your network can be a security risk if your computer is directly accessible from the internet!
+If you are worried about this, use `yarn start` so the server is only accessible from your own computer.  In most cases this shouldn't be an issue.
+
+## Run tests
+
+This project uses `jest` for testing.  Run the tests with `yarn test`.
+
+## Build the prod resources
+
+To build and bundle the resources for prod, run `yarn build`.
+
+---
+
 This repo was originally cloned from:
 
 ## Webpack react minimal boilerplate
