@@ -5,14 +5,14 @@ export default class PlaylistModel {
   id;
   @observable displayName;
 
-  // List of clips (ClipModel objects) that are in this playlist
-  @observable clips;
+  // List of items (SceneModel objects or TransitionModel objects (Transitions later) that are in this playlist
+  @observable items;
 
-  constructor(store, id, displayName, clips) {
+  constructor(store, id, displayName, items) {
     this.store = store;
     this.id = id;
     this.displayName = displayName;
-    this.clips = clips;
+    this.items = items;
   }
 
   // this is dumb.  we shouldn't be reaching into the store from the model
@@ -24,11 +24,11 @@ export default class PlaylistModel {
     return {
       id: this.id,
       displayName: this.displayName,
-      clips: this.clips,
+      items: this.items,
     };
   }
 
   static fromJS(store, obj) {
-    return new PlaylistModel(store, obj.id, obj.displayName, obj.clips);
+    return new PlaylistModel(store, obj.id, obj.displayName, obj.items);
   }
 }

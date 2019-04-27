@@ -5,8 +5,8 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/es/ButtonGroup';
 import PropTypes from 'prop-types';
-import { observer } from 'mobx-react';
-import PlaylistsList from '../playlists-list';
+import { observer } from 'mobx-react/index';
+import PlaylistsList from '../PlaylistsList';
 
 @observer
 class ControlPanel extends React.Component {
@@ -53,10 +53,10 @@ class ControlPanel extends React.Component {
     }
 
     return (
-      <Container>
+      <Container fluid>
         <Row>
-          <Col>
-            <Container>
+          <Col sm={ 2 }>
+            <Container fluid>
               <Row>
                 <Col>
                   Current Playlist: { currentPlaylistName }
@@ -81,7 +81,7 @@ class ControlPanel extends React.Component {
           </Col>
           <Col>
             <Container>
-              <div>More Controls</div>
+              <div className="fill-parent">More Controls</div>
             </Container>
           </Col>
         </Row>

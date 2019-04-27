@@ -6,15 +6,18 @@ import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 import { observer } from 'mobx-react';
 import style from './MainContent.scss';
-import ControlPanel from '../control-panel';
-import ClipsPanel from '../clips-panel';
-import PlayListsPanel from '../playlists-panel';
-import SettingsPanel from '../settings-panel';
-import AboutPanel from '../about-panel';
+import ControlPanel from '../main-panels/ControlPanel';
+import ClipsPanel from '../main-panels/ClipsPanel';
+import PlayListsPanel from '../main-panels/PlaylistsPanel';
+import SettingsPanel from '../main-panels/SettingsPanel';
+import AboutPanel from '../main-panels/AboutPanel';
 import PageHeader from '../page-header';
 import PlaylistStore from '../../stores/PlaylistStore';
 import ControlPanelStore from '../../stores/ControlPanelStore';
 import ClipStore from '../../stores/ClipStore';
+import PlaylistPanelStore from '../../stores/PlaylistPanelStore';
+import MockData from '../../util/MockData';
+import SceneStore from '../../stores/SceneStore';
 
 @observer
 class MainContent extends React.Component {
@@ -28,77 +31,22 @@ class MainContent extends React.Component {
   controlPanelStore = null;
 
   componentWillMount() {
-    this.clipStore = ClipStore.fromJS([
-      { id: '1', displayName: 'Shimmer 1', clipId: 'shimmer_1', duration: 61 },
-      { id: '2', displayName: 'Shimmer 2', clipId: 'shimmer_2', duration: 35 },
-      { id: '3', displayName: 'Audio Reactive 1', clipId: 'audio_reactive_1', duration: 127 },
-      { id: '4', displayName: 'Blue Waves 1', clipId: 'blue_waves_1', duration: 106 },
-      { id: '5', displayName: 'Blue Waves 2', clipId: 'blue_waves_2', duration: 74 },
-      { id: '6', displayName: 'Blue Waves 3', clipId: 'blue_waves_3', duration: 87 },
-      { id: '7', displayName: 'Ocean Bottom 1', clipId: 'ocean_bottom_1', duration: 90 },
-      { id: '8', displayName: 'Grassy Fields', clipId: 'grassy_fields', duration: 89 },
-      { id: '9', displayName: 'Shiny Red', clipId: 'shiny_red', duration: 87 },
-      { id: '10', displayName: 'Shiny Rainbow', clipId: 'shiny_rainbow', duration: 78 },
-      { id: '11', displayName: 'Shiny Rainbow 2', clipId: 'shiny_rainbow_2', duration: 68 },
-      { id: '12', displayName: 'Audio Reactive 2', clipId: 'audio_reactive_2', duration: 267 },
-    ]);
+    this.clipStore = ClipStore.fromJS(MockData.getClipStoreData());
 
-    this.playlistStore = PlaylistStore.fromJS([
-      {
-        id: '1',
-        displayName: 'Rad Playlist',
-        clips: [
-          this.clipStore.findClip('shimmer_1'),
-          this.clipStore.findClip('shimmer_2'),
-          this.clipStore.findClip('audio_reactive_1'),
-          this.clipStore.findClip('audio_reactive_2'),
-          this.clipStore.findClip('audio_reactive_1'),
-          this.clipStore.findClip('audio_reactive_2'),
-          this.clipStore.findClip('shiny_rainbow'),
-          this.clipStore.findClip('shiny_rainbow_2'),
-          this.clipStore.findClip('shiny_rainbow_2'),
-        ],
-      },
-      {
-        id: '2',
-        displayName: 'Glowy Lights',
-        clips: [
-          this.clipStore.findClip('blue_waves_1'),
-          this.clipStore.findClip('blue_waves_2'),
-          this.clipStore.findClip('blue_waves_3'),
-          this.clipStore.findClip('ocean_bottom_1'),
-        ],
-      },
-      {
-        id: '3',
-        displayName: 'Flame Colors',
-        clips: [
-          this.clipStore.findClip('shiny_red'),
-          this.clipStore.findClip('shiny_rainbow'),
-          this.clipStore.findClip('shiny_rainbow_2'),
-          this.clipStore.findClip('audio_reactive_1'),
-          this.clipStore.findClip('audio_reactive_2'),
-        ],
-      },
-      {
-        id: '4',
-        displayName: 'Audio Reactive',
-        clips: [
-          this.clipStore.findClip('audio_reactive_1'),
-          this.clipStore.findClip('audio_reactive_2'),
-        ],
-      },
-    ]);
+    this.sceneStore = SceneStore.fromJS(MockData.getSceneStoreData(this.clipStore));
+    this.playlistStore = PlaylistStore.fromJS(MockData.getPlaylistStoreData(this.sceneStore));
 
     this.controlPanelStore = new ControlPanelStore();
+
+    this.playlistPanelStore = new PlaylistPanelStore();
+    this.playlistPanelStore.currentPlaylist = this.playlistStore.items[0];
   }
 
   render() {
-    console.log(style);
     return (
       <div className="MainContent">
         <PageHeader />
-        <Tab.Container defaultActiveKey="control">
+        <Tab.Container defaultActiveKey="playlists">
           <Row>
             <Col sm={ 1 }>
               <Nav variant="pills" className="flex-column tesseract-sidebar">
@@ -109,15 +57,19 @@ class MainContent extends React.Component {
                 <Nav.Item><Nav.Link eventKey="about">About</Nav.Link></Nav.Item>
               </Nav>
             </Col>
-            <Col sm="auto">
+            <Col sm={ 8 }>
               <Tab.Content>
                 <Tab.Pane eventKey="control">
                   <ControlPanel
                     controlPanelStore={ this.controlPanelStore }
                     playlistStore={ this.playlistStore } />
                 </Tab.Pane>
-                <Tab.Pane eventKey="playlists"><ClipsPanel /></Tab.Pane>
-                <Tab.Pane eventKey="clips"><PlayListsPanel /></Tab.Pane>
+                <Tab.Pane eventKey="playlists">
+                  <PlayListsPanel
+                    playlistPanelStore={ this.playlistPanelStore }
+                    playlistStore={ this.playlistStore } />
+                </Tab.Pane>
+                <Tab.Pane eventKey="clips"><ClipsPanel /></Tab.Pane>
                 <Tab.Pane eventKey="settings"><SettingsPanel /></Tab.Pane>
                 <Tab.Pane eventKey="about"><AboutPanel /></Tab.Pane>
               </Tab.Content>

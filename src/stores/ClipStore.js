@@ -1,5 +1,5 @@
 import { observable, computed, reaction, action } from 'mobx';
-import ClipModel from '../models/PlaylistModel';
+import ClipModel from '../models/ClipModel';
 
 export default class ClipStore {
   @observable clips = [];

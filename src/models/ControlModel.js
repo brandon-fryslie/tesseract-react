@@ -1,9 +1,6 @@
 import { observable } from 'mobx';
 
 export default class ControlModel {
-  store;
-  id;
-
   // Pretty name for the control, e.g. 'Position'
   @observable displayName;
 
@@ -17,9 +14,7 @@ export default class ControlModel {
   // The current value of the control
   @observable currentValue;
 
-  constructor(store, id, displayName, type, defaultValue, currentValue) {
-    this.store = store;
-    this.id = id;
+  constructor(displayName, type, defaultValue, currentValue) {
     this.displayName = displayName;
     this.type = type;
     this.defaultValue = defaultValue;
@@ -28,7 +23,6 @@ export default class ControlModel {
 
   toJS() {
     return {
-      id: this.id,
       displayName: this.displayName,
       type: this.type,
       defaultValue: this.defaultValue,
@@ -36,7 +30,7 @@ export default class ControlModel {
     };
   }
 
-  static fromJS(store, obj) {
-    return new ControlModel(store, obj.id, obj.displayName, obj.type, obj.defaultValue, obj.currentValue);
+  static fromJS(obj) {
+    return new ControlModel(obj.displayName, obj.type, obj.defaultValue, obj.currentValue);
   }
 }

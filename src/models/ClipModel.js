@@ -1,4 +1,5 @@
 import { observable } from 'mobx';
+import ControlModel from './ControlModel';
 
 export default class ClipModel {
   store;
@@ -30,6 +31,8 @@ export default class ClipModel {
   }
 
   static fromJS(store, obj) {
-    return new ClipModel(store, obj.id, obj.displayName, obj.clipId, obj.controls);
+    const controls = obj.controls.map(c => ControlModel.fromJS(c));
+
+    return new ClipModel(store, obj.id, obj.displayName, obj.clipId, controls);
   }
 }

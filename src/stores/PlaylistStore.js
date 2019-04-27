@@ -2,20 +2,20 @@ import { observable, computed, reaction, action } from 'mobx';
 import PlaylistModel from '../models/PlaylistModel';
 
 export default class PlaylistStore {
-  @observable playlists = [];
+  @observable items = [];
 
   get playlists() {
-    return this.playlists;
+    return this.items;
   }
 
   // @action
   addPlaylist(playlist) {
-    this.playlists.push(playlist);
+    this.items.push(playlist);
   }
 
   static fromJS(arr) {
     const store = new PlaylistStore();
-    store.playlists = arr.map(item => PlaylistModel.fromJS(store, item));
+    store.items = arr.map(item => PlaylistModel.fromJS(store, item));
     return store;
   }
 }

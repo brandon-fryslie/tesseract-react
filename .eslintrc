@@ -45,6 +45,11 @@
     "no-underscore-dangle": "off",
     "no-trailing-spaces": "off",
     "import/order": "off",
+    "react/jsx-indent": "off",
+    "eslint-disable-next-line no-throw-literal": "off",
+    "no-debugger": "off",
+    "no-throw-literal": "off",
+    "arrow-body-style": "off",
     // disabled crap
 
     "react/prefer-stateless-function": "warn",
@@ -89,7 +94,7 @@
         "eventHandlerPropPrefix": "on"
       }
     ],
-    "react/jsx-indent": ["warn", 2],
+//    "react/jsx-indent": ["warn", 2],
     "react/jsx-key": "error",
     "react/jsx-wrap-multilines": ["warn"],
     "react/jsx-indent-props": 0,
