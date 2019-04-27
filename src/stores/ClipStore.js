@@ -4,10 +4,6 @@ import ClipModel from '../models/PlaylistModel';
 export default class ClipStore {
   @observable clips = [];
 
-  // get clips() {
-  //   return this.clips;
-  // }
-
   // this is what will eventually fetch the playlists from the api endpoint
   // subscribeServerToStore() {
   //   reaction(

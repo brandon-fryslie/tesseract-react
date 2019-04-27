@@ -4,8 +4,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/es/ButtonGroup';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Card from 'react-bootstrap/Card';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import PlaylistsList from '../playlists-list';

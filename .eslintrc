@@ -43,6 +43,8 @@
     "react/jsx-one-expression-per-line": "off",
     "max-len": "off",
     "no-underscore-dangle": "off",
+    "no-trailing-spaces": "off",
+    "import/order": "off",
     // disabled crap
 
     "react/prefer-stateless-function": "warn",
@@ -91,7 +93,7 @@
     "react/jsx-key": "error",
     "react/jsx-wrap-multilines": ["warn"],
     "react/jsx-indent-props": 0,
-    "no-trailing-spaces": [2, { "skipBlankLines": true }],
+//    "no-trailing-spaces": [2, { "skipBlankLines": true }],
     "prefer-template": 0,
     "import/prefer-default-export": 0,
     "import/no-unresolved": 0,

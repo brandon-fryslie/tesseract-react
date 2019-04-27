@@ -11,13 +11,13 @@ export default class ControlPanelStore {
   }
 
   @action
-  toggleIsPlaying(isPlaying) {
-    this.isPlaying = !isPlaying;
+  setCurrentPlaylist(p) {
+    this.currentPlaylist = p;
   }
 
   @action
-  setCurrentPlaylist(p) {
-    this.currentPlaylist = p;
+  toggleIsPlaying() {
+    this.isPlaying = !this.isPlaying;
   }
 
   @action

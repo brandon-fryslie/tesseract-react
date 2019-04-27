@@ -94,7 +94,7 @@ class MainContent extends React.Component {
   }
 
   render() {
-    console.log(style)
+    console.log(style);
     return (
       <div className="MainContent">
         <PageHeader />
@@ -111,7 +111,11 @@ class MainContent extends React.Component {
             </Col>
             <Col sm="auto">
               <Tab.Content>
-                <Tab.Pane eventKey="control"><ControlPanel controlPanelStore={ this.controlPanelStore } playlistStore={ this.playlistStore } /></Tab.Pane>
+                <Tab.Pane eventKey="control">
+                  <ControlPanel
+                    controlPanelStore={ this.controlPanelStore }
+                    playlistStore={ this.playlistStore } />
+                </Tab.Pane>
                 <Tab.Pane eventKey="playlists"><ClipsPanel /></Tab.Pane>
                 <Tab.Pane eventKey="clips"><PlayListsPanel /></Tab.Pane>
                 <Tab.Pane eventKey="settings"><SettingsPanel /></Tab.Pane>
