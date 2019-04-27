@@ -8,6 +8,15 @@ class Util {
 
     return result;
   }
+
+  static getListStyle(isDraggingOver) {
+    return {
+      background: isDraggingOver ? 'lightblue' : 'lightgrey',
+      padding: 8,
+      width: 250,
+    };
+  }
+
 }
 
 export default Util;

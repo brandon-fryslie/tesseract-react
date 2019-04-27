@@ -66,6 +66,7 @@ class MainContent extends React.Component {
                 </Tab.Pane>
                 <Tab.Pane eventKey="playlists">
                   <PlayListsPanel
+                    sceneStore={ this.sceneStore }
                     playlistPanelStore={ this.playlistPanelStore }
                     playlistStore={ this.playlistStore } />
                 </Tab.Pane>

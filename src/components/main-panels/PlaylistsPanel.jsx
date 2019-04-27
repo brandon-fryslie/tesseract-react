@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import PlaylistEditor from '../PlaylistEditor';
 import Util from '../../util/Util';
 import { DragDropContext } from 'react-beautiful-dnd';
+import ScenesList from '../ScenesList';
 
 @observer
 class PlayListsPanel extends React.Component {
@@ -72,6 +73,9 @@ class PlayListsPanel extends React.Component {
                 onItemClick={ this.handlePlaylistClick }
                 controlPanelStore={ this.props.playlistPanelStore }
                 playlistStore={ this.props.playlistStore } />
+
+              <ScenesList
+                sceneStore={ this.props.sceneStore } />
             </Col>
             <Col>
               <PlaylistEditor currentPlaylist={ currentPlaylist } />
@@ -85,6 +89,7 @@ class PlayListsPanel extends React.Component {
 
 PlayListsPanel.propTypes = {
   playlistStore: PropTypes.object.isRequired,
+  sceneStore: PropTypes.object.isRequired,
   playlistPanelStore: PropTypes.object.isRequired,
 };
 

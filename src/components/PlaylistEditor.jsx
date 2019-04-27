@@ -3,6 +3,7 @@ import { observer } from 'mobx-react';
 import Table from 'react-bootstrap/Table';
 import PropTypes from 'prop-types';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
+import Util from '../util/Util';
 
 // This panel contains a view of a playlist that shows
 // - each scene w/ duration
@@ -11,13 +12,6 @@ import { Draggable, Droppable } from 'react-beautiful-dnd';
 
 @observer
 class PlaylistEditor extends React.Component {
-  getListStyle(isDraggingOver) {
-    return {
-      background: isDraggingOver ? 'lightblue' : 'lightgrey',
-      padding: 8,
-      width: 250,
-    };
-  }
 
   render() {
     const currentPlaylist = this.props.currentPlaylist;
@@ -38,7 +32,7 @@ class PlaylistEditor extends React.Component {
             <tbody
               { ...provided.droppableProps }
               ref={ provided.innerRef }
-              style={ this.getListStyle(snapshot.isDraggingOver) }
+              style={ Util.getListStyle(snapshot.isDraggingOver) }
             >
             {
               currentPlaylist.items.map((item, idx) =>
@@ -79,5 +73,3 @@ PlaylistEditorRow.propTypes = {
   idx: PropTypes.number.isRequired,
   item: PropTypes.object.isRequired,
 };
-
-// export default AboutPanel;
