@@ -39,17 +39,9 @@ class PlayListsPanel extends React.Component {
   // Handle a drag from the Scene list to the Playlist
   handleSceneDragToPlaylist(source, destination) {
     const sourceList = Util.getListForDroppable(source.droppableId);
-    const destList = Util.getListForDroppable(destination.droppableId);
-    console.log(sourceList);
-    console.log(destList);
 
     // Now we need to add a new instance of the dragged Scene to the currentPlaylist
-    const sceneToAdd = sourceList[source.index];
-    const currentPlaylist = this.currentPlaylist;
-
-    console.log(sceneToAdd);
-
-    debugger;
+    this.currentPlaylist.addScene(sourceList[source.index], destination.index);
   }
 
   // Handle a drag to reorder playlist elements
