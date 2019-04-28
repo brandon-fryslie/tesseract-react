@@ -79,8 +79,6 @@ class PlayListsPanel extends React.Component {
   }
 
   render() {
-    // const playlistStore = this.props.playlistStore;
-    // const controlPanelStore = this.props.controlPanelStore;
     const currentPlaylist = this.currentPlaylist;
 
     return (
@@ -97,7 +95,6 @@ class PlayListsPanel extends React.Component {
               <PlaylistsList
                 currentPlaylist={ this.currentPlaylist }
                 onItemClick={ this.handlePlaylistClick }
-                controlPanelStore={ this.props.controlPanelStore }
                 playlistStore={ this.props.playlistStore } />
 
               <ScenesList

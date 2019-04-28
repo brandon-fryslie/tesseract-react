@@ -7,11 +7,14 @@ import ButtonGroup from 'react-bootstrap/es/ButtonGroup';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react/index';
 import PlaylistsList from '../PlaylistsList';
-import { observable } from 'mobx';
+import { action, observable } from 'mobx';
 
 @observer
 class ControlPanel extends React.Component {
-  @observable currentPlaylist;
+  @observable currentPlaylist = null;
+  @observable isPlaying = false;
+  @observable shuffleEnabled = false;
+  @observable repeatEnabled = false;
 
   constructor(...args) {
     super(...args);
@@ -27,31 +30,44 @@ class ControlPanel extends React.Component {
     this.handleRepeatButtonClick = this.handleRepeatButtonClick.bind(this);
   }
 
+  @action
+  toggleIsPlaying() {
+    this.isPlaying = !this.isPlaying;
+  }
+
+  @action
+  toggleShuffleClips() {
+    this.shuffleEnabled = !this.shuffleEnabled;
+  }
+
+  @action
+  toggleRepeatPlaylist() {
+    this.repeatEnabled = !this.repeatEnabled;
+  }
+
   // Trigger this function when we click a playlist in the PlaylistsList
   // This will set the current playlist
   // Called with the dom element and the playlist model
   handlePlaylistClick(dom, playlist) {
     this.currentPlaylist = playlist;
-    this.props.controlPanelStore.setCurrentPlaylist(playlist);
   }
 
   // Triggered when we click the play button
   handlePlayButtonClick() {
-    this.props.controlPanelStore.toggleIsPlaying();
+    this.toggleIsPlaying();
   }
 
   // Triggered when we click the shuffle button
   handleShuffleButtonClick() {
-    this.props.controlPanelStore.toggleShuffleClips();
+    this.toggleShuffleClips();
   }
 
   // Triggered when we click the repeat button
   handleRepeatButtonClick() {
-    this.props.controlPanelStore.toggleRepeatPlayList();
+    this.toggleRepeatPlaylist();
   }
 
   render() {
-    const controlPanelStore = this.props.controlPanelStore;
     let currentPlaylistName;
 
     if (this.currentPlaylist == null) {
@@ -75,15 +91,14 @@ class ControlPanel extends React.Component {
                   <PlaylistsList
                     currentPlaylist={ this.currentPlaylist }
                     onItemClick={ this.handlePlaylistClick }
-                    controlPanelStore={ this.props.controlPanelStore }
                     playlistStore={ this.props.playlistStore } />
                 </Col>
               </Row>
               <Row>
                 <ButtonGroup>
-                  <ControlPanelButton active={ controlPanelStore.isPlaying } onClick={ this.handlePlayButtonClick }>Play</ControlPanelButton>
-                  <ControlPanelButton active={ controlPanelStore.shuffleEnabled } onClick={ this.handleShuffleButtonClick }>Shuffle Clips</ControlPanelButton>
-                  <ControlPanelButton active={ controlPanelStore.repeatEnabled } onClick={ this.handleRepeatButtonClick }>Repeat Playlist</ControlPanelButton>
+                  <ControlPanelButton active={ this.isPlaying } onClick={ this.handlePlayButtonClick }>Play</ControlPanelButton>
+                  <ControlPanelButton active={ this.shuffleEnabled } onClick={ this.handleShuffleButtonClick }>Shuffle Clips</ControlPanelButton>
+                  <ControlPanelButton active={ this.repeatEnabled } onClick={ this.handleRepeatButtonClick }>Repeat Playlist</ControlPanelButton>
                 </ButtonGroup>
               </Row>
             </Container>
@@ -101,7 +116,6 @@ class ControlPanel extends React.Component {
 
 ControlPanel.propTypes = {
   playlistStore: PropTypes.object.isRequired,
-  controlPanelStore: PropTypes.object.isRequired,
 };
 
 export default ControlPanel;

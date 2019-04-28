@@ -13,7 +13,6 @@ import SettingsPanel from '../main-panels/SettingsPanel';
 import AboutPanel from '../main-panels/AboutPanel';
 import PageHeader from '../page-header';
 import PlaylistStore from '../../stores/PlaylistStore';
-import ControlPanelStore from '../../stores/ControlPanelStore';
 import ClipStore from '../../stores/ClipStore';
 import MockData from '../../util/MockData';
 import SceneStore from '../../stores/SceneStore';
@@ -26,16 +25,11 @@ class MainContent extends React.Component {
   // Clip store is where data about clips is stored
   playlistStore = null;
 
-  // Store for panel specific state, like which buttons are active, etc
-  controlPanelStore = null;
-
   componentWillMount() {
     this.clipStore = ClipStore.fromJS(MockData.getClipStoreData());
 
     this.sceneStore = SceneStore.fromJS(MockData.getSceneStoreData(this.clipStore));
     this.playlistStore = PlaylistStore.fromJS(MockData.getPlaylistStoreData(this.sceneStore));
-
-    this.controlPanelStore = new ControlPanelStore();
   }
 
   render() {
@@ -57,7 +51,6 @@ class MainContent extends React.Component {
               <Tab.Content>
                 <Tab.Pane eventKey="control">
                   <ControlPanel
-                    controlPanelStore={ this.controlPanelStore }
                     playlistStore={ this.playlistStore } />
                 </Tab.Pane>
                 <Tab.Pane eventKey="playlists">
