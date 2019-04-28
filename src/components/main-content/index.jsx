@@ -57,7 +57,7 @@ class MainContent extends React.Component {
                 <Nav.Item><Nav.Link eventKey="about">About</Nav.Link></Nav.Item>
               </Nav>
             </Col>
-            <Col sm={ 8 }>
+            <Col>
               <Tab.Content>
                 <Tab.Pane eventKey="control">
                   <ControlPanel

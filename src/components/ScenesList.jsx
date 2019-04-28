@@ -3,9 +3,8 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Card from 'react-bootstrap/Card';
 import { observer } from 'mobx-react/index';
 import PropTypes from 'prop-types';
-import { Draggable, Droppable } from 'react-beautiful-dnd';
-import Table from 'react-bootstrap/Table';
-import Util from '../util/Util';
+import DroppableWrapper from './dnd-wrappers/DroppableWrapper';
+import DraggableWrapper from './dnd-wrappers/DraggableWrapper';
 
 @observer
 class ScenesList extends React.Component {
@@ -15,24 +14,17 @@ class ScenesList extends React.Component {
     return (
       <Card style={ { width: '18rem' } }>
         <Card.Header>Scenes</Card.Header>
-
-        <Droppable droppableId="playlistPanelScenesList">
-          { (provided, snapshot) => (
+        <Card.Body>
+          <DroppableWrapper isDropDisabled droppableId="playlistPanelScenesList">
             <ListGroup as="ul">
-              <div
-                { ...provided.droppableProps }
-                ref={ provided.innerRef }
-                style={ Util.getListStyle(snapshot.isDraggingOver) }>
-                {
-                  sceneStore.items.map((item, idx) =>
-                    <SceneListRow key={ item.id } idx={ idx } item={ item } />,
-                  )
-                }
-              </div>
-              { provided.placeholder }
+              {
+                sceneStore.items.map((item, idx) =>
+                  <SceneListRow key={ item.id } idx={ idx } item={ item } />,
+                )
+              }
             </ListGroup>
-          ) }
-        </Droppable>
+          </DroppableWrapper>
+        </Card.Body>
       </Card>
     );
   }
@@ -45,23 +37,13 @@ ScenesList.propTypes = {
 export default ScenesList;
 
 const SceneListRow = props => (
-  <Draggable index={ props.idx } key={ props.item.id } draggableId={ props.item.id }>
-    { (providedInner, snapshotInner) => (
-      <ListGroup.Item
-        action
-        as="li"
-        key={ props.idx }>
-        <div
-          ref={ providedInner.innerRef }
-          { ...providedInner.draggableProps }
-          { ...providedInner.dragHandleProps }>
-
-          { props.item.displayName }
-        </div>
-      </ListGroup.Item>
-    ) }
-  </Draggable>
-
+  <DraggableWrapper index={ props.idx } key={ props.item.id } draggableId={ props.item.id }>
+    <ListGroup.Item action
+                    as="li"
+                    key={ props.idx }>
+      { props.item.displayName }
+    </ListGroup.Item>
+  </DraggableWrapper>
 );
 
 SceneListRow.propTypes = {

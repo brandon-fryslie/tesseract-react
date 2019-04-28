@@ -15,6 +15,10 @@ export default class PlaylistItemModel {
     this.duration = duration;
   }
 
+  get displayName() {
+    return this.scene.displayName;
+  }
+
   toJS() {
     return {
       scene: this.scene,

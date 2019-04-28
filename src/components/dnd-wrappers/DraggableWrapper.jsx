@@ -3,33 +3,23 @@ import { Draggable } from 'react-beautiful-dnd';
 import PropTypes from 'prop-types';
 
 const DraggableWrapper = (props) => {
+  let ElType;
   if (props.table) {
-    return (
-      <Draggable draggableId={ props.draggableId } index={ props.index }>
-        {
-          provided => (
-            <tr className={ props.className }
-                ref={ provided.innerRef }
-                { ...provided.draggableProps }
-                { ...provided.dragHandleProps }>
-              { props.children }
-            </tr>
-          )
-        }
-      </Draggable>
-    );
+    ElType = 'tr';
+  } else {
+    ElType = 'div';
   }
 
   return (
     <Draggable draggableId={ props.draggableId } index={ props.index }>
       {
         provided => (
-          <div className={ props.className }
-               ref={ provided.innerRef }
-               { ...provided.draggableProps }
-               { ...provided.dragHandleProps }>
+          <ElType className={ props.className }
+              ref={ provided.innerRef }
+              { ...provided.draggableProps }
+              { ...provided.dragHandleProps }>
             { props.children }
-          </div>
+          </ElType>
         )
       }
     </Draggable>
@@ -37,7 +27,7 @@ const DraggableWrapper = (props) => {
 };
 
 DraggableWrapper.propTypes = {
-  children: PropTypes.array.isRequired,
+  children: PropTypes.any,
   className: PropTypes.string,
   draggableId: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,

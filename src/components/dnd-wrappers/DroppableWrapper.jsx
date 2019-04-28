@@ -4,35 +4,24 @@ import PropTypes from 'prop-types';
 import Util from '../../util/Util';
 
 const DroppableWrapper = (props) => {
+  let ElType;
   if (props.table) {
-    return (
-      <Droppable droppableId={ props.droppableId }>
-        {
-          (provided, snapshot) => (
-            <tbody className={ props.className }
-                   ref={ provided.innerRef }
-                   style={ Util.getListStyle(snapshot.isDraggingOver) }
-                   {...provided.droppableProps}>
-            { props.children }
-            { provided.placeholder }
-            </tbody>
-          )
-        }
-      </Droppable>
-    );
+    ElType = 'tbody';
+  } else {
+    ElType = 'div';
   }
 
   return (
-    <Droppable droppableId={ props.droppableId }>
+    <Droppable isDropDisabled={ props.isDropDisabled } droppableId={ props.droppableId }>
       {
         (provided, snapshot) => (
-          <div className={ props.className }
-               ref={ provided.innerRef }
-               style={ Util.getListStyle(snapshot.isDraggingOver) }
-               {...provided.droppableProps}>
+          <ElType className={ props.className }
+                  ref={ provided.innerRef }
+                  style={ Util.getListStyle(snapshot.isDraggingOver) }
+                  { ...provided.droppableProps }>
             { props.children }
             { provided.placeholder }
-          </div>
+          </ElType>
         )
       }
     </Droppable>
@@ -40,10 +29,11 @@ const DroppableWrapper = (props) => {
 };
 
 DroppableWrapper.propTypes = {
-  children: PropTypes.array.isRequired,
+  children: PropTypes.any,
   className: PropTypes.string,
   droppableId: PropTypes.string.isRequired,
   table: PropTypes.bool,
+  isDropDisabled: PropTypes.bool,
 };
 
 export default DroppableWrapper;

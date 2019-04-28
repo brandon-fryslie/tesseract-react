@@ -36,7 +36,6 @@ class PlayListsPanel extends React.Component {
 
     // dropped outside the list
     if (!destination) {
-      console.log('Dropped outside of list');
       return;
     }
 
