@@ -9,6 +9,7 @@ import style from './MainContent.scss';
 import ControlPanel from '../main-panels/ControlPanel';
 import ClipsPanel from '../main-panels/ClipsPanel';
 import PlayListsPanel from '../main-panels/PlaylistsPanel';
+import ScenesPanel from '../main-panels/ScenesPanel';
 import SettingsPanel from '../main-panels/SettingsPanel';
 import AboutPanel from '../main-panels/AboutPanel';
 import PageHeader from '../page-header';
@@ -36,12 +37,13 @@ class MainContent extends React.Component {
     return (
       <div className="MainContent">
         <PageHeader />
-        <Tab.Container defaultActiveKey="playlists">
+        <Tab.Container defaultActiveKey="scenes">
           <Row>
             <Col sm={ 1 }>
               <Nav variant="pills" className="flex-column tesseract-sidebar">
                 <Nav.Item><Nav.Link eventKey="control">Control</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="playlists">Playlists</Nav.Link></Nav.Item>
+                <Nav.Item><Nav.Link eventKey="scenes">Scenes</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="clips">Clips</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="settings">Settings</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="about">About</Nav.Link></Nav.Item>
@@ -50,13 +52,14 @@ class MainContent extends React.Component {
             <Col>
               <Tab.Content>
                 <Tab.Pane eventKey="control">
-                  <ControlPanel
-                    playlistStore={ this.playlistStore } />
+                  <ControlPanel playlistStore={ this.playlistStore } />
                 </Tab.Pane>
                 <Tab.Pane eventKey="playlists">
-                  <PlayListsPanel
-                    sceneStore={ this.sceneStore }
-                    playlistStore={ this.playlistStore } />
+                  <PlayListsPanel sceneStore={ this.sceneStore }
+                                  playlistStore={ this.playlistStore } />
+                </Tab.Pane>
+                <Tab.Pane eventKey="scenes">
+                  <ScenesPanel sceneStore={ this.sceneStore } clipStore={ this.clipStore } />
                 </Tab.Pane>
                 <Tab.Pane eventKey="clips"><ClipsPanel /></Tab.Pane>
                 <Tab.Pane eventKey="settings"><SettingsPanel /></Tab.Pane>

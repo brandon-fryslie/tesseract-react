@@ -1,5 +1,5 @@
 import React from 'react';
-import { observer } from 'mobx-react/index';
+import { observer } from 'mobx-react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
@@ -87,18 +87,16 @@ class PlayListsPanel extends React.Component {
           {/* One row that spans the entire content area */ }
           <Row>
             {/* Two columns. Col one: playlists list, scenes list.  Col two: Current playlist state */ }
-            <Col sm={ 3 }>
+            <Col sm={ 2 }>
               <ButtonToolbar>
                 <NewPlaylistButton />
               </ButtonToolbar>
 
-              <PlaylistsList
-                currentPlaylist={ this.currentPlaylist }
-                onItemClick={ this.handlePlaylistClick }
-                playlistStore={ this.props.playlistStore } />
+              <PlaylistsList currentPlaylist={ this.currentPlaylist }
+                             onItemClick={ this.handlePlaylistClick }
+                             playlistStore={ this.props.playlistStore } />
 
-              <ScenesList
-                sceneStore={ this.props.sceneStore } />
+              <ScenesList sceneStore={ this.props.sceneStore } />
             </Col>
             <Col>
               <PlaylistEditor currentPlaylist={ currentPlaylist } />

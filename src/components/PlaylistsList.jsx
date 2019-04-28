@@ -1,7 +1,7 @@
 import React from 'react';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Card from 'react-bootstrap/Card';
-import { observer } from 'mobx-react/index';
+import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 
 @observer
@@ -11,7 +11,7 @@ class PlaylistsList extends React.Component {
     const currentPlaylist = this.props.currentPlaylist;
 
     return (
-      <Card style={ { width: '18rem' } }>
+      <Card className="mt-3 mb-3">
         <Card.Header>Playlists</Card.Header>
         <ListGroup as="ul">
           {

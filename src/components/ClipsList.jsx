@@ -7,25 +7,25 @@ import DroppableWrapper from './dnd-wrappers/DroppableWrapper';
 import DraggableWrapper from './dnd-wrappers/DraggableWrapper';
 
 @observer
-class ScenesList extends React.Component {
+class ClipsList extends React.Component {
   // constructor(...args) {
   //   super(...args);
   // }
 
   render() {
-    const sceneStore = this.props.sceneStore;
+    const clipStore = this.props.clipStore;
 
     return (
       <Card className="mt-3 mb-3">
-        <Card.Header>Scenes</Card.Header>
+        <Card.Header>Clips</Card.Header>
         <Card.Body>
           <DroppableWrapper isDropDisabled
-                            droppableId="playlistPanelScenesList"
-                            list={ sceneStore.items }>
+                            droppableId="clipsList"
+                            list={ clipStore.items }>
             <ListGroup as="ul">
               {
-                sceneStore.items.map((item, idx) => (
-                    <SceneListRow key={ item.id }
+                clipStore.items.map((item, idx) => (
+                    <ClipListRow key={ item.id }
                                   idx={ idx }
                                   item={ item }
                                   onItemClick={ this.props.onItemClick }
@@ -41,15 +41,15 @@ class ScenesList extends React.Component {
   }
 }
 
-ScenesList.propTypes = {
-  sceneStore: PropTypes.object.isRequired,
+ClipsList.propTypes = {
+  clipStore: PropTypes.object.isRequired,
   activeScene: PropTypes.object,
   onItemClick: PropTypes.func,
 };
 
-export default ScenesList;
+export default ClipsList;
 
-const SceneListRow = props => (
+const ClipListRow = props => (
   <DraggableWrapper index={ props.idx } key={ props.item.id } draggableId={ props.item.id }>
     <ListGroup.Item action
                     as="li"
@@ -61,7 +61,7 @@ const SceneListRow = props => (
   </DraggableWrapper>
 );
 
-SceneListRow.propTypes = {
+ClipListRow.propTypes = {
   idx: PropTypes.number.isRequired,
   item: PropTypes.object.isRequired,
   active: PropTypes.bool,

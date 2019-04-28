@@ -62,6 +62,7 @@
     "react-data-grid-addons": "^6.1.0",
     "react-dom": "npm:@hot-loader/react-dom",
     "react-hot-loader": "4.8.3",
+    "react-rotary-knob": "^1.1.5",
     "uuid": "^3.3.2"
   },
   "resolutions": {

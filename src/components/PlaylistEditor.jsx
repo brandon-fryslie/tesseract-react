@@ -10,7 +10,6 @@ import PlaylistEditorGrid from './data-grids/PlaylistEditorGrid';
 
 @observer
 class PlaylistEditor extends React.Component {
-
   render() {
     return (
       <PlaylistEditorGrid rows={ this.props.currentPlaylist.items } />

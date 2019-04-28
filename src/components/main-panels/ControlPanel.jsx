@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/es/ButtonGroup';
 import PropTypes from 'prop-types';
-import { observer } from 'mobx-react/index';
+import { observer } from 'mobx-react';
 import PlaylistsList from '../PlaylistsList';
 import { action, observable } from 'mobx';
 
