@@ -52,6 +52,7 @@
     "arrow-body-style": "off",
     "no-plusplus": "off",
     "react/sort-comp": "off",
+    "template-curly-spacing": "off",
     // disabled crap
 
     "react/prefer-stateless-function": "warn",

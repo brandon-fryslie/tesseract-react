@@ -1,3 +1,7 @@
+const grid = 1;
+
+const droppableListRegistry = {};
+
 class Util {
   // a little function to help us with reordering the result
 // TODO: move this to a helper class
@@ -12,11 +16,34 @@ class Util {
   static getListStyle(isDraggingOver) {
     return {
       background: isDraggingOver ? 'lightblue' : 'lightgrey',
-      padding: 8,
-      width: 250,
+      padding: grid,
     };
   }
 
+  static getItemStyle(isDragging, draggableStyle) {
+    return {
+      // some basic styles to make the items look a bit nicer
+      // userSelect: 'none',
+      // padding: grid * 2,
+      // margin: `0 0 ${ grid }px 0`,
+
+      // change background colour if dragging
+      // background: isDragging ? 'lightgreen' : 'grey',
+
+      // styles we need to apply on draggables
+      ...draggableStyle,
+    };
+  }
+
+  // Need to somehow return the list that generates a particular Droppable ID
+  static getListForDroppable(droppableId) {
+    return droppableListRegistry[droppableId];
+  }
+
+  // Save a reference to a droppable's list
+  static registerDroppableList(droppableId, list) {
+    droppableListRegistry[droppableId] = list;
+  }
 }
 
 export default Util;

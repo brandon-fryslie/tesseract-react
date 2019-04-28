@@ -11,12 +11,19 @@ import PlaylistEditor from '../PlaylistEditor';
 import Util from '../../util/Util';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ScenesList from '../ScenesList';
+import { observable } from 'mobx';
 
 @observer
 class PlayListsPanel extends React.Component {
+  @observable currentPlaylist;
+
   constructor(...args) {
     super(...args);
 
+    const props = args[0];
+    this.currentPlaylist = props.playlistStore.items[0];
+
+    //
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
     this.handleDragEnd = this.handleDragEnd.bind(this);
@@ -26,7 +33,34 @@ class PlayListsPanel extends React.Component {
   // This will set the current playlist
   // Called with the dom element and the playlist model
   handlePlaylistClick(dom, playlist) {
-    this.props.playlistPanelStore.setCurrentPlaylist(playlist);
+    this.currentPlaylist = playlist;
+  }
+
+  // Handle a drag from the Scene list to the Playlist
+  handleSceneDragToPlaylist(source, destination) {
+    const sourceList = Util.getListForDroppable(source.droppableId);
+    const destList = Util.getListForDroppable(destination.droppableId);
+    console.log(sourceList);
+    console.log(destList);
+
+    // Now we need to add a new instance of the dragged Scene to the currentPlaylist
+    const sceneToAdd = sourceList[source.index];
+    const currentPlaylist = this.currentPlaylist;
+
+    console.log(sceneToAdd);
+
+    debugger;
+  }
+
+  // Handle a drag to reorder playlist elements
+  handlePlaylistGridReorder(source, destination) {
+    const items = Util.reorder(
+      this.currentPlaylist.items,
+      source.index,
+      destination.index,
+    );
+
+    this.currentPlaylist.items = items;
   }
 
   // Handle all dragging.  we've gotta handle all dragging interactions in this one handler
@@ -39,23 +73,23 @@ class PlayListsPanel extends React.Component {
       return;
     }
 
-    if (source.droppableId === destination.droppableId) {
-      const items = Util.reorder(
-        this.props.playlistPanelStore.currentPlaylist.items,
-        source.index,
-        destination.index,
-      );
-
-      this.props.playlistPanelStore.currentPlaylist.items = items;
-    } else {
-      console.log('Dropped on the wrong target');
+    if (source.droppableId === 'playlistPanelScenesList' && destination.droppableId === 'playlistEditorGridContainer') {
+      this.handleSceneDragToPlaylist(source, destination);
+      return;
     }
+
+    if (source.droppableId === 'playlistEditorGridContainer' && destination.droppableId === 'playlistEditorGridContainer') {
+      this.handlePlaylistGridReorder(source, destination);
+      return;
+    }
+
+    console.log(`WARNING: No drag handler set for combo of source ${ source.droppableId } and dest ${ destination.droppableId }`);
   }
 
   render() {
     // const playlistStore = this.props.playlistStore;
     // const controlPanelStore = this.props.controlPanelStore;
-    const currentPlaylist = this.props.playlistPanelStore.currentPlaylist;
+    const currentPlaylist = this.currentPlaylist;
 
     return (
       <DragDropContext onDragEnd={ this.handleDragEnd }>
@@ -69,8 +103,9 @@ class PlayListsPanel extends React.Component {
               </ButtonToolbar>
 
               <PlaylistsList
+                currentPlaylist={ this.currentPlaylist }
                 onItemClick={ this.handlePlaylistClick }
-                controlPanelStore={ this.props.playlistPanelStore }
+                controlPanelStore={ this.props.controlPanelStore }
                 playlistStore={ this.props.playlistStore } />
 
               <ScenesList
@@ -89,7 +124,6 @@ class PlayListsPanel extends React.Component {
 PlayListsPanel.propTypes = {
   playlistStore: PropTypes.object.isRequired,
   sceneStore: PropTypes.object.isRequired,
-  playlistPanelStore: PropTypes.object.isRequired,
 };
 
 export default PlayListsPanel;

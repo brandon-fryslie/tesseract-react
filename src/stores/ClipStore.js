@@ -23,7 +23,12 @@ export default class ClipStore {
 
   // Pass in a clipId and get the model from the clip store
   findClip(clipId) {
-    return this.clips.find(c => c.clipId === clipId);
+    const result = this.clips.find(c => c.clipId === clipId);
+    if (result == null) {
+      debugger;
+      throw `Error! Could not find clip ${clipId}`;
+    }
+    return result;
   }
 
   static fromJS(arr) {

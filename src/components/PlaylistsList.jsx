@@ -8,8 +8,7 @@ import PropTypes from 'prop-types';
 class PlaylistsList extends React.Component {
   render() {
     const playlistStore = this.props.playlistStore;
-    const controlPanelStore = this.props.controlPanelStore;
-    const activePlaylist = controlPanelStore.currentPlaylist;
+    const currentPlaylist = this.props.currentPlaylist;
 
     return (
       <Card style={ { width: '18rem' } }>
@@ -22,7 +21,7 @@ class PlaylistsList extends React.Component {
                 as="li"
                 key={ idx }
                 onClick={ dom => this.props.onItemClick(dom, playlist) }
-                active={ activePlaylist && activePlaylist.id === playlist.id }>
+                active={ currentPlaylist && currentPlaylist.id === playlist.id }>
                 { playlist.displayName }
               </ListGroup.Item>
             ))
@@ -35,8 +34,8 @@ class PlaylistsList extends React.Component {
 
 PlaylistsList.propTypes = {
   playlistStore: PropTypes.object.isRequired,
-  controlPanelStore: PropTypes.object.isRequired,
   onItemClick: PropTypes.func.isRequired,
+  currentPlaylist: PropTypes.object.isRequired,
 };
 
 export default PlaylistsList;

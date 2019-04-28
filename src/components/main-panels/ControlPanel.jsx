@@ -7,11 +7,18 @@ import ButtonGroup from 'react-bootstrap/es/ButtonGroup';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react/index';
 import PlaylistsList from '../PlaylistsList';
+import { observable } from 'mobx';
 
 @observer
 class ControlPanel extends React.Component {
+  @observable currentPlaylist;
+
   constructor(...args) {
     super(...args);
+
+    const props = args[0];
+
+    this.currentPlaylist = props.playlistStore.items[0];
 
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
@@ -24,6 +31,7 @@ class ControlPanel extends React.Component {
   // This will set the current playlist
   // Called with the dom element and the playlist model
   handlePlaylistClick(dom, playlist) {
+    this.currentPlaylist = playlist;
     this.props.controlPanelStore.setCurrentPlaylist(playlist);
   }
 
@@ -46,10 +54,10 @@ class ControlPanel extends React.Component {
     const controlPanelStore = this.props.controlPanelStore;
     let currentPlaylistName;
 
-    if (controlPanelStore.currentPlaylist == null) {
+    if (this.currentPlaylist == null) {
       currentPlaylistName = '<none>';
     } else {
-      currentPlaylistName = controlPanelStore.currentPlaylist.displayName;
+      currentPlaylistName = this.currentPlaylist.displayName;
     }
 
     return (
@@ -65,6 +73,7 @@ class ControlPanel extends React.Component {
               <Row>
                 <Col>
                   <PlaylistsList
+                    currentPlaylist={ this.currentPlaylist }
                     onItemClick={ this.handlePlaylistClick }
                     controlPanelStore={ this.props.controlPanelStore }
                     playlistStore={ this.props.playlistStore } />

@@ -19,20 +19,7 @@ class PlaylistEditor extends React.Component {
 }
 
 PlaylistEditor.propTypes = {
-  currentPlaylist: PropTypes.object,
+  currentPlaylist: PropTypes.object.isRequired,
 };
 
 export default PlaylistEditor;
-
-// const PlaylistEditorRow = props => (
-//   <DraggableWrapper table index={ props.idx } key={ props.item.id } draggableId={ props.item.id }>
-//     <td>{ props.idx + 1 }</td>
-//     <td>{ props.item.scene.displayName }</td>
-//     <td>{ props.item.duration }</td>
-//   </DraggableWrapper>
-// );
-//
-// PlaylistEditorRow.propTypes = {
-//   idx: PropTypes.number.isRequired,
-//   item: PropTypes.object.isRequired,
-// };

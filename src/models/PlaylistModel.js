@@ -1,12 +1,16 @@
 import { observable } from 'mobx';
+import PlaylistItemModel from './PlaylistItemModel';
 
 export default class PlaylistModel {
   store;
   id;
   @observable displayName;
 
-  // List of items (SceneModel objects or TransitionModel objects (Transitions later) that are in this playlist
+  // List of items (PlaylistItemModel) that are in this playlist
   @observable items;
+
+  // The default duration to use when adding a new Scene
+  defaultDuration = 60;
 
   constructor(store, id, displayName, items) {
     this.store = store;
@@ -15,10 +19,11 @@ export default class PlaylistModel {
     this.items = items;
   }
 
-  // this is dumb.  we shouldn't be reaching into the store from the model
-  // destroy() {
-  //   this.store.playlists.remove(this);
-  // }
+  // Adds a PlaylistItemModel (a Scene + a Duration) to the Playlist
+  addScene(scene, index) {
+    const item = PlaylistItemModel.fromJS({ scene, duration: this.defaultDuration });
+    this.items.splice(index, 0, item);
+  }
 
   toJS() {
     return {

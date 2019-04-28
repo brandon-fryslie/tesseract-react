@@ -15,7 +15,6 @@ import PageHeader from '../page-header';
 import PlaylistStore from '../../stores/PlaylistStore';
 import ControlPanelStore from '../../stores/ControlPanelStore';
 import ClipStore from '../../stores/ClipStore';
-import PlaylistPanelStore from '../../stores/PlaylistPanelStore';
 import MockData from '../../util/MockData';
 import SceneStore from '../../stores/SceneStore';
 
@@ -37,9 +36,6 @@ class MainContent extends React.Component {
     this.playlistStore = PlaylistStore.fromJS(MockData.getPlaylistStoreData(this.sceneStore));
 
     this.controlPanelStore = new ControlPanelStore();
-
-    this.playlistPanelStore = new PlaylistPanelStore();
-    this.playlistPanelStore.currentPlaylist = this.playlistStore.items[0];
   }
 
   render() {
@@ -67,7 +63,6 @@ class MainContent extends React.Component {
                 <Tab.Pane eventKey="playlists">
                   <PlayListsPanel
                     sceneStore={ this.sceneStore }
-                    playlistPanelStore={ this.playlistPanelStore }
                     playlistStore={ this.playlistStore } />
                 </Tab.Pane>
                 <Tab.Pane eventKey="clips"><ClipsPanel /></Tab.Pane>

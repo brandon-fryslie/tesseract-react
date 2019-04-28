@@ -15,12 +15,12 @@ class ScenesList extends React.Component {
       <Card style={ { width: '18rem' } }>
         <Card.Header>Scenes</Card.Header>
         <Card.Body>
-          <DroppableWrapper isDropDisabled droppableId="playlistPanelScenesList">
+          <DroppableWrapper isDropDisabled
+                            droppableId="playlistPanelScenesList"
+                            list={ sceneStore.items }>
             <ListGroup as="ul">
               {
-                sceneStore.items.map((item, idx) =>
-                  <SceneListRow key={ item.id } idx={ idx } item={ item } />,
-                )
+                sceneStore.items.map((item, idx) => <SceneListRow key={ item.id } idx={ idx } item={ item } />)
               }
             </ListGroup>
           </DroppableWrapper>

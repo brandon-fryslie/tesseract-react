@@ -18,6 +18,7 @@ export default class ClipModel {
     this.store = store;
     this.id = id;
     this.displayName = displayName;
+    this.clipId = clipId;
     this.controls = controls;
   }
 

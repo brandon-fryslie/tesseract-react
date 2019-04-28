@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import PropTypes from 'prop-types';
+import Util from '../../util/Util';
 
 const DraggableWrapper = (props) => {
   let ElType;
@@ -13,11 +14,12 @@ const DraggableWrapper = (props) => {
   return (
     <Draggable draggableId={ props.draggableId } index={ props.index }>
       {
-        provided => (
+        (provided, snapshot) => (
           <ElType className={ props.className }
-              ref={ provided.innerRef }
-              { ...provided.draggableProps }
-              { ...provided.dragHandleProps }>
+                  ref={ provided.innerRef }
+                  { ...provided.draggableProps }
+                  { ...provided.dragHandleProps }
+                  style={ Util.getItemStyle(snapshot.isDragging, provided.draggableProps.style) }>
             { props.children }
           </ElType>
         )
