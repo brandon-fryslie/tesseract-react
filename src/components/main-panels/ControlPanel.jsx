@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import PlaylistsList from '../PlaylistsList';
 import { action, observable } from 'mobx';
+import { Websocket } from 'react-websocket';
 
 @observer
 class ControlPanel extends React.Component {
@@ -30,9 +31,25 @@ class ControlPanel extends React.Component {
     this.handleRepeatButtonClick = this.handleRepeatButtonClick.bind(this);
   }
 
-  @action
+  // @action
   toggleIsPlaying() {
     this.isPlaying = !this.isPlaying;
+
+    // For now, this is also going to send messages via websocket
+    if (!this.props.websocketRef) {
+      throw "Error: no websocket ref";
+    }
+
+    const msg = {
+      action: 'rotate_left',
+      value: 100
+    };
+
+    const msgStr = JSON.stringify(msg)
+
+    console.log(`Sending websocket message: ${msgStr}`);
+
+    this.props.websocketRef.sendMessage(msgStr);
   }
 
   @action
@@ -116,6 +133,7 @@ class ControlPanel extends React.Component {
 
 ControlPanel.propTypes = {
   playlistStore: PropTypes.object.isRequired,
+  websocketRef: PropTypes.object,
 };
 
 export default ControlPanel;
