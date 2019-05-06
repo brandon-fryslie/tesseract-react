@@ -1,6 +1,7 @@
 import { observable } from 'mobx';
+import BaseModel from './BaseModel';
 
-export default class ControlModel {
+export default class ControlModel extends BaseModel {
   // Pretty name for the control, e.g. 'Position'
   @observable displayName;
 
@@ -15,6 +16,8 @@ export default class ControlModel {
   @observable currentValue;
 
   constructor(displayName, type, defaultValue, currentValue) {
+    super();
+
     this.displayName = displayName;
     this.type = type;
     this.defaultValue = defaultValue;

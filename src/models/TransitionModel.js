@@ -1,6 +1,7 @@
 import { observable } from 'mobx';
+import BaseModel from './BaseModel';
 
-export default class TransitionModel {
+export default class TransitionModel extends BaseModel {
   store;
   id;
 
@@ -11,6 +12,7 @@ export default class TransitionModel {
   @observable duration;
 
   constructor(store, id, displayName, duration) {
+    super();
     this.store = store;
     this.id = id;
     this.displayName = displayName;

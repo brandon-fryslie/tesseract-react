@@ -1,9 +1,9 @@
 import { observable } from 'mobx';
+import BaseModel from './BaseModel';
 
 // A Scene is one or more clips loaded into channels with specific parameters defined
 // Scenes have two channels (for now, can expand to 4 later)
-export default class SceneModel {
-  store;
+export default class SceneModel extends BaseModel {
   id;
 
   // Pretty name
@@ -15,8 +15,8 @@ export default class SceneModel {
   // Clip loaded into Channel 2.  type: ClipModel
   @observable channel2Clip;
 
-  constructor(store, id, displayName, channel1Clip, channel2Clip) {
-    this.store = store;
+  constructor(id, displayName, channel1Clip, channel2Clip) {
+    super();
     this.id = id;
     this.displayName = displayName;
     this.channel1Clip = channel1Clip;
@@ -33,7 +33,7 @@ export default class SceneModel {
     };
   }
 
-  static fromJS(store, obj) {
-    return new SceneModel(store, obj.id, obj.displayName, obj.channel1Clip, obj.channel2Clip);
+  static fromJS(obj) {
+    return new SceneModel(obj.id, obj.displayName, obj.channel1Clip, obj.channel2Clip);
   }
 }

@@ -1,7 +1,8 @@
 import { observable } from 'mobx';
 import ControlModel from './ControlModel';
+import BaseModel from './BaseModel';
 
-export default class ClipModel {
+export default class ClipModel extends BaseModel {
   store;
   id;
 
@@ -15,6 +16,8 @@ export default class ClipModel {
   @observable controls;
 
   constructor(store, id, displayName, clipId, controls) {
+    super();
+
     this.store = store;
     this.id = id;
     this.displayName = displayName;

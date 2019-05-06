@@ -53,6 +53,8 @@
     "no-plusplus": "off",
     "react/sort-comp": "off",
     "template-curly-spacing": "off",
+    "no-useless-constructor": "off",
+    "no-else-return": "off",
     // disabled crap
 
     "react/prefer-stateless-function": "warn",

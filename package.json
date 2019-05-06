@@ -63,6 +63,7 @@
     "react-dom": "npm:@hot-loader/react-dom",
     "react-hot-loader": "4.8.3",
     "react-rotary-knob": "^1.1.5",
+    "react-websocket": "^2.0.1",
     "uuid": "^3.3.2"
   },
   "resolutions": {

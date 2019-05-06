@@ -1,8 +1,8 @@
 import { observable } from 'mobx';
 import PlaylistItemModel from './PlaylistItemModel';
+import BaseModel from './BaseModel';
 
-export default class PlaylistModel {
-  store;
+export default class PlaylistModel extends BaseModel {
   id;
   @observable displayName;
 
@@ -12,8 +12,9 @@ export default class PlaylistModel {
   // The default duration to use when adding a new Scene
   defaultDuration = 60;
 
-  constructor(store, id, displayName, items) {
-    this.store = store;
+  constructor(id, displayName, items) {
+    super();
+
     this.id = id;
     this.displayName = displayName;
     this.items = items;
@@ -33,7 +34,7 @@ export default class PlaylistModel {
     };
   }
 
-  static fromJS(store, obj) {
-    return new PlaylistModel(store, obj.id, obj.displayName, obj.items);
+  static fromJS(obj) {
+    return new PlaylistModel(obj.id, obj.displayName, obj.items);
   }
 }
