@@ -43,6 +43,13 @@ class ScenesPanel extends React.Component {
   render() {
     const activeScene = this.activeScene;
 
+    let channelControlsContainer;
+    if (activeScene) {
+      channelControlsContainer = <ChannelControlsContainer scene={ this.activeScene } clipStore={ this.props.clipStore } />;
+    } else {
+      channelControlsContainer = <span>No active scene</span>;
+    }
+
     return (
       <DragDropContext onDragEnd={ this.handleDragEnd }>
         <Container fluid>
@@ -58,7 +65,7 @@ class ScenesPanel extends React.Component {
                           sceneStore={ this.props.sceneStore } />
             </Col>
             <Col>
-              <ChannelControlsContainer scene={ this.activeScene } clipStore={ this.props.clipStore } />
+              { channelControlsContainer }
             </Col>
           </Row>
         </Container>

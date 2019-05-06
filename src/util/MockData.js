@@ -7,7 +7,7 @@ class MockData {
   static getClipStoreData() {
     return [
       {
-        id: '1',
+        id: 1,
         displayName: 'Color Wash',
         clipId: 'color_wash',
         controls: [
@@ -29,7 +29,7 @@ class MockData {
         ],
       },
       {
-        id: '2',
+        id: 2,
         displayName: 'Animated Gif',
         clipId: 'animated_gif',
         controls: [
@@ -56,7 +56,7 @@ class MockData {
         ],
       },
       {
-        id: '3',
+        id: 3,
         displayName: 'Image Scroll',
         clipId: 'image_scroll',
         controls: [
@@ -88,7 +88,7 @@ class MockData {
         ],
       },
       {
-        id: '4',
+        id: 4,
         displayName: 'Text Scroll',
         clipId: 'text_scroll',
         controls: [
@@ -130,7 +130,7 @@ class MockData {
         ],
       },
       {
-        id: '5',
+        id: 5,
         displayName: 'Solid Color',
         clipId: 'solid_color',
         controls: [
@@ -157,7 +157,7 @@ class MockData {
   static getPlaylistStoreData(sceneStore) {
     return [
       {
-        id: '1',
+        id: 1,
         displayName: 'Rad Playlist',
         items: [
           PlaylistItemModel.fromJS({ scene: sceneStore.findScene('Color'), duration: 234 }),
@@ -169,7 +169,7 @@ class MockData {
         ],
       },
       {
-        id: '2',
+        id: 2,
         displayName: 'Image Playlist',
         items: [
           PlaylistItemModel.fromJS({ scene: sceneStore.findScene('Colored Image Scroll'), duration: 56 }),
@@ -186,25 +186,25 @@ class MockData {
   static getSceneStoreData(clipStore) {
     return [
       {
-        id: '1',
+        id: 1,
         displayName: 'Color',
         channel1Clip: clipStore.findClip('solid_color'),
         channel2Clip: clipStore.findClip('color_wash'),
       },
       {
-        id: '2',
+        id: 2,
         displayName: 'Text Scroll',
         channel1Clip: clipStore.findClip('solid_color'),
         channel2Clip: clipStore.findClip('color_wash'),
       },
       {
-        id: '3',
+        id: 3,
         displayName: 'Colored Image Scroll',
         channel1Clip: clipStore.findClip('image_scroll'),
         channel2Clip: clipStore.findClip('color_wash'),
       },
       {
-        id: '4',
+        id: 4,
         displayName: 'Color Gif',
         channel1Clip: clipStore.findClip('solid_color'),
         channel2Clip: clipStore.findClip('animated_gif'),

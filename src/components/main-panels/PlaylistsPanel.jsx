@@ -21,7 +21,11 @@ class PlayListsPanel extends React.Component {
     super(...args);
 
     const props = args[0];
-    this.currentPlaylist = props.playlistStore.items[0];
+
+    // before initial load this is undefined
+    if (props.playlistStore.items[0]) {
+      this.currentPlaylist = props.playlistStore.items[0];
+    }
 
     //
     // Bind event handlers to the correct value of 'this'
@@ -81,6 +85,14 @@ class PlayListsPanel extends React.Component {
   render() {
     const currentPlaylist = this.currentPlaylist;
 
+    let playlistEditor;
+    if (currentPlaylist) {
+      playlistEditor = <PlaylistEditor currentPlaylist={ currentPlaylist } />;
+    } else {
+      playlistEditor = <span>No Current Playlist</span>;
+    }
+
+
     return (
       <DragDropContext onDragEnd={ this.handleDragEnd }>
         <Container fluid>
@@ -99,7 +111,7 @@ class PlayListsPanel extends React.Component {
               <ScenesList sceneStore={ this.props.sceneStore } />
             </Col>
             <Col>
-              <PlaylistEditor currentPlaylist={ currentPlaylist } />
+              { playlistEditor }
             </Col>
           </Row>
         </Container>

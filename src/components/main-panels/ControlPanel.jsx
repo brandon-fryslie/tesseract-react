@@ -104,7 +104,7 @@ class ControlPanel extends React.Component {
             </Container>
           </Col>
           <Col>
-            <Container>
+            <Container fluid>
               <div className="fill-parent">More Controls</div>
             </Container>
           </Col>
@@ -116,6 +116,7 @@ class ControlPanel extends React.Component {
 
 ControlPanel.propTypes = {
   playlistStore: PropTypes.object.isRequired,
+  websocketRef: PropTypes.object,
 };
 
 export default ControlPanel;

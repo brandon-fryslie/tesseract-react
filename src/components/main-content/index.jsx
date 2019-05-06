@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Tab from 'react-bootstrap/Tab';
@@ -17,6 +18,9 @@ import PlaylistStore from '../../stores/PlaylistStore';
 import ClipStore from '../../stores/ClipStore';
 import MockData from '../../util/MockData';
 import SceneStore from '../../stores/SceneStore';
+import { observable } from 'mobx';
+import WebsocketController from '../WebsocketController';
+import WebsocketIndicatorModel from '../../models/WebsocketIndicatorModel';
 
 @observer
 class MainContent extends React.Component {
@@ -26,18 +30,37 @@ class MainContent extends React.Component {
   // Clip store is where data about clips is stored
   playlistStore = null;
 
+  // Reference to websocket;
+  @observable websocketRef = null;
+
+  @observable websocketIndicatorModel = null;
+
+  constructor(...args) {
+    super(...args);
+  }
+
   componentWillMount() {
     this.clipStore = ClipStore.fromJS(MockData.getClipStoreData());
 
-    this.sceneStore = SceneStore.fromJS(MockData.getSceneStoreData(this.clipStore));
-    this.playlistStore = PlaylistStore.fromJS(MockData.getPlaylistStoreData(this.sceneStore));
+    this.sceneStore = new SceneStore(this.clipStore);
+    this.playlistStore = new PlaylistStore(this.sceneStore);
+
+    // this.sceneStore = SceneStore.fromJS(MockData.getSceneStoreData(this.clipStore));
+    // this.playlistStore = PlaylistStore.fromJS(MockData.getPlaylistStoreData(this.sceneStore));
+
+    this.websocketIndicatorModel = new WebsocketIndicatorModel();
   }
 
   render() {
     return (
       <div className="MainContent">
-        <PageHeader />
-        <Tab.Container defaultActiveKey="scenes">
+        <WebsocketController
+          clipStore={ this.clipStore }
+          playlistStore={ this.playlistStore }
+          sceneStore={ this.sceneStore }
+          websocketIndicatorModel={ this.websocketIndicatorModel } />
+        <PageHeader isConnected={ this.websocketIndicatorModel.isConnected } />
+        <Tab.Container defaultActiveKey="control">
           <Row>
             <Col sm={ 1 }>
               <Nav variant="pills" className="flex-column tesseract-sidebar">
@@ -52,7 +75,9 @@ class MainContent extends React.Component {
             <Col>
               <Tab.Content>
                 <Tab.Pane eventKey="control">
-                  <ControlPanel playlistStore={ this.playlistStore } />
+                  <ControlPanel
+                    playlistStore={ this.playlistStore }
+                    websocketRef={ this.websocketRef } />
                 </Tab.Pane>
                 <Tab.Pane eventKey="playlists">
                   <PlayListsPanel sceneStore={ this.sceneStore }

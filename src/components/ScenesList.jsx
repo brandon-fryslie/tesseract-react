@@ -50,7 +50,7 @@ ScenesList.propTypes = {
 export default ScenesList;
 
 const SceneListRow = props => (
-  <DraggableWrapper index={ props.idx } key={ props.item.id } draggableId={ props.item.id }>
+  <DraggableWrapper index={ props.idx } key={ props.item.id } draggableId={ props.item.uuid }>
     <ListGroup.Item action
                     as="li"
                     key={ props.idx }

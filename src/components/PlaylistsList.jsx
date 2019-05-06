@@ -35,7 +35,7 @@ class PlaylistsList extends React.Component {
 PlaylistsList.propTypes = {
   playlistStore: PropTypes.object.isRequired,
   onItemClick: PropTypes.func.isRequired,
-  currentPlaylist: PropTypes.object.isRequired,
+  currentPlaylist: PropTypes.object,
 };
 
 export default PlaylistsList;
