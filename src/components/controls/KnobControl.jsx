@@ -27,7 +27,7 @@ class KnobControl extends React.Component {
           <Knob unlockDistance={ 40 }
                 onChange={ this.handleKnobChange }
                 min={ 0 }
-                max={ 100 }
+                max={ 1 }
                 value={ this.props.control.currentValue } />
         </Card.Body>
       </Card>

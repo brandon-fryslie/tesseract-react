@@ -4,6 +4,15 @@ import ClipModel from '../models/ClipModel';
 export default class ClipStore {
   @observable items = [];
 
+  // singleton pattern
+  static instance;
+  static get() {
+    if (this.instance == null) {
+      this.instance = new ClipStore();
+    }
+    return this.instance;
+  }
+
   // @action
   addClip(playlist) {
     this.items.push(playlist);
@@ -19,9 +28,8 @@ export default class ClipStore {
     return result;
   }
 
-  static fromJS(arr) {
-    const store = new ClipStore();
-    store.items = arr.map(item => ClipModel.fromJS(store, item));
-    return store;
+  // Refresh store contents from parsed JSON
+  refreshFromJS(arr) {
+    this.items = arr.map(item => ClipModel.fromJS(item));
   }
 }

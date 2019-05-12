@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 import DroppableWrapper from './dnd-wrappers/DroppableWrapper';
 import DraggableWrapper from './dnd-wrappers/DraggableWrapper';
+import ClipStore from '../stores/ClipStore';
 
 @observer
 class ClipsList extends React.Component {
@@ -13,10 +14,10 @@ class ClipsList extends React.Component {
   // }
 
   render() {
-    const clipStore = this.props.clipStore;
+    const clipStore = ClipStore.get();
 
     return (
-      <Card className="mt-3 mb-3">
+      <Card>
         <Card.Header>Clips</Card.Header>
         <Card.Body>
           <DroppableWrapper isDropDisabled
@@ -25,7 +26,7 @@ class ClipsList extends React.Component {
             <ListGroup as="ul">
               {
                 clipStore.items.map((item, idx) => (
-                    <ClipListRow key={ item.id }
+                    <ClipListRow key={ item.uuid }
                                   idx={ idx }
                                   item={ item }
                                   onItemClick={ this.props.onItemClick }
@@ -42,7 +43,6 @@ class ClipsList extends React.Component {
 }
 
 ClipsList.propTypes = {
-  clipStore: PropTypes.object.isRequired,
   activeScene: PropTypes.object,
   onItemClick: PropTypes.func,
 };

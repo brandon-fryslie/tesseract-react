@@ -1,19 +1,17 @@
 import React from 'react';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Card from 'react-bootstrap/Card';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
-import DroppableWrapper from './dnd-wrappers/DroppableWrapper';
-import DraggableWrapper from './dnd-wrappers/DraggableWrapper';
-import { Accordion } from 'react-bootstrap';
-import ClipsList from './ClipsList';
 import Websocket from 'react-websocket';
+import ClipStore from '../stores/ClipStore';
+import SceneStore from '../stores/SceneStore';
+import PlaylistStore from '../stores/PlaylistStore';
+import StateManager from '../util/StateManager';
 
 @observer
 class WebsocketController extends React.Component {
 
-  // Have we loaded the initial state?
-  shouldRequestInitialState = false;
+  // Handles managing state.  instantiated when we get a websocket reference
+  stateManager;
 
   constructor(...args) {
     super(...args);
@@ -30,15 +28,17 @@ class WebsocketController extends React.Component {
     console.log('got ws open');
     this.props.websocketIndicatorModel.setConnected(true);
 
-    this.loadInitialState();
+    this.stateManager.loadInitialState();
   }
 
   handleWebsocketMessage(messageJson) {
     // Ignore these until I can figure out where the hell they are coming from
     // eslint-disable-next-line no-proto
-    if (messageJson.__proto__.toString() === '[object Blob]') {
-      return;
-    }
+    // if (messageJson.__proto__.toString() === '[object Blob]') {
+    //   return;
+    // }
+
+    console.log("got ws message");
 
     const message = JSON.parse(messageJson);
 
@@ -51,7 +51,9 @@ class WebsocketController extends React.Component {
     if (action === 'logMessage') {
       this.handleLogMessageAction(data);
     } else if (action === 'sendInitialState') {
-      this.handleSendInitialStateAction(data);
+      this.stateManager.handleSendInitialStateAction(data);
+    } else if (action === 'stateUpdate') {
+      this.stateManager.handleStateUpdatedAction(data);
     } else {
       throw `Error: Unimplemented action type: ${ action }`;
     }
@@ -67,6 +69,8 @@ class WebsocketController extends React.Component {
   // Action: string
   // data: object
   sendMessage(action, data = {}) {
+    console.log(`Sending websocket message. action: ${action}`);
+
     const message = JSON.stringify({ action, data });
 
     try {
@@ -79,16 +83,12 @@ class WebsocketController extends React.Component {
 
   handleWebsocketRef(ws) {
     this.ws = ws;
-  }
-
-  loadInitialState() {
-    console.log('Requesting Initital State');
-    this.sendMessage('requestInitialState');
+    this.stateManager = StateManager.get();
+    // Kinda a hack
+    this.stateManager.setWebsocketController(this);
   }
 
   render() {
-    const clipStore = this.props.clipStore;
-
     return (
       <Websocket url="ws://localhost:8883"
                  onOpen={ this.handleWebsocketOpen }
@@ -104,19 +104,10 @@ class WebsocketController extends React.Component {
     console.log(`WEBSOCKET LOGMESSAGE: ${data}`);
   }
 
-  handleSendInitialStateAction(data) {
-    console.log("!!! received initial state!!!");
-    console.log(data);
 
-    this.props.sceneStore.refreshFromJS(data.sceneData);
-    this.props.playlistStore.refreshFromJS(data.playlistData);
-  }
 }
 
 WebsocketController.propTypes = {
-  clipStore: PropTypes.object.isRequired,
-  sceneStore: PropTypes.object.isRequired,
-  playlistStore: PropTypes.object.isRequired,
   websocketIndicatorModel: PropTypes.object.isRequired,
 };
 

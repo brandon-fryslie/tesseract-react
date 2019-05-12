@@ -3,7 +3,6 @@ import ControlModel from './ControlModel';
 import BaseModel from './BaseModel';
 
 export default class ClipModel extends BaseModel {
-  store;
   id;
 
   // Pretty name for the clip
@@ -15,10 +14,9 @@ export default class ClipModel extends BaseModel {
   // The controls required of the clip (ControlModels) and the default values
   @observable controls;
 
-  constructor(store, id, displayName, clipId, controls) {
+  constructor(id, displayName, clipId, controls) {
     super();
 
-    this.store = store;
     this.id = id;
     this.displayName = displayName;
     this.clipId = clipId;
@@ -34,9 +32,9 @@ export default class ClipModel extends BaseModel {
     };
   }
 
-  static fromJS(store, obj) {
+  static fromJS(obj) {
     const controls = obj.controls.map(c => ControlModel.fromJS(c));
 
-    return new ClipModel(store, obj.id, obj.displayName, obj.clipId, controls);
+    return new ClipModel(obj.id, obj.displayName, obj.clipId, controls);
   }
 }

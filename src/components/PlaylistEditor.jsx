@@ -12,13 +12,13 @@ import PlaylistEditorGrid from './data-grids/PlaylistEditorGrid';
 class PlaylistEditor extends React.Component {
   render() {
     return (
-      <PlaylistEditorGrid rows={ this.props.currentPlaylist.items } />
+      <PlaylistEditorGrid playlist={ this.props.activePlaylist } />
     );
   }
 }
 
 PlaylistEditor.propTypes = {
-  currentPlaylist: PropTypes.object.isRequired,
+  activePlaylist: PropTypes.object.isRequired,
 };
 
 export default PlaylistEditor;

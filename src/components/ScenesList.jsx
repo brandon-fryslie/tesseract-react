@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 import DroppableWrapper from './dnd-wrappers/DroppableWrapper';
 import DraggableWrapper from './dnd-wrappers/DraggableWrapper';
+import SceneStore from '../stores/SceneStore';
 
 @observer
 class ScenesList extends React.Component {
@@ -13,7 +14,7 @@ class ScenesList extends React.Component {
   // }
 
   render() {
-    const sceneStore = this.props.sceneStore;
+    const sceneStore = SceneStore.get();
 
     return (
       <Card className="mt-3 mb-3">
@@ -42,7 +43,6 @@ class ScenesList extends React.Component {
 }
 
 ScenesList.propTypes = {
-  sceneStore: PropTypes.object.isRequired,
   activeScene: PropTypes.object,
   onItemClick: PropTypes.func,
 };

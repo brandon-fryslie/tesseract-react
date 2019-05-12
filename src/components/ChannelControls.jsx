@@ -22,33 +22,40 @@ class ChannelControls extends React.Component {
 
   renderClipControl(control, idx) {
     if (control.type === 'knob') {
-      return this.renderKnob(control, idx);
+      this.props.scene.clipValues;
+      return this.renderKnob(currentValue, control, idx);
     }
 
     throw `renderClipControl: Not implemented for type ${ control.type }`;
   }
 
   render() {
-    const clipControls = this.props.clip.controls;
+    const title = `Scene: '${ this.props.scene.displayName }' Controls`;
+    const clipControls = this.props.scene.clip.controls;
 
     return (
-      <Card>
-        <Card.Header>{ this.props.title }</Card.Header>
-        <Card.Body>
-          <ClipSelector clipStore={this.props.clipStore} />
-          { clipControls.map((control, idx) => {
-            return this.renderClipControl(control, idx);
-          }) }
-        </Card.Body>
-      </Card>
+      <CardGroup>
+        <Card>
+          <Card.Header>{ title }</Card.Header>
+          <Card.Body>
+            <CardGroup>
+              <ClipSelector onItemClick={ this.props.onItemClick } />
+              {
+                clipControls.map((control, idx) => {
+                  return this.renderClipControl(control, idx);
+                })
+              }
+            </CardGroup>
+          </Card.Body>
+        </Card>
+      </CardGroup>
     );
   }
 }
 
 ChannelControls.propTypes = {
-  clip: PropTypes.object.isRequired,
-  title: PropTypes.string.isRequired,
-  clipStore: PropTypes.object.isRequired,
+  scene: PropTypes.object.isRequired,
+  onItemClick: PropTypes.func.isRequired,
 };
 
 export default ChannelControls;

@@ -10,10 +10,13 @@ import CardGroup from 'react-bootstrap/CardGroup';
 @observer
 class ChannelControlsContainer extends React.Component {
   render() {
+
+
     return (
       <CardGroup>
-        <ChannelControls title="Channel 1" clip={ this.props.scene.channel1Clip } clipStore={this.props.clipStore} />
-        <ChannelControls title="Channel 2" clip={ this.props.scene.channel2Clip } clipStore={this.props.clipStore} />
+        <ChannelControls
+          clip={ this.props.scene.clip }
+          onItemClick={ this.props.onItemClick } />
       </CardGroup>
     );
   }
@@ -21,7 +24,7 @@ class ChannelControlsContainer extends React.Component {
 
 ChannelControlsContainer.propTypes = {
   scene: PropTypes.object.isRequired,
-  clipStore: PropTypes.object.isRequired,
+  onItemClick: PropTypes.func.isRequired,
 };
 
 export default ChannelControlsContainer;

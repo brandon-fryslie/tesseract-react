@@ -1,13 +1,23 @@
 import { observable, computed, reaction, action } from 'mobx';
 import SceneModel from '../models/SceneModel';
+import ClipStore from './ClipStore';
 
 export default class SceneStore {
   @observable items = [];
 
   clipStore = null;
 
-  constructor(clipStore) {
-    this.clipStore = clipStore;
+  constructor() {
+    this.clipStore = ClipStore.get();
+  }
+
+  // singleton pattern
+  static instance;
+  static get() {
+    if (this.instance == null) {
+      this.instance = new SceneStore();
+    }
+    return this.instance;
   }
 
   get scenes() {
@@ -45,9 +55,8 @@ export default class SceneStore {
   hydrateClipsOnScene(scenes) {
     scenes.forEach((scene) => {
       // eslint-disable-next-line no-param-reassign
-      scene.channel1Clip = this.clipStore.findClip(scene.channel1Clip.clipId);
+      scene.clip = this.clipStore.findClip(scene.clipId);
       // eslint-disable-next-line no-param-reassign
-      scene.channel2Clip = this.clipStore.findClip(scene.channel2Clip.clipId);
     });
   }
 
@@ -56,11 +65,5 @@ export default class SceneStore {
     this.hydrateClipsOnScene(arr);
 
     this.items = arr.map(item => SceneModel.fromJS(item));
-  }
-
-  static fromJS(arr) {
-    const store = new SceneStore();
-    store.items = arr.map(item => SceneModel.fromJS(item));
-    return store;
   }
 }

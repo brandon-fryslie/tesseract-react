@@ -24,7 +24,7 @@ class PageHeader extends Component {
         <Container fluid>
           <Row>
             <Col xs={ 2 }><h2 className="ml-4 mb-2">draco ui</h2></Col>
-            <Col xs={ 8 }></Col>
+            <Col xs={ 8 } />
             <Col xs={ 2 }><span className="pb-2 mt-4 mb-2 float-right">{ getConnectedIndicator(this.props.isConnected) }</span></Col>
           </Row>
         </Container>
