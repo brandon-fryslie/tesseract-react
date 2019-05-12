@@ -1,5 +1,7 @@
 import { observable } from 'mobx';
 import BaseModel from './BaseModel';
+import ClipModel from './ClipModel';
+import ControlModel from './ControlModel';
 
 // A Scene is one or more clips loaded into channels with specific parameters defined
 // Scenes have two channels (for now, can expand to 4 later)
@@ -25,9 +27,16 @@ export default class SceneModel extends BaseModel {
     this.rawClipValues = rawClipValues;
 
     // need to create the Scene's controls
-    // this.clip.controls.forEach((control) => {
-    //
-    // });
+    this.clipControls = this.clip.controls.map((control) => {
+      return ControlModel.fromJS(control.toJS());
+    });
+
+    // hacky, this should be better
+    rawClipValues.forEach((value, idx) => {
+      if (this.clipControls[idx]) {
+        this.clipControls[idx].currentValue = value;
+      }
+    });
   }
 
   toJS() {

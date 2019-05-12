@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import PlaylistsList from '../PlaylistsList';
 import { action, computed, observable } from 'mobx';
-import ChannelControlsContainer from '../ChannelControlsContainer';
 import UIStore from '../../stores/UIStore';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ChannelControls from '../ChannelControls';
@@ -31,7 +30,7 @@ class ControlPanel extends React.Component {
     const props = args[0];
 
     // this.uiStore = UIStore.get();
-    UIStore.stateTree.controlPanel.activePlaylist = props.playlistStore.items[0];
+    UIStore.get().stateTree.controlPanel.activePlaylist = props.playlistStore.items[0];
 
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
@@ -80,12 +79,17 @@ class ControlPanel extends React.Component {
 
   // dunno if computed is the right thing here.
   @computed get activeScene() {
-    return UIStore.stateTree.controlPanel.activeScene;
+    return UIStore.get().stateTree.controlPanel.activeScene;
+  }
+
+  // dunno if computed is the right thing here.
+  @computed get activeControls() {
+    return UIStore.get().stateTree.controlPanel.activeControls;
   }
 
   // dunno if computed is the right thing here.
   @computed get activePlaylist() {
-    return UIStore.stateTree.controlPanel.activePlaylist;
+    return UIStore.get().stateTree.controlPanel.activePlaylist;
   }
 
   handleClipSelect() {
@@ -99,6 +103,7 @@ class ControlPanel extends React.Component {
       channelControls = (
         <ChannelControls
           scene={ this.activeScene }
+          controls={ this.activeControls }
           onItemClick={ this.handleClipSelect } />
       );
     } else {
@@ -108,9 +113,11 @@ class ControlPanel extends React.Component {
   }
 
   render() {
-    // declaring this here will make it rerender when the value changes
-    const activeScene = UIStore.stateTree.controlPanel.activeScene;
-    const activePlaylist = UIStore.stateTree.controlPanel.activePlaylist;
+    // 'Using' these values here will cause the mobx library to rerender this component when they change
+    // This is not the exact right way to do this, but it works
+    const activeScene = UIStore.get().stateTree.controlPanel.activeScene;
+    const activeControls = UIStore.get().stateTree.controlPanel.activeControls;
+    const activePlaylist = UIStore.get().stateTree.controlPanel.activePlaylist;
     let activePlaylistName;
 
     if (activePlaylist == null) {
@@ -118,8 +125,6 @@ class ControlPanel extends React.Component {
     } else {
       activePlaylistName = activePlaylist.displayName;
     }
-
-    console.log('Rendered ControlPanel');
 
     return (
       <DragDropContext>

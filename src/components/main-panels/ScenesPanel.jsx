@@ -13,7 +13,6 @@ import { DragDropContext } from 'react-beautiful-dnd';
 import ScenesList from '../ScenesList';
 import { observable } from 'mobx';
 import Button from 'react-bootstrap/Button';
-import ChannelControlsContainer from '../ChannelControlsContainer';
 import SceneStore from '../../stores/SceneStore';
 import ChannelControls from '../ChannelControls';
 

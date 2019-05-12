@@ -43,9 +43,10 @@ export default class StateManager {
       // Find the scene
       try {
         const scene = SceneStore.get().findSceneById(data.value);
-        UIStore.stateTree.controlPanel.activeScene = scene;
+        UIStore.get().setControlPanelActiveScene(scene);
       } catch (e) {
-        console.log("Tried to set activeScene before initial data load");
+        console.log(`Error finding activeScene in store: ${e.message}`);
+        console.log(e.stack);
       }
     } else {
       throw `Error: ${data.key} is not a valid stateKey`;

@@ -22,8 +22,7 @@ class ChannelControls extends React.Component {
 
   renderClipControl(control, idx) {
     if (control.type === 'knob') {
-      this.props.scene.clipValues;
-      return this.renderKnob(currentValue, control, idx);
+      return this.renderKnob(control, idx);
     }
 
     throw `renderClipControl: Not implemented for type ${ control.type }`;
@@ -31,7 +30,6 @@ class ChannelControls extends React.Component {
 
   render() {
     const title = `Scene: '${ this.props.scene.displayName }' Controls`;
-    const clipControls = this.props.scene.clip.controls;
 
     return (
       <CardGroup>
@@ -41,7 +39,7 @@ class ChannelControls extends React.Component {
             <CardGroup>
               <ClipSelector onItemClick={ this.props.onItemClick } />
               {
-                clipControls.map((control, idx) => {
+                this.props.controls.map((control, idx) => {
                   return this.renderClipControl(control, idx);
                 })
               }
@@ -54,7 +52,10 @@ class ChannelControls extends React.Component {
 }
 
 ChannelControls.propTypes = {
+  // The reason we pass in both Scene and Controls is because in 'live' mode (on the ControlPanel)
+  // the controls we are modifying won't be directly tied to the Scene
   scene: PropTypes.object.isRequired,
+  controls: PropTypes.array.isRequired,
   onItemClick: PropTypes.func.isRequired,
 };
 
