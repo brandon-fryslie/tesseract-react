@@ -44,6 +44,7 @@ export default class StateManager {
     ClipStore.get().refreshFromJS(data.clipData);
     SceneStore.get().refreshFromJS(data.sceneData);
     PlaylistStore.get().refreshFromJS(data.playlistData);
+    this.setControlPanelActiveScene(data.activeScene);
   }
 
   // handle a state updated action from the backend
@@ -52,16 +53,20 @@ export default class StateManager {
     console.log(data);
 
     if (data.key === 'activeScene') {
-      // Find the scene
-      try {
-        const scene = SceneStore.get().findSceneById(data.value);
-        UIStore.get().setControlPanelActiveScene(scene);
-      } catch (e) {
-        console.log(`Error finding activeScene in store: ${e.message}`);
-        console.log(e.stack);
-      }
+      this.setControlPanelActiveScene(data.value);
     } else {
       throw `Error: ${data.key} is not a valid stateKey`;
+    }
+  }
+
+  setControlPanelActiveScene(sceneId) {
+    // Find the scene
+    try {
+      const scene = SceneStore.get().findSceneById(sceneId);
+      UIStore.get().setControlPanelActiveScene(scene);
+    } catch (e) {
+      console.log(`Error finding activeScene in store: ${e.message}`);
+      console.log(e.stack);
     }
   }
 
@@ -82,7 +87,7 @@ export default class StateManager {
     }
 
     console.log("got handleLiveControlsUpdate", change, path);
-    debugger
+    // debugger
 
     // actually, here I need to figure out if it is anything the backend cares about
     // we don't care about (or want to respond to) having our activeState updated
@@ -90,27 +95,33 @@ export default class StateManager {
 
     // here I need to send a stateUpdate message via websocket
     const data = {
-
+      // these state keys are going to be pretty arbitrary at this point
+      stateKey: 'activeControls',
+      // value is arbitrary shape, the handler on the backend for stateKey 'activeControls' needs to handle it
+      value: {
+        fieldName: change.object.fieldName,
+        newValue: change.newValue,
+      }
     };
 
-    this.ws.sendMessage('stateUpdate', data)
+    this.ws.sendMessage('stateUpdate', data);
   }
 
   // handle activeControl state updated on frontend
   // e.g., a user used a knob to change the value
   handleUIStoreUpdated(change, path) {
-    console.log("got handleUIStoreUpdated", change, path);
-    debugger
-
-    // actually, here I need to figure out if it is anything the backend cares about
-    // we don't care about (or want to respond to) having our activeState updated
-    // if (change.name === "currentValue")
-
-    // here I need to send a stateUpdate message via websocket
-    const data = {
-
-    };
-
-    this.ws.sendMessage('stateUpdate', data)
+  //   console.log("got handleUIStoreUpdated", change, path);
+  //   debugger
+  //
+  //   // actually, here I need to figure out if it is anything the backend cares about
+  //   // we don't care about (or want to respond to) having our activeState updated
+  //   // if (change.name === "currentValue")
+  //
+  //   // here I need to send a stateUpdate message via websocket
+  //   const data = {
+  //
+  //   };
+  //
+  //   this.ws.sendMessage('stateUpdate', data)
   }
 }

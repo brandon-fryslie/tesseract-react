@@ -19,15 +19,15 @@ class KnobControl extends React.Component {
   render() {
     return (
       <Card>
-        <Card.Header>{ this.props.control.displayName }</Card.Header>
+        <Card.Header>{ this.props.control.displayName } (field: { this.props.control.fieldName })</Card.Header>
         <Card.Body>
           <div>
             <span>{ this.props.control.currentValue }</span>
           </div>
           <Knob unlockDistance={ 40 }
                 onChange={ this.handleKnobChange }
-                min={ 0 }
-                max={ 1 }
+                min={ this.props.control.minValue }
+                max={ this.props.control.maxValue }
                 value={ this.props.control.currentValue } />
         </Card.Body>
       </Card>
