@@ -40,13 +40,9 @@ class MainContent extends React.Component {
   }
 
   componentWillMount() {
-    this.clipStore = ClipStore.fromJS(MockData.getClipStoreData());
-
-    this.sceneStore = new SceneStore(this.clipStore);
-    this.playlistStore = new PlaylistStore(this.sceneStore);
-
-    // this.sceneStore = SceneStore.fromJS(MockData.getSceneStoreData(this.clipStore));
-    // this.playlistStore = PlaylistStore.fromJS(MockData.getPlaylistStoreData(this.sceneStore));
+    this.clipStore = ClipStore.get();
+    this.sceneStore = SceneStore.get();
+    this.playlistStore = PlaylistStore.get();
 
     this.websocketIndicatorModel = new WebsocketIndicatorModel();
   }
@@ -55,9 +51,6 @@ class MainContent extends React.Component {
     return (
       <div className="MainContent">
         <WebsocketController
-          clipStore={ this.clipStore }
-          playlistStore={ this.playlistStore }
-          sceneStore={ this.sceneStore }
           websocketIndicatorModel={ this.websocketIndicatorModel } />
         <PageHeader isConnected={ this.websocketIndicatorModel.isConnected } />
         <Tab.Container defaultActiveKey="control">

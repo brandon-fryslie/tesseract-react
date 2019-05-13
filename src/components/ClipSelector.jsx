@@ -7,6 +7,7 @@ import DroppableWrapper from './dnd-wrappers/DroppableWrapper';
 import DraggableWrapper from './dnd-wrappers/DraggableWrapper';
 import { Accordion } from 'react-bootstrap';
 import ClipsList from './ClipsList';
+import ClipStore from '../stores/ClipStore';
 
 @observer
 class ClipSelector extends React.Component {
@@ -15,25 +16,14 @@ class ClipSelector extends React.Component {
   // }
 
   render() {
-    const clipStore = this.props.clipStore;
-
     return (
-      <Accordion>
-        <Card>
-          <Accordion.Toggle as={Card.Header} eventKey="0">
-            Select Clip
-          </Accordion.Toggle>
-          <Accordion.Collapse eventKey="0">
-            <ClipsList clipStore={this.props.clipStore} />
-          </Accordion.Collapse>
-        </Card>
-      </Accordion>
+      <ClipsList onItemClick={ this.props.onItemClick } />
     );
   }
 }
 
 ClipSelector.propTypes = {
-  clipStore: PropTypes.object.isRequired,
+  onItemClick: PropTypes.func.isRequired,
 };
 
 export default ClipSelector;

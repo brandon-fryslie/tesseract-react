@@ -55,9 +55,10 @@
     "template-curly-spacing": "off",
     "no-useless-constructor": "off",
     "no-else-return": "off",
+    "react/prefer-stateless-function": "off",
     // disabled crap
 
-    "react/prefer-stateless-function": "warn",
+//    "react/prefer-stateless-function": "warn",
     "react/self-closing-comp": [
       "warn",
       {

@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { observable, observe } from 'mobx';
+import { autorun, action, observable, observe, reaction, computed } from 'mobx';
 import ReactDataGrid from 'react-data-grid';
 import { observer } from 'mobx-react';
 import DraggableWrapper from '../dnd-wrappers/DraggableWrapper';
@@ -40,44 +40,57 @@ class PlaylistEditorGrid extends React.Component {
 
     const props = args[0];
 
-    this.rows = props.rows;
-
     // Bind event handlers to the correct value of 'this'
     this.handleGridRowsUpdated = this.handleGridRowsUpdated.bind(this);
   }
 
-  @observable rows;
+  // @observable rows;
 
   componentDidMount() {
     // Hack to force table to resize to the proper width
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 1);
+
+    // const reaction2 = reaction(
+    //   () => this.props.playlist.items.map(item => item),
+    //   stuff => console.log("reaction 2:", stuff)
+    // );
   }
 
-  componentWillReceiveProps(props) {
-    this.rows = props.rows;
+  // 'Computed' functions are tracked by mobx, and any Component whos render method uses the computed value will be rerendered when the dependencies change
+  // Here we use it to force a rerender when any of the durations change
+  @computed get allDurations() {
+    return this.props.playlist.items.map(item => item.duration);
   }
 
-  handleGridRowsUpdated({ fromRow, toRow, updated }) {
-    const rows = this.rows.slice();
-    for (let i = fromRow; i <= toRow; i++) {
-      rows[i] = { ...rows[i], ...updated };
-    }
-    this.rows = rows;
+  @action
+  handleGridRowsUpdated({ fromRowData, updated }) {
+    // console.log('PlaylistGridEditor.jsx: handleGridRowsUpdated');
+
+    // Update all changed values on the Model
+    Object.entries(updated).forEach(([key, value]) => {
+      // eslint-disable-next-line no-param-reassign
+      fromRowData[key] = value;
+    });
   }
 
   render() {
+    // This is a hack to get the component to automatically rerender when any duration changes in the playlist items
+    // Still learning the intricacies of mobx...obviously.  this value isn't used for anything
+    const someVar = this.allDurations;
+
     return (
+
       <DroppableWrapper droppableId="playlistEditorGridContainer"
                         className="playlistEditorGridContainer"
-                        list={ this.rows }
+                        list={ this.props.playlist.items }
                         style={ { width: '815px' } }>
         <div className="playlistEditorGridContainer">
           <ReactDataGrid
             columns={ columns }
-            rowGetter={ i => this.rows[i] }
-            rowsCount={ this.rows.length }
+            rowGetter={ i => this.props.playlist.items[i] }
+            rowsCount={ this.props.playlist.items.length }
             onGridRowsUpdated={ this.handleGridRowsUpdated }
             rowRenderer={ customRowRenderer }
             enableCellSelect />
@@ -88,7 +101,7 @@ class PlaylistEditorGrid extends React.Component {
 }
 
 PlaylistEditorGrid.propTypes = {
-  rows: PropTypes.array.isRequired,
+  playlist: PropTypes.object.isRequired,
 };
 
 export default PlaylistEditorGrid;

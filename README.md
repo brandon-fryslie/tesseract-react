@@ -2,6 +2,8 @@
 
 UI for the draco art installation
 
+**Important: Run `nvm use` from the repo directory to ensure you are using the correct version of NodeJS**
+
 ## Setup
 
 Run `yarn install` in the repo directory.  You must have Yarn installed.  On MacOS, this can be accomplished via `brew install yarn`.

@@ -15,7 +15,7 @@ import { observable } from 'mobx';
 
 @observer
 class PlayListsPanel extends React.Component {
-  @observable currentPlaylist;
+  @observable activePlaylist;
 
   constructor(...args) {
     super(...args);
@@ -23,8 +23,8 @@ class PlayListsPanel extends React.Component {
     const props = args[0];
 
     // before initial load this is undefined
-    if (props.playlistStore.items[0]) {
-      this.currentPlaylist = props.playlistStore.items[0];
+    if (props.playlistStore.items.length > 0) {
+      this.activePlaylist = props.playlistStore.items[0];
     }
 
     //
@@ -37,26 +37,26 @@ class PlayListsPanel extends React.Component {
   // This will set the current playlist
   // Called with the dom element and the playlist model
   handlePlaylistClick(dom, playlist) {
-    this.currentPlaylist = playlist;
+    this.activePlaylist = playlist;
   }
 
   // Handle a drag from the Scene list to the Playlist
   handleSceneDragToPlaylist(source, destination) {
     const sourceList = Util.getListForDroppable(source.droppableId);
 
-    // Now we need to add a new instance of the dragged Scene to the currentPlaylist
-    this.currentPlaylist.addScene(sourceList[source.index], destination.index);
+    // Now we need to add a new instance of the dragged Scene to the activePlaylist
+    this.activePlaylist.addScene(sourceList[source.index], destination.index);
   }
 
   // Handle a drag to reorder playlist elements
   handlePlaylistGridReorder(source, destination) {
     const items = Util.reorder(
-      this.currentPlaylist.items,
+      this.activePlaylist.items,
       source.index,
       destination.index,
     );
 
-    this.currentPlaylist.items = items;
+    this.activePlaylist.items = items;
   }
 
   // Handle all dragging.  we've gotta handle all dragging interactions in this one handler
@@ -83,11 +83,11 @@ class PlayListsPanel extends React.Component {
   }
 
   render() {
-    const currentPlaylist = this.currentPlaylist;
+    const activePlaylist = this.activePlaylist;
 
     let playlistEditor;
-    if (currentPlaylist) {
-      playlistEditor = <PlaylistEditor currentPlaylist={ currentPlaylist } />;
+    if (activePlaylist) {
+      playlistEditor = <PlaylistEditor activePlaylist={ activePlaylist } />;
     } else {
       playlistEditor = <span>No Current Playlist</span>;
     }
@@ -104,11 +104,10 @@ class PlayListsPanel extends React.Component {
                 <NewPlaylistButton />
               </ButtonToolbar>
 
-              <PlaylistsList currentPlaylist={ this.currentPlaylist }
-                             onItemClick={ this.handlePlaylistClick }
-                             playlistStore={ this.props.playlistStore } />
+              <PlaylistsList activePlaylist={ this.activePlaylist }
+                             onItemClick={ this.handlePlaylistClick } />
 
-              <ScenesList sceneStore={ this.props.sceneStore } />
+              <ScenesList />
             </Col>
             <Col>
               { playlistEditor }

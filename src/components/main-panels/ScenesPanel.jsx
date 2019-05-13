@@ -13,7 +13,8 @@ import { DragDropContext } from 'react-beautiful-dnd';
 import ScenesList from '../ScenesList';
 import { observable } from 'mobx';
 import Button from 'react-bootstrap/Button';
-import ChannelControlsContainer from '../ChannelControlsContainer';
+import SceneStore from '../../stores/SceneStore';
+import ChannelControls from '../ChannelControls';
 
 @observer
 class ScenesPanel extends React.Component {
@@ -22,11 +23,17 @@ class ScenesPanel extends React.Component {
   constructor(...args) {
     super(...args);
 
-    const props = args[0];
-    this.activeScene = props.sceneStore.items[0];
+    // const props = args[0];
+
+    // we don't have any scenes loaded when this runs initially
+    if (SceneStore.get().items.length > 0) {
+      this.activeScene = SceneStore.get().items[0];
+    }
 
     // Bind event handlers to the correct value of 'this'
     this.handleSceneClick = this.handleSceneClick.bind(this);
+    this.handleClipSelect = this.handleClipSelect.bind(this);
+    this.handleNewSceneButtonClick = this.handleNewSceneButtonClick.bind(this);
   }
 
   // Trigger this function when we click a playlist in the PlaylistsList
@@ -37,17 +44,26 @@ class ScenesPanel extends React.Component {
   }
 
   handleNewSceneButtonClick() {
+    console.log('New Scene Button Click');
+  }
 
+  // Handles a click on the clip selection list for the scene
+  handleClipSelect() {
+    // don't do anything here
   }
 
   render() {
     const activeScene = this.activeScene;
 
-    let channelControlsContainer;
+    let channelControls;
     if (activeScene) {
-      channelControlsContainer = <ChannelControlsContainer scene={ this.activeScene } clipStore={ this.props.clipStore } />;
+      channelControls = (
+        <ChannelControls
+          scene={ this.activeScene }
+          onItemClick={ this.handleClipSelect } />
+      );
     } else {
-      channelControlsContainer = <span>No active scene</span>;
+      channelControls = <span>No active scene</span>;
     }
 
     return (
@@ -58,14 +74,17 @@ class ScenesPanel extends React.Component {
             {/* Two columns. Col one: playlists list, scenes list.  Col two: Current playlist state */ }
             <Col sm={ 2 }>
               <ButtonToolbar>
-                <Button variant="primary" block>+ New Scene</Button>
+                <Button
+                  block
+                  variant="primary"
+                  onClick={ this.handleNewSceneButtonClick }>+ New Scene
+                </Button>
               </ButtonToolbar>
               <ScenesList activeScene={ this.activeScene }
-                          onItemClick={ this.handleSceneClick }
-                          sceneStore={ this.props.sceneStore } />
+                          onItemClick={ this.handleSceneClick } />
             </Col>
             <Col>
-              { channelControlsContainer }
+              { channelControls }
             </Col>
           </Row>
         </Container>
@@ -75,9 +94,6 @@ class ScenesPanel extends React.Component {
 }
 
 ScenesPanel.propTypes = {
-  // playlistStore: PropTypes.object.isRequired,
-  sceneStore: PropTypes.object.isRequired,
-  clipStore: PropTypes.object.isRequired,
 };
 
 export default ScenesPanel;

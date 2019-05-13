@@ -54,6 +54,7 @@
     "lodash": "4.17.11",
     "mobx": "^5.9.4",
     "mobx-react": "^5.4.3",
+    "mobx-utils": "^5.4.0",
     "prop-types": "15.7.2",
     "react": "16.8.6",
     "react-beautiful-dnd": "^11.0.1",

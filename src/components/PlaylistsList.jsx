@@ -3,12 +3,13 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import Card from 'react-bootstrap/Card';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
+import PlaylistStore from '../stores/PlaylistStore';
 
 @observer
 class PlaylistsList extends React.Component {
   render() {
-    const playlistStore = this.props.playlistStore;
-    const currentPlaylist = this.props.currentPlaylist;
+    const playlistStore = PlaylistStore.get();
+    const activePlaylist = this.props.activePlaylist;
 
     return (
       <Card className="mt-3 mb-3">
@@ -21,7 +22,7 @@ class PlaylistsList extends React.Component {
                 as="li"
                 key={ idx }
                 onClick={ dom => this.props.onItemClick(dom, playlist) }
-                active={ currentPlaylist && currentPlaylist.id === playlist.id }>
+                active={ activePlaylist && activePlaylist.id === playlist.id }>
                 { playlist.displayName }
               </ListGroup.Item>
             ))
@@ -33,9 +34,8 @@ class PlaylistsList extends React.Component {
 }
 
 PlaylistsList.propTypes = {
-  playlistStore: PropTypes.object.isRequired,
   onItemClick: PropTypes.func.isRequired,
-  currentPlaylist: PropTypes.object,
+  activePlaylist: PropTypes.object,
 };
 
 export default PlaylistsList;

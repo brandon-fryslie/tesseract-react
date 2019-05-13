@@ -7,27 +7,39 @@ import ButtonGroup from 'react-bootstrap/es/ButtonGroup';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import PlaylistsList from '../PlaylistsList';
-import { action, observable } from 'mobx';
+import { action, computed, observable } from 'mobx';
+import UIStore from '../../stores/UIStore';
+import { DragDropContext } from 'react-beautiful-dnd';
+import ChannelControls from '../ChannelControls';
 
 @observer
 class ControlPanel extends React.Component {
-  @observable currentPlaylist = null;
+  @observable activePlaylist = null;
   @observable isPlaying = false;
   @observable shuffleEnabled = false;
   @observable repeatEnabled = false;
+
+  // The currently active scene
+  // @observable activeScene;
+
+  @observable uiStore;
 
   constructor(...args) {
     super(...args);
 
     const props = args[0];
 
-    this.currentPlaylist = props.playlistStore.items[0];
+    // this.uiStore = UIStore.get();
+
+    // this isn't set here
+    // UIStore.get().stateTree.controlPanel.activePlaylist = props.playlistStore.items[0];
 
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
     this.handleShuffleButtonClick = this.handleShuffleButtonClick.bind(this);
     this.handleRepeatButtonClick = this.handleRepeatButtonClick.bind(this);
+    this.handleClipSelect = this.handleClipSelect.bind(this);
   }
 
   @action
@@ -49,7 +61,7 @@ class ControlPanel extends React.Component {
   // This will set the current playlist
   // Called with the dom element and the playlist model
   handlePlaylistClick(dom, playlist) {
-    this.currentPlaylist = playlist;
+    UIStore().stateTree.controlPanel.activePlaylist = playlist;
   }
 
   // Triggered when we click the play button
@@ -67,49 +79,102 @@ class ControlPanel extends React.Component {
     this.toggleRepeatPlaylist();
   }
 
-  render() {
-    let currentPlaylistName;
+  // dunno if computed is the right thing here.
+  @computed get activeScene() {
+    return UIStore.get().stateTree.controlPanel.activeScene;
+  }
 
-    if (this.currentPlaylist == null) {
-      currentPlaylistName = '<none>';
+  // dunno if computed is the right thing here.
+  @computed get activeControls() {
+    return UIStore.get().stateTree.controlPanel.activeControls;
+  }
+
+  // dunno if computed is the right thing here.
+  @computed get activePlaylist() {
+    return UIStore.get().stateTree.controlPanel.activePlaylist;
+  }
+
+  handleClipSelect() {
+
+  }
+
+  // Renders the container for the currently playing Scene
+  renderControlsContainer() {
+    let channelControls;
+    if (this.activeScene) {
+      channelControls = (
+        <ChannelControls
+          scene={ this.activeScene }
+          controls={ this.activeControls }
+          onItemClick={ this.handleClipSelect } />
+      );
     } else {
-      currentPlaylistName = this.currentPlaylist.displayName;
+      channelControls = <span>No active scene</span>;
+    }
+    return channelControls;
+  }
+
+  render() {
+    // 'Using' these values here will cause the mobx library to rerender this component when they change
+    // This is not the exact right way to do this, but it works
+    const activeScene = UIStore.get().stateTree.controlPanel.activeScene;
+    const activeControls = UIStore.get().stateTree.controlPanel.activeControls;
+    const activePlaylist = UIStore.get().stateTree.controlPanel.activePlaylist;
+    let activePlaylistName;
+
+    if (activePlaylist == null) {
+      activePlaylistName = '<none>';
+    } else {
+      activePlaylistName = activePlaylist.displayName;
     }
 
     return (
-      <Container fluid>
-        <Row>
-          <Col sm={ 2 }>
-            <Container fluid>
-              <Row>
-                <Col>
-                  Current Playlist: { currentPlaylistName }
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <PlaylistsList
-                    currentPlaylist={ this.currentPlaylist }
-                    onItemClick={ this.handlePlaylistClick }
-                    playlistStore={ this.props.playlistStore } />
-                </Col>
-              </Row>
-              <Row>
-                <ButtonGroup>
-                  <ControlPanelButton active={ this.isPlaying } onClick={ this.handlePlayButtonClick }>Play</ControlPanelButton>
-                  <ControlPanelButton active={ this.shuffleEnabled } onClick={ this.handleShuffleButtonClick }>Shuffle Clips</ControlPanelButton>
-                  <ControlPanelButton active={ this.repeatEnabled } onClick={ this.handleRepeatButtonClick }>Repeat Playlist</ControlPanelButton>
-                </ButtonGroup>
-              </Row>
-            </Container>
-          </Col>
-          <Col>
-            <Container fluid>
-              <div className="fill-parent">More Controls</div>
-            </Container>
-          </Col>
-        </Row>
-      </Container>
+      <DragDropContext>
+        <Container fluid>
+          <Row>
+            <Col sm={ 2 }>
+              <Container fluid>
+                <Row>
+                  <Col>
+                    Current Playlist: { activePlaylistName }
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <PlaylistsList
+                      activePlaylist={ activePlaylist }
+                      onItemClick={ this.handlePlaylistClick } />
+                  </Col>
+                </Row>
+                <Row>
+                  <ButtonGroup>
+                    <ControlPanelButton
+                      active={ this.isPlaying }
+                      onClick={ this.handlePlayButtonClick }>
+                      Play
+                    </ControlPanelButton>
+                    <ControlPanelButton
+                      active={ this.shuffleEnabled }
+                      onClick={ this.handleShuffleButtonClick }>
+                      Shuffle Clips
+                    </ControlPanelButton>
+                    <ControlPanelButton
+                      active={ this.repeatEnabled }
+                      onClick={ this.handleRepeatButtonClick }>
+                      Repeat Playlist
+                    </ControlPanelButton>
+                  </ButtonGroup>
+                </Row>
+              </Container>
+            </Col>
+            <Col>
+              <Container fluid>
+                { this.renderControlsContainer() }
+              </Container>
+            </Col>
+          </Row>
+        </Container>
+      </DragDropContext>
     );
   }
 }

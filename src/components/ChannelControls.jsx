@@ -29,26 +29,34 @@ class ChannelControls extends React.Component {
   }
 
   render() {
-    const clipControls = this.props.clip.controls;
+    const title = `Scene: '${ this.props.scene.displayName }' Controls`;
 
     return (
-      <Card>
-        <Card.Header>{ this.props.title }</Card.Header>
-        <Card.Body>
-          <ClipSelector clipStore={this.props.clipStore} />
-          { clipControls.map((control, idx) => {
-            return this.renderClipControl(control, idx);
-          }) }
-        </Card.Body>
-      </Card>
+      <CardGroup>
+        <Card>
+          <Card.Header>{ title }</Card.Header>
+          <Card.Body>
+            <CardGroup>
+              <ClipSelector onItemClick={ this.props.onItemClick } />
+              {
+                this.props.controls.map((control, idx) => {
+                  return this.renderClipControl(control, idx);
+                })
+              }
+            </CardGroup>
+          </Card.Body>
+        </Card>
+      </CardGroup>
     );
   }
 }
 
 ChannelControls.propTypes = {
-  clip: PropTypes.object.isRequired,
-  title: PropTypes.string.isRequired,
-  clipStore: PropTypes.object.isRequired,
+  // The reason we pass in both Scene and Controls is because in 'live' mode (on the ControlPanel)
+  // the controls we are modifying won't be directly tied to the Scene
+  scene: PropTypes.object.isRequired,
+  controls: PropTypes.array.isRequired,
+  onItemClick: PropTypes.func.isRequired,
 };
 
 export default ChannelControls;
