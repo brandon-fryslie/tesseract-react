@@ -24,7 +24,11 @@ class ScenesPanel extends React.Component {
     super(...args);
 
     // const props = args[0];
-    this.activeScene = SceneStore.get().items[0];
+
+    // we don't have any scenes loaded when this runs initially
+    if (SceneStore.get().items.length > 0) {
+      this.activeScene = SceneStore.get().items[0];
+    }
 
     // Bind event handlers to the correct value of 'this'
     this.handleSceneClick = this.handleSceneClick.bind(this);

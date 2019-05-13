@@ -33,7 +33,7 @@ export default class SceneModel extends BaseModel {
 
     // hacky, this should be better
     rawClipValues.forEach((value, idx) => {
-      if (this.clipControls[idx]) {
+      if (this.clipControls.length > idx) {
         this.clipControls[idx].currentValue = value;
       }
     });

@@ -30,7 +30,9 @@ class ControlPanel extends React.Component {
     const props = args[0];
 
     // this.uiStore = UIStore.get();
-    UIStore.get().stateTree.controlPanel.activePlaylist = props.playlistStore.items[0];
+
+    // this isn't set here
+    // UIStore.get().stateTree.controlPanel.activePlaylist = props.playlistStore.items[0];
 
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);

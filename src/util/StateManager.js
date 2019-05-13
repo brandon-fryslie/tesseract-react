@@ -2,11 +2,23 @@ import ClipStore from '../stores/ClipStore';
 import SceneStore from '../stores/SceneStore';
 import PlaylistStore from '../stores/PlaylistStore';
 import UIStore from '../stores/UIStore';
+import { observe } from 'mobx';
+import { deepObserve } from 'mobx-utils';
 
 export default class StateManager {
 
   // Instance of WebsocketController
   ws;
+
+  uiStoreDisposer;
+
+  constructor(...args) {
+    // Bind event handlers to the correct value of 'this'
+    this.handleUIStoreUpdated = this.handleUIStoreUpdated.bind(this);
+    this.handleLiveControlsUpdated = this.handleLiveControlsUpdated.bind(this);
+
+    this.observeItemsForChanges();
+  }
 
   // singleton pattern
   static instance;
@@ -51,7 +63,54 @@ export default class StateManager {
     } else {
       throw `Error: ${data.key} is not a valid stateKey`;
     }
-
   }
 
+  observeItemsForChanges() {
+    // maybe we don't need this.  maybe more targeted observers would be more useful right now
+    // deepObserve(UIStore.get().stateTree, this.handleUIStoreUpdated);
+
+    // todo: each of these calls to 'observe' is a memory leak unless we clean it up
+    deepObserve(UIStore.get().stateTree.controlPanel.activeControls, this.handleLiveControlsUpdated);
+  }
+
+  // handle activeControl state updated on frontend
+  // e.g., a user used a knob to change the value
+  handleLiveControlsUpdated(change, path) {
+    // Ignore these events
+    if (change.type === "splice") {
+      return;
+    }
+
+    console.log("got handleLiveControlsUpdate", change, path);
+    debugger
+
+    // actually, here I need to figure out if it is anything the backend cares about
+    // we don't care about (or want to respond to) having our activeState updated
+    // if (change.name === "currentValue")
+
+    // here I need to send a stateUpdate message via websocket
+    const data = {
+
+    };
+
+    this.ws.sendMessage('stateUpdate', data)
+  }
+
+  // handle activeControl state updated on frontend
+  // e.g., a user used a knob to change the value
+  handleUIStoreUpdated(change, path) {
+    console.log("got handleUIStoreUpdated", change, path);
+    debugger
+
+    // actually, here I need to figure out if it is anything the backend cares about
+    // we don't care about (or want to respond to) having our activeState updated
+    // if (change.name === "currentValue")
+
+    // here I need to send a stateUpdate message via websocket
+    const data = {
+
+    };
+
+    this.ws.sendMessage('stateUpdate', data)
+  }
 }

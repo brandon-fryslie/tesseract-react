@@ -38,7 +38,7 @@ class WebsocketController extends React.Component {
     //   return;
     // }
 
-    console.log("got ws message");
+    // console.log("got ws message");
 
     const message = JSON.parse(messageJson);
 

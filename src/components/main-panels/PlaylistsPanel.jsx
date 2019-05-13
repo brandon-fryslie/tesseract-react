@@ -23,7 +23,7 @@ class PlayListsPanel extends React.Component {
     const props = args[0];
 
     // before initial load this is undefined
-    if (props.playlistStore.items[0]) {
+    if (props.playlistStore.items.length > 0) {
       this.activePlaylist = props.playlistStore.items[0];
     }
 
