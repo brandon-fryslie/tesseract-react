@@ -51,7 +51,7 @@ class Websocket extends React.Component {
       if (this.shouldReconnect) {
         const time = this.generateInterval(this.state.attempts);
         this.timeoutID = setTimeout(() => {
-          this.setState({ attempts: this.state.attempts + 1 });
+          this.setState(prevState => ({ attempts: prevState.attempts + 1 }));
           this.setState({ ws: new WebSocket(this.props.url, this.props.protocol) });
           this.setupWebsocket();
         }, time);

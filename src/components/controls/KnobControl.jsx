@@ -17,12 +17,14 @@ class KnobControl extends React.Component {
   }
 
   render() {
+    const roundedNumber = Math.round(this.props.control.currentValue * 1000) / 1000;
+
     return (
       <Card>
         <Card.Header>{ this.props.control.displayName } (field: { this.props.control.fieldName })</Card.Header>
         <Card.Body>
           <div>
-            <span>{ this.props.control.currentValue }</span>
+            <span>{ roundedNumber }</span>
           </div>
           <Knob unlockDistance={ 40 }
                 onChange={ this.handleKnobChange }

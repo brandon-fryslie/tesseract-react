@@ -104,6 +104,7 @@ class ControlPanel extends React.Component {
     if (this.activeScene) {
       channelControls = (
         <ChannelControls
+          showClipSelector={false}
           scene={ this.activeScene }
           controls={ this.activeControls }
           onItemClick={ this.handleClipSelect } />

@@ -13,15 +13,14 @@ export default class UIStore {
     settingsPanel: {
       shouldShowFullScreenButton: false,
       serverAddr: '192.168.0.32',
-      // State of any edited fields
-      editState: {
-
-      }
-    }
+      // State of any edited fields, if this has values we know we have unsaved data
+      editState: {},
+    },
   };
 
   // singleton pattern
   static instance;
+
   static get() {
     if (this.instance == null) {
       this.instance = observable(new UIStore());

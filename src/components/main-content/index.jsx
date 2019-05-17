@@ -53,11 +53,11 @@ class MainContent extends React.Component {
         <WebsocketController
           websocketIndicatorModel={ this.websocketIndicatorModel } />
         <PageHeader isConnected={ this.websocketIndicatorModel.isConnected } />
-        <Tab.Container defaultActiveKey="settings">
+        <Tab.Container defaultActiveKey="live-control">
           <Row>
             <Col sm={ 1 }>
               <Nav variant="pills" className="flex-column tesseract-sidebar">
-                <Nav.Item><Nav.Link eventKey="control">Control</Nav.Link></Nav.Item>
+                <Nav.Item><Nav.Link eventKey="live-control">Live Control</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="playlists">Playlists</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="scenes">Scenes</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="clips">Clips</Nav.Link></Nav.Item>
@@ -67,7 +67,7 @@ class MainContent extends React.Component {
             </Col>
             <Col>
               <Tab.Content>
-                <Tab.Pane eventKey="control">
+                <Tab.Pane eventKey="live-control">
                   <ControlPanel
                     playlistStore={ this.playlistStore }
                     websocketRef={ this.websocketRef } />

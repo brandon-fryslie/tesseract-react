@@ -31,13 +31,18 @@ class ChannelControls extends React.Component {
   render() {
     const title = `Scene: '${ this.props.scene.displayName }' Controls`;
 
+    let clipSelector = null;
+    if (this.props.showClipSelector) {
+      clipSelector = <ClipSelector onItemClick={ this.props.onItemClick } />;
+    }
+
     return (
       <CardGroup>
         <Card>
           <Card.Header>{ title }</Card.Header>
           <Card.Body>
             <CardGroup>
-              <ClipSelector onItemClick={ this.props.onItemClick } />
+              { clipSelector }
               {
                 this.props.controls.map((control, idx) => {
                   return this.renderClipControl(control, idx);
@@ -57,6 +62,7 @@ ChannelControls.propTypes = {
   scene: PropTypes.object.isRequired,
   controls: PropTypes.array.isRequired,
   onItemClick: PropTypes.func.isRequired,
+  showClipSelector: PropTypes.bool.isRequired,
 };
 
 export default ChannelControls;
