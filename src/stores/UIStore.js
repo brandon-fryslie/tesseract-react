@@ -10,6 +10,14 @@ export default class UIStore {
       activePlaylist: null, // Active playlist on control panel
       activeControls: [], // Controls for the active scene on control panel
     },
+    settingsPanel: {
+      shouldShowFullScreenButton: false,
+      serverAddr: '192.168.0.32',
+      // State of any edited fields
+      editState: {
+
+      }
+    }
   };
 
   // singleton pattern
@@ -19,6 +27,14 @@ export default class UIStore {
       this.instance = observable(new UIStore());
     }
     return this.instance;
+  }
+
+  getValue(panelKey, propertyKey) {
+    return this.stateTree[panelKey][propertyKey];
+  }
+
+  setValue(panelKey, propertyKey, value) {
+    this.stateTree[panelKey][propertyKey] = value;
   }
 
   setControlPanelActiveScene(scene) {

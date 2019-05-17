@@ -1,11 +1,12 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
-import Websocket from 'react-websocket';
+import Websocket from './websocket/Websocket';
 import ClipStore from '../stores/ClipStore';
 import SceneStore from '../stores/SceneStore';
 import PlaylistStore from '../stores/PlaylistStore';
 import StateManager from '../util/StateManager';
+import UIStore from '../stores/UIStore';
 
 @observer
 class WebsocketController extends React.Component {
@@ -20,6 +21,7 @@ class WebsocketController extends React.Component {
     this.handleWebsocketOpen = this.handleWebsocketOpen.bind(this);
     this.handleWebsocketMessage = this.handleWebsocketMessage.bind(this);
     this.handleWebsocketClose = this.handleWebsocketClose.bind(this);
+    this.handleWebsocketError = this.handleWebsocketError.bind(this);
     this.handleWebsocketRef = this.handleWebsocketRef.bind(this);
   }
 
@@ -69,7 +71,7 @@ class WebsocketController extends React.Component {
   // Action: string
   // data: object
   sendMessage(action, data = {}) {
-    console.log(`Sending websocket message. action: ${action}`);
+    console.log(`Sending websocket message. action: ${ action }`);
 
     const message = JSON.stringify({ action, data });
 
@@ -81,29 +83,41 @@ class WebsocketController extends React.Component {
     }
   }
 
+  handleWebsocketError(a1, a2, a3) {
+    debugger;
+  }
+
   handleWebsocketRef(ws) {
     this.ws = ws;
     this.stateManager = StateManager.get();
     // Kinda a hack
     this.stateManager.setWebsocketController(this);
+    // Set onerror handler because the dumb library doesn't let us do that...
+    this.ws.onerror = this.handleWebsocketError;
   }
 
   render() {
+    const serverAddr = UIStore.get().getValue('settingsPanel', 'serverAddr');
+    const wsUrl = `ws://${ serverAddr }:8883`;
+
+    console.log(`WebsocketController: Rendering Websocket element with url: ${ wsUrl }`);
+
     return (
-      <Websocket url="ws://localhost:8883"
+      <Websocket url={ wsUrl }
                  onOpen={ this.handleWebsocketOpen }
                  onMessage={ this.handleWebsocketMessage }
                  onClose={ this.handleWebsocketClose }
+                 onError={ this.handleWebsocketError }
                  ref={ this.handleWebsocketRef }
+                 reconnectInterval={ 1000 }
                  debug
                  reconnect />
     );
   }
 
   handleLogMessageAction(data) {
-    console.log(`WEBSOCKET LOGMESSAGE: ${data}`);
+    console.log(`WEBSOCKET LOGMESSAGE: ${ data }`);
   }
-
 
 }
 

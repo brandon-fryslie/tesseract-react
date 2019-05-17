@@ -49,11 +49,11 @@ class MainContent extends React.Component {
 
   render() {
     return (
-      <div className="MainContent">
+      <div className="MainContent ml-4 mr-4 mb-4 pt-4">
         <WebsocketController
           websocketIndicatorModel={ this.websocketIndicatorModel } />
         <PageHeader isConnected={ this.websocketIndicatorModel.isConnected } />
-        <Tab.Container defaultActiveKey="control">
+        <Tab.Container defaultActiveKey="settings">
           <Row>
             <Col sm={ 1 }>
               <Nav variant="pills" className="flex-column tesseract-sidebar">
