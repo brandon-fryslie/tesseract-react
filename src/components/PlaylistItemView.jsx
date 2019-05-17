@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import PlaylistStore from '../stores/PlaylistStore';
 
 @observer
-class PlaylistsList extends React.Component {
+class PlaylistItemView extends React.Component {
   render() {
     const activePlaylist = this.props.activePlaylist;
 
@@ -32,10 +32,10 @@ class PlaylistsList extends React.Component {
   }
 }
 
-PlaylistsList.propTypes = {
+PlaylistItemView.propTypes = {
   onItemClick: PropTypes.func.isRequired,
   activePlaylist: PropTypes.object,
   items: PropTypes.array.isRequired,
 };
 
-export default PlaylistsList;
+export default PlaylistItemView;

@@ -11,6 +11,9 @@ import { action, computed, observable } from 'mobx';
 import UIStore from '../../stores/UIStore';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ChannelControls from '../ChannelControls';
+import ScenesList from '../ScenesList';
+import PlaylistStore from '../../stores/PlaylistStore';
+import SceneStore from '../../stores/SceneStore';
 
 @observer
 class ControlPanel extends React.Component {
@@ -36,6 +39,7 @@ class ControlPanel extends React.Component {
 
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
+    this.handleSceneClick = this.handleSceneClick.bind(this);
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
     this.handleShuffleButtonClick = this.handleShuffleButtonClick.bind(this);
     this.handleRepeatButtonClick = this.handleRepeatButtonClick.bind(this);
@@ -61,7 +65,16 @@ class ControlPanel extends React.Component {
   // This will set the current playlist
   // Called with the dom element and the playlist model
   handlePlaylistClick(dom, playlist) {
-    UIStore().stateTree.controlPanel.activePlaylist = playlist;
+    UIStore.get().stateTree.controlPanel.activePlaylist = playlist;
+  }
+
+  // Trigger this function when we click a playlist in the PlaylistsList
+  // This will set the current playlist
+  // Called with the dom element and the playlist model
+  handleSceneClick(dom, playlist) {
+    // TODO: here we need to tell the backend to switch to this scene?
+    // not sure what I need to do here yet
+    // UIStore.get().stateTree.controlPanel.activePlaylist = playlist;
   }
 
   // Triggered when we click the play button
@@ -104,7 +117,7 @@ class ControlPanel extends React.Component {
     if (this.activeScene) {
       channelControls = (
         <ChannelControls
-          showClipSelector={false}
+          showClipSelector={ false }
           scene={ this.activeScene }
           controls={ this.activeControls }
           onItemClick={ this.handleClipSelect } />
@@ -115,18 +128,51 @@ class ControlPanel extends React.Component {
     return channelControls;
   }
 
+  renderPlaylistControlButtons() {
+    return (
+      <ButtonGroup>
+        <ControlPanelButton
+          active={ this.isPlaying }
+          onClick={ this.handlePlayButtonClick }>
+          Play
+        </ControlPanelButton>
+        <ControlPanelButton
+          active={ this.shuffleEnabled }
+          onClick={ this.handleShuffleButtonClick }>
+          Shuffle Clips
+        </ControlPanelButton>
+        <ControlPanelButton
+          active={ this.repeatEnabled }
+          onClick={ this.handleRepeatButtonClick }>
+          Repeat Playlist
+        </ControlPanelButton>
+      </ButtonGroup>
+    );
+  }
+
   render() {
     // 'Using' these values here will cause the mobx library to rerender this component when they change
     // This is not the exact right way to do this, but it works
     const activeScene = UIStore.get().stateTree.controlPanel.activeScene;
     const activeControls = UIStore.get().stateTree.controlPanel.activeControls;
     const activePlaylist = UIStore.get().stateTree.controlPanel.activePlaylist;
-    let activePlaylistName;
+    let activePlaylistName, sceneItems;
 
     if (activePlaylist == null) {
       activePlaylistName = '<none>';
     } else {
       activePlaylistName = activePlaylist.displayName;
+    }
+
+    const playlistItems = PlaylistStore.get().getItems();
+
+    if (activePlaylist == null) {
+      sceneItems = [];
+
+    } else {
+      sceneItems = activePlaylist.items.map((item) => {
+          return item.scene;
+      });
     }
 
     return (
@@ -143,28 +189,23 @@ class ControlPanel extends React.Component {
                 <Row>
                   <Col>
                     <PlaylistsList
+                      items={ playlistItems }
                       activePlaylist={ activePlaylist }
                       onItemClick={ this.handlePlaylistClick } />
                   </Col>
                 </Row>
                 <Row>
-                  <ButtonGroup>
-                    <ControlPanelButton
-                      active={ this.isPlaying }
-                      onClick={ this.handlePlayButtonClick }>
-                      Play
-                    </ControlPanelButton>
-                    <ControlPanelButton
-                      active={ this.shuffleEnabled }
-                      onClick={ this.handleShuffleButtonClick }>
-                      Shuffle Clips
-                    </ControlPanelButton>
-                    <ControlPanelButton
-                      active={ this.repeatEnabled }
-                      onClick={ this.handleRepeatButtonClick }>
-                      Repeat Playlist
-                    </ControlPanelButton>
-                  </ButtonGroup>
+                  <Col>
+                    <ScenesList
+                      scenes={ sceneItems }
+                      activeScene={ activeScene }
+                      onItemClick={ this.handleSceneClick } />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    { this.renderPlaylistControlButtons() }
+                  </Col>
                 </Row>
               </Container>
             </Col>

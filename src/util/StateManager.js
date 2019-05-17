@@ -49,8 +49,8 @@ export default class StateManager {
 
   // handle a state updated action from the backend
   handleStateUpdatedAction(data) {
-    console.log("got a stateUpdate action");
-    console.log(data);
+    // console.log("got a stateUpdate action");
+    // console.log(data);
 
     if (data.key === 'activeScene') {
       this.setControlPanelActiveScene(data.value);

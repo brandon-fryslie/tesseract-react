@@ -14,29 +14,28 @@ class ScenesList extends React.Component {
   // }
 
   render() {
-    const sceneStore = SceneStore.get();
-
     return (
       <Card className="mt-3 mb-3">
         <Card.Header>Scenes</Card.Header>
-        <Card.Body>
-          <DroppableWrapper isDropDisabled
-                            droppableId="playlistPanelScenesList"
-                            list={ sceneStore.items }>
-            <ListGroup as="ul">
-              {
-                sceneStore.items.map((item, idx) => (
-                    <SceneListRow key={ item.id }
-                                  idx={ idx }
-                                  item={ item }
-                                  onItemClick={ this.props.onItemClick }
-                                  active={ this.props.activeScene && this.props.activeScene.id === item.id } />
-                  ),
-                )
-              }
-            </ListGroup>
-          </DroppableWrapper>
-        </Card.Body>
+        <DroppableWrapper isDropDisabled
+                          droppableId="playlistPanelScenesList"
+                          list={ this.props.scenes }>
+          <ListGroup as="ul">
+            {
+              this.props.scenes.map((item, idx) => {
+                  return (
+                    <SceneListRow
+                      key={ item.uuid }
+                      idx={ idx }
+                      item={ item }
+                      onItemClick={ this.props.onItemClick }
+                      active={ this.props.activeScene && this.props.activeScene.id === item.id } />
+                  );
+                },
+              )
+            }
+          </ListGroup>
+        </DroppableWrapper>
       </Card>
     );
   }
@@ -45,6 +44,7 @@ class ScenesList extends React.Component {
 ScenesList.propTypes = {
   activeScene: PropTypes.object,
   onItemClick: PropTypes.func,
+  scenes: PropTypes.array.isRequired,
 };
 
 export default ScenesList;

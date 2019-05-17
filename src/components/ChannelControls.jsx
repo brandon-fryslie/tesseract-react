@@ -40,7 +40,6 @@ class ChannelControls extends React.Component {
       <CardGroup>
         <Card>
           <Card.Header>{ title }</Card.Header>
-          <Card.Body>
             <CardGroup>
               { clipSelector }
               {
@@ -49,7 +48,6 @@ class ChannelControls extends React.Component {
                 })
               }
             </CardGroup>
-          </Card.Body>
         </Card>
       </CardGroup>
     );

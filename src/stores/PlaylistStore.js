@@ -21,6 +21,10 @@ export default class PlaylistStore {
     return this.instance;
   }
 
+  getItems() {
+    return this.items;
+  }
+
   get playlists() {
     return this.items;
   }

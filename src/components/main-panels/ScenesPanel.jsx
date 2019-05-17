@@ -66,6 +66,8 @@ class ScenesPanel extends React.Component {
       channelControls = <span>No active scene</span>;
     }
 
+    const scenes = SceneStore.get().getItems();
+
     return (
       <DragDropContext onDragEnd={ this.handleDragEnd }>
         <Container fluid>
@@ -80,8 +82,10 @@ class ScenesPanel extends React.Component {
                   onClick={ this.handleNewSceneButtonClick }>+ New Scene
                 </Button>
               </ButtonToolbar>
-              <ScenesList activeScene={ this.activeScene }
-                          onItemClick={ this.handleSceneClick } />
+              <ScenesList
+                scenes={ scenes }
+                activeScene={ this.activeScene }
+                onItemClick={ this.handleSceneClick } />
             </Col>
             <Col>
               { channelControls }
@@ -93,7 +97,6 @@ class ScenesPanel extends React.Component {
   }
 }
 
-ScenesPanel.propTypes = {
-};
+ScenesPanel.propTypes = {};
 
 export default ScenesPanel;

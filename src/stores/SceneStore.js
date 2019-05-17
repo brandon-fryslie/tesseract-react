@@ -38,6 +38,10 @@ export default class SceneStore {
     return scene;
   }
 
+  getItems() {
+    return this.items;
+  }
+
   findSceneById(id) {
     if (!id) {
       throw `ERROR: SceneID is undefined`;

@@ -12,6 +12,8 @@ import Util from '../../util/Util';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ScenesList from '../ScenesList';
 import { observable } from 'mobx';
+import PlaylistStore from '../../stores/PlaylistStore';
+import SceneStore from '../../stores/SceneStore';
 
 @observer
 class PlayListsPanel extends React.Component {
@@ -92,7 +94,6 @@ class PlayListsPanel extends React.Component {
       playlistEditor = <span>No Current Playlist</span>;
     }
 
-
     return (
       <DragDropContext onDragEnd={ this.handleDragEnd }>
         <Container fluid>
@@ -104,10 +105,12 @@ class PlayListsPanel extends React.Component {
                 <NewPlaylistButton />
               </ButtonToolbar>
 
-              <PlaylistsList activePlaylist={ this.activePlaylist }
-                             onItemClick={ this.handlePlaylistClick } />
+              <PlaylistsList
+                items={ PlaylistStore.get().getItems() }
+                activePlaylist={ this.activePlaylist }
+                onItemClick={ this.handlePlaylistClick } />
 
-              <ScenesList />
+              <ScenesList scenes={ SceneStore.get().getItems() } />
             </Col>
             <Col>
               { playlistEditor }
