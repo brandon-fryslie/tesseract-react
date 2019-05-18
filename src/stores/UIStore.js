@@ -10,6 +10,9 @@ export default class UIStore {
       activePlaylist: null, // Active playlist on control panel
       activeControls: [], // Controls for the active scene on control panel
     },
+    scenesPanel: {
+      activeScene: null, // Active scene on control panel
+    },
     settingsPanel: {
       shouldShowFullScreenButton: false,
       serverAddr: '192.168.0.32',

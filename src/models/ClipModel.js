@@ -3,8 +3,6 @@ import ControlModel from './ControlModel';
 import BaseModel from './BaseModel';
 
 export default class ClipModel extends BaseModel {
-  id;
-
   // Pretty name for the clip
   @observable displayName;
 

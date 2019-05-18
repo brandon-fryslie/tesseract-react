@@ -7,22 +7,23 @@ import PlaylistStore from '../stores/PlaylistStore';
 
 @observer
 class PlaylistItemView extends React.Component {
+
   render() {
-    const activePlaylist = this.props.activePlaylist;
+
 
     return (
       <Card className="mt-3 mb-3">
-        <Card.Header>Playlists</Card.Header>
+        <Card.Header>Scenes</Card.Header>
         <ListGroup as="ul">
           {
-            this.props.items.map((playlist, idx) => (
+            this.props.playlist.items.map((item, idx) => (
               <ListGroup.Item
                 action
                 as="li"
                 key={ idx }
-                onClick={ dom => this.props.onItemClick(dom, playlist) }
-                active={ activePlaylist && activePlaylist.id === playlist.id }>
-                { playlist.displayName }
+                onClick={ dom => this.props.onItemClick(dom, item) }
+                active={ this.props.activeScene && this.props.activeScene.id === item.scene.id }>
+                { item.scene.displayName }
               </ListGroup.Item>
             ))
           }
@@ -33,9 +34,12 @@ class PlaylistItemView extends React.Component {
 }
 
 PlaylistItemView.propTypes = {
+  playlist: PropTypes.object.isRequired,
+  // TODO: change this when playlists are implemented on the backend, this needs
+  //  to take a playlist item, not a scene, because a playlist can contain the
+  //  same scene multiple times
+  activeScene: PropTypes.object,
   onItemClick: PropTypes.func.isRequired,
-  activePlaylist: PropTypes.object,
-  items: PropTypes.array.isRequired,
 };
 
 export default PlaylistItemView;

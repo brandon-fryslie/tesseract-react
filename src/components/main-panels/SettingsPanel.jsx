@@ -43,7 +43,7 @@ class SettingsPanel extends React.Component {
 
   handleSettingsChange(dom, data) {
     let newValue;
-    if (data.type == 'checkbox') {
+    if (data.type === 'checkbox') {
       newValue = dom.target.checked;
     } else {
       newValue = dom.target.value;
@@ -65,7 +65,7 @@ class SettingsPanel extends React.Component {
   }
 
   renderFormControlDescription(data) {
-    if (data.description == null) {
+    if (!data.description) {
       return null;
     }
     return (

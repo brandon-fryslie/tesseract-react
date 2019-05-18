@@ -6,7 +6,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 import { observer } from 'mobx-react';
-import style from './MainContent.scss';
 import ControlPanel from '../main-panels/ControlPanel';
 import ClipsPanel from '../main-panels/ClipsPanel';
 import PlayListsPanel from '../main-panels/PlaylistsPanel';
@@ -16,7 +15,6 @@ import AboutPanel from '../main-panels/AboutPanel';
 import PageHeader from '../page-header';
 import PlaylistStore from '../../stores/PlaylistStore';
 import ClipStore from '../../stores/ClipStore';
-import MockData from '../../util/MockData';
 import SceneStore from '../../stores/SceneStore';
 import { observable } from 'mobx';
 import WebsocketController from '../WebsocketController';
@@ -53,7 +51,7 @@ class MainContent extends React.Component {
         <WebsocketController
           websocketIndicatorModel={ this.websocketIndicatorModel } />
         <PageHeader isConnected={ this.websocketIndicatorModel.isConnected } />
-        <Tab.Container defaultActiveKey="live-control">
+        <Tab.Container defaultActiveKey="scenes">
           <Row>
             <Col sm={ 1 }>
               <Nav variant="pills" className="flex-column tesseract-sidebar">

@@ -14,6 +14,7 @@ import ChannelControls from '../ChannelControls';
 import ScenesList from '../ScenesList';
 import PlaylistStore from '../../stores/PlaylistStore';
 import SceneStore from '../../stores/SceneStore';
+import PlaylistItemView from '../PlaylistItemView';
 
 @observer
 class ControlPanel extends React.Component {
@@ -29,8 +30,6 @@ class ControlPanel extends React.Component {
 
   constructor(...args) {
     super(...args);
-
-    const props = args[0];
 
     // this.uiStore = UIStore.get();
 
@@ -93,17 +92,17 @@ class ControlPanel extends React.Component {
   }
 
   // dunno if computed is the right thing here.
-  @computed get activeScene() {
+  get activeScene() {
     return UIStore.get().stateTree.controlPanel.activeScene;
   }
 
   // dunno if computed is the right thing here.
-  @computed get activeControls() {
+  get activeControls() {
     return UIStore.get().stateTree.controlPanel.activeControls;
   }
 
   // dunno if computed is the right thing here.
-  @computed get activePlaylist() {
+  getActivePlaylist() {
     return UIStore.get().stateTree.controlPanel.activePlaylist;
   }
 
@@ -150,6 +149,20 @@ class ControlPanel extends React.Component {
     );
   }
 
+  renderPlaylistItemList() {
+    const activePlaylist = this.getActivePlaylist();
+
+    if (activePlaylist == null) {
+      return null;
+    }
+    return (
+      <PlaylistItemView
+        playlist={ activePlaylist }
+        activeScene={ this.activeScene }
+        onItemClick={ this.handleSceneClick } />
+    );
+  }
+
   render() {
     // 'Using' these values here will cause the mobx library to rerender this component when they change
     // This is not the exact right way to do this, but it works
@@ -168,10 +181,9 @@ class ControlPanel extends React.Component {
 
     if (activePlaylist == null) {
       sceneItems = [];
-
     } else {
       sceneItems = activePlaylist.items.map((item) => {
-          return item.scene;
+        return item.scene;
       });
     }
 
@@ -196,10 +208,7 @@ class ControlPanel extends React.Component {
                 </Row>
                 <Row>
                   <Col>
-                    <ScenesList
-                      scenes={ sceneItems }
-                      activeScene={ activeScene }
-                      onItemClick={ this.handleSceneClick } />
+                    { this.renderPlaylistItemList() }
                   </Col>
                 </Row>
                 <Row>

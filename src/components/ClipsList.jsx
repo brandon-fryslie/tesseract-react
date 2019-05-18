@@ -13,58 +13,48 @@ class ClipsList extends React.Component {
   //   super(...args);
   // }
 
-  render() {
-    const clipStore = ClipStore.get();
+  renderClipListRow(item, idx) {
+    // debugger;
+    return (
+      <DraggableWrapper index={ idx } key={ item.uuid } draggableId={ item.uuid }>
+        <ListGroup.Item action
+                        as="li"
+                        key={ idx }
+                        active={ this.props.activeClip && this.props.activeClip.clipId === item.clipId }
+                        onClick={ dom => this.props.onItemClick(dom, item) }>
+          { item.displayName }
+        </ListGroup.Item>
+      </DraggableWrapper>
+    );
+  }
 
+  render() {
     return (
       <Card>
         <Card.Header>Clips</Card.Header>
-        <Card.Body>
-          <DroppableWrapper isDropDisabled
-                            droppableId="clipsList"
-                            list={ clipStore.items }>
-            <ListGroup as="ul">
-              {
-                clipStore.items.map((item, idx) => (
-                    <ClipListRow key={ item.uuid }
-                                  idx={ idx }
-                                  item={ item }
-                                  onItemClick={ this.props.onItemClick }
-                                  active={ this.props.activeScene && this.props.activeScene.id === item.id } />
-                  ),
-                )
-              }
-            </ListGroup>
-          </DroppableWrapper>
-        </Card.Body>
+        <DroppableWrapper isDropDisabled
+                          droppableId="clipsList"
+                          list={ this.props.items }>
+          <ListGroup as="ul">
+            {
+              this.props.items.map((item, idx) => this.renderClipListRow(item, idx))
+            }
+          </ListGroup>
+        </DroppableWrapper>
       </Card>
     );
   }
 }
 
 ClipsList.propTypes = {
-  activeScene: PropTypes.object,
+  activeClip: PropTypes.object,
   onItemClick: PropTypes.func,
+  draggable: PropTypes.bool,
+  items: PropTypes.array,
+};
+
+ClipsList.defaultProps = {
+  draggable: false,
 };
 
 export default ClipsList;
-
-const ClipListRow = props => (
-  <DraggableWrapper index={ props.idx } key={ props.item.id } draggableId={ props.item.uuid }>
-    <ListGroup.Item action
-                    as="li"
-                    key={ props.idx }
-                    active={ props.active }
-                    onClick={ dom => props.onItemClick(dom, props.item) }>
-      { props.item.displayName }
-    </ListGroup.Item>
-  </DraggableWrapper>
-);
-
-ClipListRow.propTypes = {
-  idx: PropTypes.number.isRequired,
-  item: PropTypes.object.isRequired,
-  active: PropTypes.bool,
-  onItemClick: PropTypes.func,
-};
-

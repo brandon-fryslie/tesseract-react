@@ -15,6 +15,7 @@ import { observable } from 'mobx';
 import Button from 'react-bootstrap/Button';
 import SceneStore from '../../stores/SceneStore';
 import ChannelControls from '../ChannelControls';
+import UIStore from '../../stores/UIStore';
 
 @observer
 class ScenesPanel extends React.Component {
@@ -36,11 +37,19 @@ class ScenesPanel extends React.Component {
     this.handleNewSceneButtonClick = this.handleNewSceneButtonClick.bind(this);
   }
 
-  // Trigger this function when we click a playlist in the PlaylistsList
-  // This will set the current playlist
+  setActiveScene(scene) {
+    UIStore.get().setValue('scenesPanel', 'activeScene', scene);
+  }
+
+  getActiveScene() {
+    return UIStore.get().getValue('scenesPanel', 'activeScene');
+  }
+
+  // Trigger this function when we click a playlist in the ScenesList
+  // This will set the active scene
   // Called with the dom element and the playlist model
   handleSceneClick(dom, scene) {
-    this.activeScene = scene;
+    this.setActiveScene(scene);
   }
 
   handleNewSceneButtonClick() {
@@ -53,13 +62,17 @@ class ScenesPanel extends React.Component {
   }
 
   render() {
-    const activeScene = this.activeScene;
+    // UIStore.get().getValue('scenesPanel', 'activeScene');
+    UIStore.get().getValue('scenesPanel', 'activeScene');
+
+    const activeScene = this.getActiveScene();
 
     let channelControls;
     if (activeScene) {
       channelControls = (
         <ChannelControls
-          scene={ this.activeScene }
+          showClipSelector
+          scene={ activeScene }
           onItemClick={ this.handleClipSelect } />
       );
     } else {
@@ -84,7 +97,7 @@ class ScenesPanel extends React.Component {
               </ButtonToolbar>
               <ScenesList
                 scenes={ scenes }
-                activeScene={ this.activeScene }
+                activeScene={ activeScene }
                 onItemClick={ this.handleSceneClick } />
             </Col>
             <Col>

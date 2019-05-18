@@ -62,7 +62,7 @@ export default class StateManager {
   setControlPanelActiveScene(sceneId) {
     // Find the scene
     try {
-      const scene = SceneStore.get().findSceneById(sceneId);
+      const scene = SceneStore.get().find('id', sceneId);
       UIStore.get().setControlPanelActiveScene(scene);
     } catch (e) {
       console.log(`Error finding activeScene in store: ${e.message}`);

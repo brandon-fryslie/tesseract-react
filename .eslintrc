@@ -56,6 +56,8 @@
     "no-useless-constructor": "off",
     "no-else-return": "off",
     "react/prefer-stateless-function": "off",
+    "one-var-declaration-per-line": "off",
+    "one-var": "off",
     // disabled crap
 
 //    "react/prefer-stateless-function": "warn",
