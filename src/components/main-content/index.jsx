@@ -20,6 +20,9 @@ import { observable } from 'mobx';
 import WebsocketController from '../WebsocketController';
 import WebsocketIndicatorModel from '../../models/WebsocketIndicatorModel';
 
+// Don't remove this or the styles won't be imported
+import style from './MainContent.scss';
+
 @observer
 class MainContent extends React.Component {
   // Clip store is where data about clips is stored

@@ -2,6 +2,7 @@ import { observable } from 'mobx';
 import uuidv1 from 'uuid/v1';
 import BaseModel from './BaseModel';
 import PlaylistStore from '../stores/PlaylistStore';
+import uuidv4 from 'uuid/v4';
 
 // This class is basically just a scene with a duration at this point
 export default class PlaylistItemModel extends BaseModel {
@@ -40,6 +41,7 @@ export default class PlaylistItemModel extends BaseModel {
   }
 
   static fromJS(obj) {
-    return new PlaylistItemModel(obj.id, obj.scene, obj.duration);
+    const id = obj.id != null ? obj.id : uuidv4();
+    return new PlaylistItemModel(id, obj.scene, obj.duration);
   }
 }
