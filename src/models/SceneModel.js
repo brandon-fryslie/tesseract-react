@@ -15,28 +15,50 @@ export default class SceneModel extends BaseModel {
   @observable clip;
 
   // Array of 7 floats
-  @observable rawClipValues;
+  @observable rawClipValues = [];
 
-  @observable clipControls;
+  @observable clipControls = [];
 
   constructor(id, displayName, clip, rawClipValues) {
     super();
     this.id = id;
     this.displayName = displayName;
-    this.clip = clip;
     this.rawClipValues = rawClipValues;
 
-    // need to create the Scene's controls
-    this.clipControls = this.clip.controls.map((control) => {
+    this.setClip(clip);
+  }
+
+  // When we set the clip, create the 'Control' objects
+  setClip(clip) {
+    this.clip = clip;
+
+    // if we have controls, save their values to an array
+    let values;
+    if (this.clipControls && this.clipControls.length > 0) {
+      values = this.clipControls.map((control) => control.currentValue);
+    } else {
+      values = this.rawClipValues;
+    }
+
+    const controls = this.createClipControls(clip, values);
+
+    this.clipControls.replace(controls);
+  }
+
+  // Create Clip Controls.  Set values to the values in 'values'
+  createClipControls(clip, values) {
+    const controls = clip.controls.map((control) => {
       return ControlModel.fromJS(control.toJS());
     });
 
-    // hacky, this should be better
-    rawClipValues.forEach((value, idx) => {
-      if (this.clipControls.length > idx) {
-        this.clipControls[idx].currentValue = value;
+    // hacky but does the job
+    values.forEach((value, idx) => {
+      if (controls.length > idx) {
+        controls[idx].currentValue = value;
       }
     });
+
+    return controls;
   }
 
   toJS() {

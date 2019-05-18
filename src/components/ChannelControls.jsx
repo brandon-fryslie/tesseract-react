@@ -8,6 +8,7 @@ import KnobControl from './controls/KnobControl';
 import CardGroup from 'react-bootstrap/CardGroup';
 import ClipsList from './ClipsList';
 import ClipStore from '../stores/ClipStore';
+import SliderControl from './controls/SliderControl';
 
 @observer
 class ChannelControls extends React.Component {
@@ -21,9 +22,17 @@ class ChannelControls extends React.Component {
     );
   }
 
+  renderSlider(control, idx) {
+    return (
+      <SliderControl control={ control } key={ idx } />
+    );
+  }
+
   renderClipControl(control, idx) {
     if (control.type === 'knob') {
       return this.renderKnob(control, idx);
+    } else if (control.type === 'slider') {
+      return this.renderSlider(control, idx);
     }
 
     throw `renderClipControl: Not implemented for type ${ control.type }`;
@@ -42,6 +51,7 @@ class ChannelControls extends React.Component {
       );
     }
 
+    // If we pass in controls, use those.  If we don't, use the Scene's controls
     const controls = this.props.controls != null ? this.props.controls : this.props.scene.clipControls;
     if (!controls) debugger;
 

@@ -57,8 +57,11 @@ class ScenesPanel extends React.Component {
   }
 
   // Handles a click on the clip selection list for the scene
-  handleClipSelect() {
-    // don't do anything here
+  handleClipSelect(dom, clip) {
+    const activeScene = this.getActiveScene();
+
+    activeScene.setClip(clip);
+
   }
 
   render() {

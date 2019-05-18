@@ -4,16 +4,17 @@ import Card from 'react-bootstrap/Card';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 import { Knob } from 'react-rotary-knob';
+import Slider from '@material-ui/lab/Slider';
 
 @observer
-class KnobControl extends React.Component {
+class SliderControl extends React.Component {
   constructor(...args) {
     super(...args);
     this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(newValue) {
-    this.props.control.currentValue = newValue;
+  handleChange(event, value) {
+    this.props.control.currentValue = value;
   }
 
   render() {
@@ -26,19 +27,19 @@ class KnobControl extends React.Component {
           <div>
             <span>{ roundedNumber }</span>
           </div>
-          <Knob unlockDistance={ 40 }
-                onChange={ this.handleChange }
-                min={ this.props.control.minValue }
-                max={ this.props.control.maxValue }
-                value={ this.props.control.currentValue } />
+          <Slider
+            min={ this.props.control.minValue }
+            max={ this.props.control.maxValue }
+            onChange={ this.handleChange }
+            value={ this.props.control.currentValue } />
         </Card.Body>
       </Card>
     );
   }
 }
 
-KnobControl.propTypes = {
+SliderControl.propTypes = {
   control: PropTypes.object.isRequired,
 };
 
-export default KnobControl;
+export default SliderControl;

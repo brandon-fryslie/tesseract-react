@@ -27,7 +27,7 @@ export default class PlaylistStore extends BaseStore {
   hydratePlaylistItems(playlist) {
     return playlist.items.map((item) => {
       const scene = this.sceneStore.find('id', item.sceneId);
-      return new PlaylistItemModel(scene, item.duration);
+      return new PlaylistItemModel(item.id, scene, item.duration);
     });
   }
 

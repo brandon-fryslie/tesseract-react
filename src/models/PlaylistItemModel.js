@@ -10,11 +10,10 @@ export default class PlaylistItemModel extends BaseModel {
 
   // scene: SceneModel object
   // duration: Number in seconds
-  constructor(scene, duration) {
+  constructor(id, scene, duration) {
     super();
 
-    this.id = this.uuid;
-
+    this.id = id;
     this.scene = scene;
     this.duration = duration;
   }
@@ -31,6 +30,6 @@ export default class PlaylistItemModel extends BaseModel {
   }
 
   static fromJS(obj) {
-    return new PlaylistItemModel(obj.scene, obj.duration);
+    return new PlaylistItemModel(obj.id, obj.scene, obj.duration);
   }
 }
