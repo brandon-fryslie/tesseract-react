@@ -6,7 +6,7 @@ const AboutPanel = () => (
     <Card.Body>
       Draco UI
 
-      v0.0.0.1
+      v0.1.0
     </Card.Body>
   </Card>
 );

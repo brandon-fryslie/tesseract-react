@@ -10,6 +10,9 @@ export default class UIStore {
       activePlaylistItem: null, // Active playlist item on control panel
       activeControls: [], // Controls for the active scene on control panel
     },
+    playlistsPanel: {
+      activePlaylist: null, // Active scene on control panel
+    },
     scenesPanel: {
       activeScene: null, // Active scene on control panel
     },
@@ -26,7 +29,7 @@ export default class UIStore {
 
   static get() {
     if (this.instance == null) {
-      this.instance = observable(new UIStore());
+      this.instance = new UIStore();
     }
     return this.instance;
   }

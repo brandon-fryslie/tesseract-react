@@ -106,10 +106,6 @@ class ControlPanel extends React.Component {
     return UIStore.get().stateTree.controlPanel.activePlaylist;
   }
 
-  handleClipSelect() {
-
-  }
-
   // Renders the container for the currently playing Scene
   renderControlsContainer() {
     let channelControls;
@@ -118,8 +114,7 @@ class ControlPanel extends React.Component {
         <ChannelControls
           showClipSelector={ false }
           scene={ this.activePlaylistItem.scene }
-          controls={ this.activeControls }
-          onItemClick={ this.handleClipSelect } />
+          controls={ this.activeControls } />
       );
     } else {
       channelControls = <span>No active scene</span>;

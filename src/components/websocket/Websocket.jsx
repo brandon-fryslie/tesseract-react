@@ -88,9 +88,7 @@ class Websocket extends React.Component {
   }
 
   render() {
-    return (
-      <div></div>
-    );
+    return <div />;
   }
 }
 
@@ -104,7 +102,7 @@ Websocket.propTypes = {
   onMessage: PropTypes.func.isRequired,
   onOpen: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
-  onError: PropTypes.func.isRequired,
+  onError: PropTypes.func,
   debug: PropTypes.bool,
   reconnect: PropTypes.bool,
   protocol: PropTypes.string,

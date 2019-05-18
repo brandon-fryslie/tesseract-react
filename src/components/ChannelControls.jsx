@@ -79,8 +79,8 @@ ChannelControls.propTypes = {
   // If we omit controls, it will update the Scene's controls
   scene: PropTypes.object.isRequired,
   controls: PropTypes.array,
-  onItemClick: PropTypes.func.isRequired,
-  showClipSelector: PropTypes.bool.isRequired,
+  onItemClick: PropTypes.func,
+  showClipSelector: PropTypes.bool,
 };
 
 export default ChannelControls;

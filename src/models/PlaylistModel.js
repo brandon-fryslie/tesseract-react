@@ -7,7 +7,7 @@ export default class PlaylistModel extends BaseModel {
   @observable displayName;
 
   // List of items (PlaylistItemModel) that are in this playlist
-  @observable items;
+  @observable items = [];
 
   // The default duration to use when adding a new Scene
   defaultDuration = 60;
@@ -17,7 +17,7 @@ export default class PlaylistModel extends BaseModel {
 
     this.id = id;
     this.displayName = displayName;
-    this.items = items;
+    this.items.replace(items);
   }
 
   // Adds a PlaylistItemModel (a Scene + a Duration) to the Playlist

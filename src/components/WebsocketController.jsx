@@ -83,17 +83,11 @@ class WebsocketController extends React.Component {
     }
   }
 
-  handleWebsocketError(a1, a2, a3) {
-    debugger;
-  }
-
   handleWebsocketRef(ws) {
     this.ws = ws;
     this.stateManager = StateManager.get();
     // Kinda a hack
     this.stateManager.setWebsocketController(this);
-    // Set onerror handler because the dumb library doesn't let us do that...
-    this.ws.onerror = this.handleWebsocketError;
   }
 
   render() {
@@ -107,7 +101,6 @@ class WebsocketController extends React.Component {
                  onOpen={ this.handleWebsocketOpen }
                  onMessage={ this.handleWebsocketMessage }
                  onClose={ this.handleWebsocketClose }
-                 onError={ this.handleWebsocketError }
                  ref={ this.handleWebsocketRef }
                  reconnectInterval={ 1000 }
                  debug

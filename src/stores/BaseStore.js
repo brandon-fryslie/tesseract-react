@@ -37,6 +37,6 @@ export default class BaseStore {
 
   // Refresh store contents from parsed JSON
   refreshFromJS(arr) {
-    this.items = arr.map(item => this.getModelType().fromJS(item));
+    this.items.replace(arr.map(item => this.getModelType().fromJS(item)));
   }
 }

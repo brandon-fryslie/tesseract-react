@@ -11,14 +11,13 @@ import PlaylistEditor from '../PlaylistEditor';
 import Util from '../../util/Util';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ScenesList from '../ScenesList';
-import { observable } from 'mobx';
+import { action, computed } from 'mobx';
 import PlaylistStore from '../../stores/PlaylistStore';
 import SceneStore from '../../stores/SceneStore';
+import UIStore from '../../stores/UIStore';
 
 @observer
 class PlayListsPanel extends React.Component {
-  @observable activePlaylist;
-
   constructor(...args) {
     super(...args);
 
@@ -33,6 +32,18 @@ class PlayListsPanel extends React.Component {
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
     this.handleDragEnd = this.handleDragEnd.bind(this);
+  }
+
+  @computed get activePlaylist() {
+    return UIStore.get().stateTree.playlistsPanel.activePlaylist;
+  }
+
+  @action _setActivePlaylist(value) {
+    UIStore.get().stateTree.playlistsPanel.activePlaylist = value;
+  }
+
+  set activePlaylist(value) {
+    this._setActivePlaylist(value);
   }
 
   // Trigger this function when we click a playlist in the PlaylistsList
@@ -58,7 +69,7 @@ class PlayListsPanel extends React.Component {
       destination.index,
     );
 
-    this.activePlaylist.items = items;
+    this.activePlaylist.items.replace(items);
   }
 
   // Handle all dragging.  we've gotta handle all dragging interactions in this one handler

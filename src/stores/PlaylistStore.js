@@ -2,6 +2,7 @@ import BaseStore from './BaseStore';
 import PlaylistModel from '../models/PlaylistModel';
 import PlaylistItemModel from '../models/PlaylistItemModel';
 import SceneStore from "./SceneStore";
+import { observable } from 'mobx';
 
 export default class PlaylistStore extends BaseStore {
   sceneStore = null;
