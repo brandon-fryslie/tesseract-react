@@ -1,6 +1,7 @@
 import { observable } from 'mobx';
 import uuidv1 from 'uuid/v1';
 import BaseModel from './BaseModel';
+import PlaylistStore from '../stores/PlaylistStore';
 
 // This class is basically just a scene with a duration at this point
 export default class PlaylistItemModel extends BaseModel {
@@ -20,6 +21,14 @@ export default class PlaylistItemModel extends BaseModel {
 
   get displayName() {
     return this.scene.displayName;
+  }
+
+  static findContainingPlaylist(playlistItemId) {
+    return PlaylistStore.get().items.find((playlist) => {
+      return playlist.items.find((playlistItem) => {
+        return playlistItem.id === playlistItemId;
+      });
+    });
   }
 
   toJS() {

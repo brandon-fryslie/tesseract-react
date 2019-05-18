@@ -2,8 +2,9 @@ import ClipStore from '../stores/ClipStore';
 import SceneStore from '../stores/SceneStore';
 import PlaylistStore from '../stores/PlaylistStore';
 import UIStore from '../stores/UIStore';
-import { autorun, observe, reaction, action } from 'mobx';
+import { observe, reaction, action } from 'mobx';
 import { deepObserve } from 'mobx-utils';
+import PlaylistItemModel from '../models/PlaylistItemModel';
 
 export default class StateManager {
 
@@ -18,6 +19,7 @@ export default class StateManager {
     this.handleLiveControlsUpdated = this.handleLiveControlsUpdated.bind(this);
     this.handlePlaylistUpdated = this.handlePlaylistUpdated.bind(this);
     this.handlePlaylistItemChange = this.handlePlaylistItemChange.bind(this);
+    this.handlePlaylistUpdate = this.handlePlaylistUpdate.bind(this);
 
     this.observeItemsForChanges();
   }
@@ -141,21 +143,25 @@ export default class StateManager {
     console.log('[StateManager] Playlist Items Update.  Creating observers for playlist items');
     const items = PlaylistStore.get().items.map((p) => { return p.items; });
     items.forEach((playlistItems) => {
+      // This handles adding/removing/reordering
+      this.createObserve(playlistItems, this.handlePlaylistUpdate);
+
+      // This handles editing items in the grid
       this.createObserveList(playlistItems, this.handlePlaylistItemChange);
     });
   }
 
   handlePlaylistItemChange(change) {
-    // typeName is equal to "PlaylistItemModel" here
-    const typeName = change.object.constructor.name;
-    const playlistItemId = change.object.id;
+    const data = {
+      stateKey: 'playlist',
+      value: PlaylistItemModel.findContainingPlaylist(change.object.id).toJS(),
+    };
 
-    // Find the playlist that was updated
-    const updatedPlaylist = PlaylistStore.get().items.find((playlist) => {
-      return playlist.items.find((playlistItem) => {
-        return playlistItem.id === playlistItemId;
-      });
-    });
+    this.ws.sendMessage('stateUpdate', data);
+  }
+
+  handlePlaylistUpdate(change) {
+    const updatedPlaylist = PlaylistItemModel.findContainingPlaylist(change.object[0].id);
 
     const data = {
       stateKey: 'playlist',
