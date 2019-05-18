@@ -24,7 +24,8 @@ export default class PlaylistItemModel extends BaseModel {
 
   toJS() {
     return {
-      scene: this.scene,
+      id: this.id,
+      sceneId: this.scene.id,
       duration: this.duration,
     };
   }

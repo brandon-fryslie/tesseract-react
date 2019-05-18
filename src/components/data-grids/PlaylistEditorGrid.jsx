@@ -51,11 +51,6 @@ class PlaylistEditorGrid extends React.Component {
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 1);
-
-    // const reaction2 = reaction(
-    //   () => this.props.playlist.items.map(item => item),
-    //   stuff => console.log("reaction 2:", stuff)
-    // );
   }
 
   // 'Computed' functions are tracked by mobx, and any Component whos render method uses the computed value will be rerendered when the dependencies change
@@ -64,14 +59,14 @@ class PlaylistEditorGrid extends React.Component {
     return this.props.playlist.items.map(item => item.duration);
   }
 
-  @action
-  handleGridRowsUpdated({ fromRowData, updated }) {
-    // console.log('PlaylistGridEditor.jsx: handleGridRowsUpdated');
-
+  @action handleGridRowsUpdated({ fromRowData, updated }) {
     // Update all changed values on the Model
     Object.entries(updated).forEach(([key, value]) => {
-      // eslint-disable-next-line no-param-reassign
-      fromRowData[key] = value;
+      const newValue = parseFloat(value);
+      if (fromRowData[key] !== newValue) {
+        // eslint-disable-next-line no-param-reassign
+        fromRowData[key] = newValue;
+      }
     });
   }
 

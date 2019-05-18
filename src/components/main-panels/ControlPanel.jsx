@@ -39,7 +39,6 @@ class ControlPanel extends React.Component {
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
     this.handleShuffleButtonClick = this.handleShuffleButtonClick.bind(this);
     this.handleRepeatButtonClick = this.handleRepeatButtonClick.bind(this);
-    this.handleClipSelect = this.handleClipSelect.bind(this);
   }
 
   @action

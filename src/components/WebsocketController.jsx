@@ -21,27 +21,17 @@ class WebsocketController extends React.Component {
     this.handleWebsocketOpen = this.handleWebsocketOpen.bind(this);
     this.handleWebsocketMessage = this.handleWebsocketMessage.bind(this);
     this.handleWebsocketClose = this.handleWebsocketClose.bind(this);
-    this.handleWebsocketError = this.handleWebsocketError.bind(this);
     this.handleWebsocketRef = this.handleWebsocketRef.bind(this);
   }
 
   handleWebsocketOpen() {
-    // debugger;
-    console.log('got ws open');
+    console.log('[WebsocketController] Websocket connection opened');
     this.props.websocketIndicatorModel.setConnected(true);
 
     this.stateManager.loadInitialState();
   }
 
   handleWebsocketMessage(messageJson) {
-    // Ignore these until I can figure out where the hell they are coming from
-    // eslint-disable-next-line no-proto
-    // if (messageJson.__proto__.toString() === '[object Blob]') {
-    //   return;
-    // }
-
-    // console.log("got ws message");
-
     const message = JSON.parse(messageJson);
 
     if (!message.action || !message.data) {
@@ -62,7 +52,7 @@ class WebsocketController extends React.Component {
   }
 
   handleWebsocketClose() {
-    console.log('got ws close');
+    console.log('[WebsocketController] Websocket connection closed');
     this.props.websocketIndicatorModel.setConnected(false);
 
     // this.shouldRequestInitialState = true;
@@ -71,14 +61,14 @@ class WebsocketController extends React.Component {
   // Action: string
   // data: object
   sendMessage(action, data = {}) {
-    console.log(`Sending websocket message. action: ${ action }`);
+    console.log(`[WebsocketController] Sending websocket message. action: ${ action }`);
 
     const message = JSON.stringify({ action, data });
 
     try {
       this.ws.sendMessage(message);
     } catch (e) {
-      console.log('Error: Cannot send websocket message');
+      console.log('[WebsocketController] Error: Cannot send websocket message');
       console.log(e);
     }
   }
@@ -94,7 +84,7 @@ class WebsocketController extends React.Component {
     const serverAddr = UIStore.get().getValue('settingsPanel', 'serverAddr');
     const wsUrl = `ws://${ serverAddr }:8883`;
 
-    console.log(`WebsocketController: Rendering Websocket element with url: ${ wsUrl }`);
+    console.log(`[WebsocketController] Opening websocket connection to: ${ wsUrl }`);
 
     return (
       <Websocket url={ wsUrl }
@@ -109,7 +99,7 @@ class WebsocketController extends React.Component {
   }
 
   handleLogMessageAction(data) {
-    console.log(`WEBSOCKET LOGMESSAGE: ${ data }`);
+    console.log(`[WebsocketController] LogMessage: ${ data }`);
   }
 
 }

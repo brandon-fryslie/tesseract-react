@@ -38,11 +38,11 @@ export default class UIStore {
     return this.stateTree[panelKey][propertyKey];
   }
 
-  setValue(panelKey, propertyKey, value) {
+  @action setValue(panelKey, propertyKey, value) {
     this.stateTree[panelKey][propertyKey] = value;
   }
 
-  setActivePlaylistItem(playlistItem) {
+  @action setActivePlaylistItem(playlistItem) {
     this.stateTree.controlPanel.activePlaylistItem = playlistItem;
     this.updateControlPanelClipControls(playlistItem.scene);
   }
@@ -50,7 +50,7 @@ export default class UIStore {
   // Update the activeControls to match the new activeScene
   // We clone the objects because the values on the Scene itself won't be updated
   // when we are editing the 'live' controls
-  updateControlPanelClipControls(scene) {
+  @action updateControlPanelClipControls(scene) {
     const controls = scene.clipControls.map((control) => {
       return ControlModel.fromJS(control.toJS());
     });

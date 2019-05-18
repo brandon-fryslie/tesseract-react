@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { observer } from 'mobx-react';
 
+@observer
 class Websocket extends React.Component {
 
   constructor(props) {
@@ -31,7 +33,7 @@ class Websocket extends React.Component {
     const websocket = this.state.ws;
 
     websocket.onopen = () => {
-      this.logging('Websocket connected');
+      // this.logging('[Websocket] Websocket connected');
       if (typeof this.props.onOpen === 'function') this.props.onOpen();
     };
 

@@ -11,7 +11,7 @@ import PlaylistEditor from '../PlaylistEditor';
 import Util from '../../util/Util';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ScenesList from '../ScenesList';
-import { action, computed } from 'mobx';
+import { action, computed, reaction } from 'mobx';
 import PlaylistStore from '../../stores/PlaylistStore';
 import SceneStore from '../../stores/SceneStore';
 import UIStore from '../../stores/UIStore';
@@ -23,12 +23,18 @@ class PlayListsPanel extends React.Component {
 
     const props = args[0];
 
-    // before initial load this is undefined
-    if (props.playlistStore.items.length > 0) {
-      this.activePlaylist = props.playlistStore.items[0];
-    }
+    // Reacts when items in the playlist store change
+    const setActivePlaylistOnLoadDisposer = reaction(
+      () => { return PlaylistStore.get().items.map(i => i); },
+      (playlistItems) => {
+        // TODO: put a guard here.  if you've picked a playlist, we don't want to reset that
+        // if some state changes.  this is for initial load. this might alredy work by calling
+        // the disposer in this method)
+        this.activePlaylist = playlistItems[0];
+        setActivePlaylistOnLoadDisposer();
+      }
+    );
 
-    //
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
     this.handleDragEnd = this.handleDragEnd.bind(this);
@@ -42,6 +48,7 @@ class PlayListsPanel extends React.Component {
     UIStore.get().stateTree.playlistsPanel.activePlaylist = value;
   }
 
+  // We can't set this as an 'action' because mobx doesn't allow setting an action to a js setter for some reason
   set activePlaylist(value) {
     this._setActivePlaylist(value);
   }

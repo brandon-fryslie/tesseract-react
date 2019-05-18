@@ -3,15 +3,10 @@ import { observer } from 'mobx-react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import NewPlaylistButton from '../NewPlaylistButton';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import PlaylistsList from '../PlaylistsList';
-import PropTypes from 'prop-types';
-import PlaylistEditor from '../PlaylistEditor';
-import Util from '../../util/Util';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ScenesList from '../ScenesList';
-import { observable } from 'mobx';
+import { observable, action } from 'mobx';
 import Button from 'react-bootstrap/Button';
 import SceneStore from '../../stores/SceneStore';
 import ChannelControls from '../ChannelControls';
@@ -20,6 +15,7 @@ import UIStore from '../../stores/UIStore';
 @observer
 class ScenesPanel extends React.Component {
   @observable activeScene;
+  @observable uiStore;
 
   constructor(...args) {
     super(...args);
@@ -31,18 +27,21 @@ class ScenesPanel extends React.Component {
       this.activeScene = SceneStore.get().items[0];
     }
 
+    this.uiStore = UIStore.get();
+
     // Bind event handlers to the correct value of 'this'
     this.handleSceneClick = this.handleSceneClick.bind(this);
     this.handleClipSelect = this.handleClipSelect.bind(this);
     this.handleNewSceneButtonClick = this.handleNewSceneButtonClick.bind(this);
   }
 
-  setActiveScene(scene) {
+  @action setActiveScene(scene) {
     UIStore.get().setValue('scenesPanel', 'activeScene', scene);
   }
 
+  // @computed <- i don't understand why i can't use computed here (get maximum stack size error)
   getActiveScene() {
-    return UIStore.get().getValue('scenesPanel', 'activeScene');
+    return this.uiStore.getValue('scenesPanel', 'activeScene');
   }
 
   // Trigger this function when we click a playlist in the ScenesList
@@ -57,11 +56,8 @@ class ScenesPanel extends React.Component {
   }
 
   // Handles a click on the clip selection list for the scene
-  handleClipSelect(dom, clip) {
-    const activeScene = this.getActiveScene();
-
-    activeScene.setClip(clip);
-
+  @action handleClipSelect(dom, clip) {
+    this.getActiveScene().setClip(clip);
   }
 
   render() {

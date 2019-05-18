@@ -30,7 +30,7 @@ export default class PlaylistModel extends BaseModel {
     return {
       id: this.id,
       displayName: this.displayName,
-      items: this.items,
+      items: this.items.map(item => item.toJS()),
     };
   }
 

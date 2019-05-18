@@ -35,7 +35,7 @@ export default class SceneModel extends BaseModel {
     // if we have controls, save their values to an array
     let values;
     if (this.clipControls && this.clipControls.length > 0) {
-      values = this.clipControls.map((control) => control.currentValue);
+      values = this.clipControls.map(control => control.currentValue);
     } else {
       values = this.rawClipValues;
     }
@@ -43,6 +43,9 @@ export default class SceneModel extends BaseModel {
     const controls = this.createClipControls(clip, values);
 
     this.clipControls.replace(controls);
+
+    // keep rawClipValues updated
+    this.rawClipValues = values;
   }
 
   // Create Clip Controls.  Set values to the values in 'values'
@@ -65,8 +68,8 @@ export default class SceneModel extends BaseModel {
     return {
       id: this.id,
       displayName: this.displayName,
-      clip: this.clip,
-      clipValues: this.clipValues,
+      clipId: this.clip.clipId,
+      clipValues: this.rawClipValues,
     };
   }
 
