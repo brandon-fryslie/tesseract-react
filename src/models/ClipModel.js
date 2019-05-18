@@ -12,10 +12,9 @@ export default class ClipModel extends BaseModel {
   // The controls required of the clip (ControlModels) and the default values
   @observable controls;
 
-  constructor(id, displayName, clipId, controls) {
+  constructor(displayName, clipId, controls) {
     super();
 
-    this.id = id;
     this.displayName = displayName;
     this.clipId = clipId;
     this.controls = controls;
@@ -23,7 +22,6 @@ export default class ClipModel extends BaseModel {
 
   toJS() {
     return {
-      id: this.id,
       displayName: this.displayName,
       clipId: this.clipId,
       controls: this.controls,
@@ -33,6 +31,6 @@ export default class ClipModel extends BaseModel {
   static fromJS(obj) {
     const controls = obj.controls.map(c => ControlModel.fromJS(c));
 
-    return new ClipModel(obj.id, obj.displayName, obj.clipId, controls);
+    return new ClipModel(obj.displayName, obj.clipId, controls);
   }
 }

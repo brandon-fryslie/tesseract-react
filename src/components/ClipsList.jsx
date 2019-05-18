@@ -32,9 +32,10 @@ class ClipsList extends React.Component {
     return (
       <Card>
         <Card.Header>Clips</Card.Header>
-        <DroppableWrapper isDropDisabled
-                          droppableId="clipsList"
-                          list={ this.props.items }>
+        <DroppableWrapper
+          isDropDisabled
+          droppableId="clipsList"
+          list={ this.props.items }>
           <ListGroup as="ul">
             {
               this.props.items.map((item, idx) => this.renderClipListRow(item, idx))
