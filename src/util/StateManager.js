@@ -22,6 +22,7 @@ export default class StateManager {
 
   // singleton pattern
   static instance;
+
   static get() {
     if (this.instance == null) {
       this.instance = new StateManager();
@@ -39,12 +40,12 @@ export default class StateManager {
   }
 
   handleSendInitialStateAction(data) {
-    console.log("!!! received initial state!!!", data);
+    console.log('!!! received initial state!!!', data);
 
     ClipStore.get().refreshFromJS(data.clipData);
     SceneStore.get().refreshFromJS(data.sceneData);
     PlaylistStore.get().refreshFromJS(data.playlistData);
-    this.setControlPanelActiveScene(data.activeScene);
+    this.setControlPanelActiveState(data.activeState);
   }
 
   // handle a state updated action from the backend
@@ -52,20 +53,24 @@ export default class StateManager {
     // console.log("got a stateUpdate action");
     // console.log(data);
 
-    if (data.key === 'activeScene') {
-      this.setControlPanelActiveScene(data.value);
+    if (data.key === 'activeState') {
+      this.setControlPanelActiveState(data.value);
     } else {
-      throw `Error: ${data.key} is not a valid stateKey`;
+      throw `Error: ${ data.key } is not a valid stateKey`;
     }
   }
 
-  setControlPanelActiveScene(sceneId) {
-    // Find the scene
+  setControlPanelActiveState(activeState) {
     try {
-      const scene = SceneStore.get().find('id', sceneId);
-      UIStore.get().setControlPanelActiveScene(scene);
+      const activePlaylist = PlaylistStore.get().find('id', activeState.playlistId);
+      const activePlaylistItem = activePlaylist.items.find(i => i.id === activeState.playlistItemId);
+
+      UIStore.get().setValue('controlPanel', 'activePlaylist', activePlaylist);
+      UIStore.get().setActivePlaylistItem(activePlaylistItem);
+
+      console.log(`Updated control panel activeState to: 'playlist: ${ activePlaylist.displayName }' 'scene: ${ activePlaylistItem.scene.displayName }'`);
     } catch (e) {
-      console.log(`Error finding activeScene in store: ${e.message}`);
+      console.log(`Error finding activeScene in store: ${ e.message }`);
       console.log(e.stack);
     }
   }
@@ -82,11 +87,11 @@ export default class StateManager {
   // e.g., a user used a knob to change the value
   handleLiveControlsUpdated(change, path) {
     // Ignore these events
-    if (change.type === "splice") {
+    if (change.type === 'splice') {
       return;
     }
 
-    console.log("got handleLiveControlsUpdate", change, path);
+    // console.log('got handleLiveControlsUpdate', change, path);
     // debugger
 
     // actually, here I need to figure out if it is anything the backend cares about
@@ -101,7 +106,7 @@ export default class StateManager {
       value: {
         fieldName: change.object.fieldName,
         newValue: change.newValue,
-      }
+      },
     };
 
     this.ws.sendMessage('stateUpdate', data);
@@ -110,18 +115,18 @@ export default class StateManager {
   // handle activeControl state updated on frontend
   // e.g., a user used a knob to change the value
   handleUIStoreUpdated(change, path) {
-  //   console.log("got handleUIStoreUpdated", change, path);
-  //   debugger
-  //
-  //   // actually, here I need to figure out if it is anything the backend cares about
-  //   // we don't care about (or want to respond to) having our activeState updated
-  //   // if (change.name === "currentValue")
-  //
-  //   // here I need to send a stateUpdate message via websocket
-  //   const data = {
-  //
-  //   };
-  //
-  //   this.ws.sendMessage('stateUpdate', data)
+    //   console.log("got handleUIStoreUpdated", change, path);
+    //   debugger
+    //
+    //   // actually, here I need to figure out if it is anything the backend cares about
+    //   // we don't care about (or want to respond to) having our activeState updated
+    //   // if (change.name === "currentValue")
+    //
+    //   // here I need to send a stateUpdate message via websocket
+    //   const data = {
+    //
+    //   };
+    //
+    //   this.ws.sendMessage('stateUpdate', data)
   }
 }

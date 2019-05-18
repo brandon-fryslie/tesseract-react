@@ -6,8 +6,8 @@ import ControlModel from '../models/ControlModel';
 export default class UIStore {
   @observable stateTree = {
     controlPanel: {
-      activeScene: null, // Active scene on control panel
       activePlaylist: null, // Active playlist on control panel
+      activePlaylistItem: null, // Active playlist item on control panel
       activeControls: [], // Controls for the active scene on control panel
     },
     scenesPanel: {
@@ -39,9 +39,9 @@ export default class UIStore {
     this.stateTree[panelKey][propertyKey] = value;
   }
 
-  setControlPanelActiveScene(scene) {
-    this.updateControlPanelClipControls(scene);
-    this.stateTree.controlPanel.activeScene = scene;
+  setActivePlaylistItem(playlistItem) {
+    this.stateTree.controlPanel.activePlaylistItem = playlistItem;
+    this.updateControlPanelClipControls(playlistItem.scene);
   }
 
   // Update the activeControls to match the new activeScene

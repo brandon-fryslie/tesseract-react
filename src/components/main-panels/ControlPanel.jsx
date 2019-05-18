@@ -23,9 +23,6 @@ class ControlPanel extends React.Component {
   @observable shuffleEnabled = false;
   @observable repeatEnabled = false;
 
-  // The currently active scene
-  // @observable activeScene;
-
   @observable uiStore;
 
   constructor(...args) {
@@ -91,9 +88,12 @@ class ControlPanel extends React.Component {
     this.toggleRepeatPlaylist();
   }
 
-  // dunno if computed is the right thing here.
-  get activeScene() {
-    return UIStore.get().stateTree.controlPanel.activeScene;
+  get activePlaylistItem() {
+    return UIStore.get().stateTree.controlPanel.activePlaylistItem;
+  }
+
+  set activePlaylistItem(value) {
+    UIStore.get().stateTree.controlPanel.activePlaylistItem = value;
   }
 
   // dunno if computed is the right thing here.
@@ -113,11 +113,11 @@ class ControlPanel extends React.Component {
   // Renders the container for the currently playing Scene
   renderControlsContainer() {
     let channelControls;
-    if (this.activeScene) {
+    if (this.activePlaylistItem) {
       channelControls = (
         <ChannelControls
           showClipSelector={ false }
-          scene={ this.activeScene }
+          scene={ this.activePlaylistItem.scene }
           controls={ this.activeControls }
           onItemClick={ this.handleClipSelect } />
       );
@@ -158,7 +158,7 @@ class ControlPanel extends React.Component {
     return (
       <PlaylistItemView
         playlist={ activePlaylist }
-        activeScene={ this.activeScene }
+        activePlaylistItem={ this.activePlaylistItem }
         onItemClick={ this.handleSceneClick } />
     );
   }
@@ -166,9 +166,9 @@ class ControlPanel extends React.Component {
   render() {
     // 'Using' these values here will cause the mobx library to rerender this component when they change
     // This is not the exact right way to do this, but it works
-    const activeScene = UIStore.get().stateTree.controlPanel.activeScene;
     const activeControls = UIStore.get().stateTree.controlPanel.activeControls;
     const activePlaylist = UIStore.get().stateTree.controlPanel.activePlaylist;
+    const activePlaylistItem = UIStore.get().stateTree.controlPanel.activePlaylistItem;
     let activePlaylistName, sceneItems;
 
     if (activePlaylist == null) {

@@ -22,7 +22,7 @@ class PlaylistItemView extends React.Component {
                 as="li"
                 key={ idx }
                 onClick={ dom => this.props.onItemClick(dom, item) }
-                active={ this.props.activeScene && this.props.activeScene.id === item.scene.id }>
+                active={ this.props.activePlaylistItem && this.props.activePlaylistItem.id === item.id }>
                 { item.scene.displayName }
               </ListGroup.Item>
             ))
@@ -38,7 +38,7 @@ PlaylistItemView.propTypes = {
   // TODO: change this when playlists are implemented on the backend, this needs
   //  to take a playlist item, not a scene, because a playlist can contain the
   //  same scene multiple times
-  activeScene: PropTypes.object,
+  activePlaylistItem: PropTypes.object,
   onItemClick: PropTypes.func.isRequired,
 };
 
