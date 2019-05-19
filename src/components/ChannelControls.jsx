@@ -1,14 +1,17 @@
 import React from 'react';
-import ListGroup from 'react-bootstrap/ListGroup';
 import Card from 'react-bootstrap/Card';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
-import { Knob } from 'react-rotary-knob';
 import KnobControl from './controls/KnobControl';
 import CardGroup from 'react-bootstrap/CardGroup';
 import ClipsList from './ClipsList';
 import ClipStore from '../stores/ClipStore';
 import SliderControl from './controls/SliderControl';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import UIStore from '../stores/UIStore';
+import DurationRemaining from './DurationRemaining';
 
 @observer
 class ChannelControls extends React.Component {
@@ -38,6 +41,10 @@ class ChannelControls extends React.Component {
     throw `renderClipControl: Not implemented for type ${ control.type }`;
   }
 
+  renderCurrentSceneDurationRemaining(remainingDuration) {
+    return <DurationRemaining initialTime={remainingDuration} />;
+  }
+
   render() {
     const title = `Scene: '${ this.props.scene.displayName }' Controls`;
 
@@ -58,7 +65,18 @@ class ChannelControls extends React.Component {
     return (
       <CardGroup>
         <Card>
-          <Card.Header>{ title }</Card.Header>
+          <Card.Header>
+            <Container>
+              <Row>
+                <Col>
+                  { title }
+                </Col>
+                <Col>
+                  { this.renderCurrentSceneDurationRemaining(UIStore.get().stateTree.controlPanel.currentSceneDurationRemaining) }
+                </Col>
+              </Row>
+            </Container>
+          </Card.Header>
           <CardGroup>
             { clipSelector }
             {

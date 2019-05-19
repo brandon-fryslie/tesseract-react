@@ -9,6 +9,7 @@ export default class UIStore {
       activePlaylist: null, // Active playlist on control panel
       activePlaylistItem: null, // Active playlist item on control panel
       activeControls: [], // Controls for the active scene on control panel
+      currentSceneDurationRemaining: -1, // Remaining duration for current scene (-1 == infinity)
     },
     playlistsPanel: {
       activePlaylist: null, // Active scene on control panel

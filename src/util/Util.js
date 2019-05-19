@@ -4,7 +4,6 @@ const droppableListRegistry = {};
 
 class Util {
   // a little function to help us with reordering the result
-// TODO: move this to a helper class
   static reorder(list, startIndex, endIndex) {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -43,6 +42,24 @@ class Util {
   // Save a reference to a droppable's list
   static registerDroppableList(droppableId, list) {
     droppableListRegistry[droppableId] = list;
+  }
+
+  static msToTime(ms) {
+    const secs = ms * 1000;
+    const hours = Math.floor(secs / (60 * 60));
+
+    const divisorForMin = secs % (60 * 60);
+    const minutes = Math.floor(divisorForMin / 60);
+
+    const divisorForSec = divisorForMin % 60;
+    const seconds = Math.ceil(divisorForSec);
+
+    const obj = {
+      h: hours,
+      m: minutes,
+      s: seconds,
+    };
+    return obj;
   }
 }
 

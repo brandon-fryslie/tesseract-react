@@ -15,9 +15,7 @@ export default class StateManager {
 
   constructor(...args) {
     // Bind event handlers to the correct value of 'this'
-    this.handleUIStoreUpdated = this.handleUIStoreUpdated.bind(this);
     this.handleLiveControlsUpdated = this.handleLiveControlsUpdated.bind(this);
-    this.handlePlaylistUpdated = this.handlePlaylistUpdated.bind(this);
     this.handlePlaylistItemChange = this.handlePlaylistItemChange.bind(this);
     this.handlePlaylistUpdate = this.handlePlaylistUpdate.bind(this);
 
@@ -62,10 +60,29 @@ export default class StateManager {
 
   // Observe a list
   createDeepObserveList(items, fn) {
-    debugger;
     items.forEach((item) => {
       this.createDeepObserve(item, fn);
     });
+  }
+
+  // This is a conglomeration of a method that sets up observers for the data we care about
+  // In some cases, it sets up a reaction that will create the observers when the necessary data is available
+  observeItemsForChanges() {
+    console.log('[StateManager] Observing Items for Changes');
+
+    // clean up any previous observers
+    this.disposers.forEach((dispose) => { dispose(); });
+
+    // todo: each of these calls to 'observe' is a memory leak unless we clean it up
+    // clean them up in componentWillUnmount or similar
+    // This actually works, don't mess with it
+    this.createDeepObserve(UIStore.get().stateTree.controlPanel.activeControls, this.handleLiveControlsUpdated);
+
+    // whenever the contents of the PlaylistStore change, create playlist observers
+    this.createReaction(
+      () => PlaylistStore.get().items.map(p => p),
+      () => this.observePlaylistItems()
+    );
   }
 
   ////////// INITIAL STATE //////////
@@ -105,6 +122,7 @@ export default class StateManager {
       const activePlaylistItem = activePlaylist.items.find(i => i.id === activeState.playlistItemId);
 
       UIStore.get().setValue('controlPanel', 'activePlaylist', activePlaylist);
+      UIStore.get().setValue('controlPanel', 'currentSceneDurationRemaining', activeState.currentSceneDurationRemaining);
       UIStore.get().setActivePlaylistItem(activePlaylistItem);
 
       console.log(`[StateManager] Updated control panel activeState to: 'playlist: ${ activePlaylist.displayName }' 'scene: ${ activePlaylistItem.scene.displayName }'`);
@@ -170,67 +188,7 @@ export default class StateManager {
 
     this.ws.sendMessage('stateUpdate', data);
   }
-
-  observeItemsForChanges() {
-    console.log('[StateManager] Observing Items for Changes');
-
-    // clean up any previous observers
-    this.disposers.forEach((dispose) => { dispose(); });
-
-    // todo: each of these calls to 'observe' is a memory leak unless we clean it up
-    // clean them up in componentWillUnmount or similar
-    // This actually works, don't mess with it
-    this.createDeepObserve(UIStore.get().stateTree.controlPanel.activeControls, this.handleLiveControlsUpdated);
-
-    // whenever the contents of the PlaylistStore change, create playlist observers
-    this.createReaction(
-      () => PlaylistStore.get().items.map(p => p),
-      () => this.observePlaylistItems()
-    );
-  }
+  ////////// PLAYLIST STATE //////////
 
 
-  // handle playlist update, i.e., reorder, add item, duration change
-  // e.g., a user used a knob to change the value
-  handlePlaylistUpdated(change, path) {
-    const js = UIStore.get().stateTree.playlistsPanel.activePlaylist.items.forEach((item) => {
-      // debugger;
-    });
-
-    // debugger;
-    if (change.type === 'splice') {
-      return;
-    }
-
-    // here I need to send a stateUpdate message via websocket
-    const data = {
-      // these state keys are going to be pretty arbitrary at this point
-      stateKey: 'activeControls',
-      // value is arbitrary shape, the handler on the backend for stateKey 'activeControls' needs to handle it
-      value: {
-        fieldName: change.object.fieldName,
-        newValue: change.newValue,
-      },
-    };
-
-    this.ws.sendMessage('stateUpdate', data);
-  }
-
-  // handle activeControl state updated on frontend
-  // e.g., a user used a knob to change the value
-  handleUIStoreUpdated(change, path) {
-    //   console.log("got handleUIStoreUpdated", change, path);
-    //   debugger
-    //
-    //   // actually, here I need to figure out if it is anything the backend cares about
-    //   // we don't care about (or want to respond to) having our activeState updated
-    //   // if (change.name === "currentValue")
-    //
-    //   // here I need to send a stateUpdate message via websocket
-    //   const data = {
-    //
-    //   };
-    //
-    //   this.ws.sendMessage('stateUpdate', data)
-  }
 }
