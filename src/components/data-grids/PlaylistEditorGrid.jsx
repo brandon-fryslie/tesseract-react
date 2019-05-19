@@ -8,11 +8,31 @@ import ReactDataGrid from 'react-data-grid';
 import { observer } from 'mobx-react';
 import DraggableWrapper from '../dnd-wrappers/DraggableWrapper';
 import DroppableWrapper from '../dnd-wrappers/DroppableWrapper';
+import DeleteIcon from '@material-ui/icons/DeleteForever';
+import PlaylistItemModel from '../../models/PlaylistItemModel';
+
+const DeleteIconFormatter = () => {
+  return <DeleteIcon />;
+};
 
 const columns = [
   { key: 'index', name: 'Order', width: 75 },
-  { key: 'displayName', name: 'Scene', width: 525 },
+  { key: 'displayName', name: 'Scene', width: 450 },
   { key: 'duration', name: 'Duration (seconds)', width: 200, editable: true },
+  {
+    key: 'delete',
+    name: 'Delete',
+    width: 75,
+    formatter: DeleteIconFormatter,
+    events: {
+      onClick: function (event, rowData) {
+        const playlist = PlaylistItemModel.findContainingPlaylist(rowData.rowId);
+        // remove item from playlist
+        playlist.removeItem(rowData.rowId);
+      },
+    },
+  },
+
 ];
 
 // Do a bit of data manipulation and add a DraggableWrapper before using the default renderer
@@ -83,6 +103,7 @@ class PlaylistEditorGrid extends React.Component {
                         style={ { width: '815px' } }>
         <div className="playlistEditorGridContainer">
           <ReactDataGrid
+            minHeight={ this.props.playlist.items.length * 35 + 50 } /* todo: need to set a max height to avoid scrolling on ipad */
             columns={ columns }
             rowGetter={ i => this.props.playlist.items[i] }
             rowsCount={ this.props.playlist.items.length }

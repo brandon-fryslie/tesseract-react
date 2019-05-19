@@ -40,6 +40,7 @@ export default class PlaylistItemModel extends BaseModel {
     };
   }
 
+  // these should be updated to save and hydrate from the same shape of data
   static fromJS(obj) {
     const id = obj.id != null ? obj.id : uuidv4();
     return new PlaylistItemModel(id, obj.scene, obj.duration);

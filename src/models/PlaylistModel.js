@@ -26,6 +26,15 @@ export default class PlaylistModel extends BaseModel {
     this.items.splice(index, 0, item);
   }
 
+  removeItem(playlistItemId) {
+    const playlistItemIndex = this.items.findIndex((item) => {
+      return item.id === playlistItemId;
+    });
+
+    this.items.splice(playlistItemIndex, 1);
+
+  }
+
   toJS() {
     return {
       id: this.id,
