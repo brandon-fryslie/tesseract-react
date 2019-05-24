@@ -2,7 +2,7 @@ import ClipStore from '../stores/ClipStore';
 import SceneStore from '../stores/SceneStore';
 import PlaylistStore from '../stores/PlaylistStore';
 import UIStore from '../stores/UIStore';
-import { observe, reaction, action } from 'mobx';
+import { observe, reaction, action, transaction, runInAction } from 'mobx';
 import { deepObserve } from 'mobx-utils';
 import PlaylistItemModel from '../models/PlaylistItemModel';
 
@@ -18,6 +18,8 @@ export default class StateManager {
     this.handleLiveControlsUpdated = this.handleLiveControlsUpdated.bind(this);
     this.handlePlaylistItemChange = this.handlePlaylistItemChange.bind(this);
     this.handlePlaylistUpdate = this.handlePlaylistUpdate.bind(this);
+    this.handlePlayStateUpdated = this.handlePlayStateUpdated.bind(this);
+    // this.handleActivePlaylistUpdated = this.handleActivePlaylistUpdated.bind(this);
 
     this.observeItemsForChanges();
   }
@@ -47,8 +49,12 @@ export default class StateManager {
   }
 
   // Observe items
-  createObserve(obj, fn) {
-    this.disposers.push(observe(obj, fn));
+  createObserve(obj, property = null, fn) {
+    if (property != null) {
+      this.disposers.push(observe(obj, property, fn));
+    } else {
+      this.disposers.push(observe(obj, fn));
+    }
   }
 
   // Observe a list
@@ -67,21 +73,24 @@ export default class StateManager {
 
   // This is a conglomeration of a method that sets up observers for the data we care about
   // In some cases, it sets up a reaction that will create the observers when the necessary data is available
+  // todo: each of these calls to 'observe' is a memory leak unless we clean it up
   observeItemsForChanges() {
     console.log('[StateManager] Observing Items for Changes');
 
     // clean up any previous observers
     this.disposers.forEach((dispose) => { dispose(); });
 
-    // todo: each of these calls to 'observe' is a memory leak unless we clean it up
-    // clean them up in componentWillUnmount or similar
-    // This actually works, don't mess with it
-    this.createDeepObserve(UIStore.get().stateTree.controlPanel.activeControls, this.handleLiveControlsUpdated);
+    // Handle clicks on play/loop scene/stop buttons
+    // this.createObserve(UIStore.get().stateTree, '', this.handlePlayStateUpdated);
+    this.createObserve(UIStore.get().stateTree, this.handlePlayStateUpdated);
+
+    // handle changing to a different playlist
+    // this.createObserve(UIStore.get().stateTree.controlPanel, this.handleActivePlaylistUpdated);
 
     // whenever the contents of the PlaylistStore change, create playlist observers
     this.createReaction(
       () => PlaylistStore.get().items.map(p => p),
-      () => this.observePlaylistItems()
+      () => this.observePlaylistItems(),
     );
   }
 
@@ -101,6 +110,7 @@ export default class StateManager {
     // Set the active state on the Live Controls panel
     this.setControlPanelActiveState(data.activeState);
   }
+
   ////////// INITIAL STATE //////////
 
   ////////// ACTIVE STATE / LIVE CONTROLS //////////
@@ -117,19 +127,7 @@ export default class StateManager {
   }
 
   @action setControlPanelActiveState(activeState) {
-    try {
-      const activePlaylist = PlaylistStore.get().find('id', activeState.playlistId);
-      const activePlaylistItem = activePlaylist.items.find(i => i.id === activeState.playlistItemId);
-
-      UIStore.get().setValue('controlPanel', 'activePlaylist', activePlaylist);
-      UIStore.get().setValue('controlPanel', 'currentSceneDurationRemaining', activeState.currentSceneDurationRemaining);
-      UIStore.get().setActivePlaylistItem(activePlaylistItem);
-
-      console.log(`[StateManager] Updated control panel activeState to: 'playlist: ${ activePlaylist.displayName }' 'scene: ${ activePlaylistItem.scene.displayName }'`);
-    } catch (e) {
-      console.log(`[StateManager] Error finding activeScene in store: ${ e.message }`);
-      console.log(e.stack);
-    }
+    UIStore.get().updateControlPanelActiveState(activeState);
   }
 
   // handle activeControl state updated on frontend
@@ -153,8 +151,39 @@ export default class StateManager {
 
     this.ws.sendMessage('stateUpdate', data);
   }
-  ////////// ACTIVE STATE / LIVE CONTROLS //////////
 
+  // Handle changing active playlist, playlistItem, or playing/paused/stopped
+  // Only sends a stateUpdate event if 'controlPanel.changeFromBackend' is false, this is my hacky way of keeping us from running in an infinite loop
+  @action handlePlayStateUpdated(change) {
+    // Ignore these events
+    if (change.type === 'splice') {
+      return;
+    }
+
+    // we only care about controlPanel updates here
+    if (change.name !== 'controlPanel') { return; }
+
+    const target = change.object.controlPanel;
+
+    // We have to (re)observe the live controls so they will work
+    this.createDeepObserve(target.activeControls, this.handleLiveControlsUpdated);
+
+    // don't send a websocket message if the change was from the backend
+    if (!target.changeFromBackend) {
+      // here I need to send a stateUpdate message via websocket
+      const data = {
+        stateKey: 'playState',
+        value: {
+          playState: target.playState,
+          activePlaylistId: target.activePlaylist.id,
+          activePlaylistItemId: target.activePlaylistItem.id,
+        },
+      };
+
+      this.ws.sendMessage('stateUpdate', data);
+    }
+  }
+  ////////// ACTIVE STATE / LIVE CONTROLS //////////
 
   ////////// PLAYLIST STATE //////////
   observePlaylistItems() {
@@ -189,6 +218,5 @@ export default class StateManager {
     this.ws.sendMessage('stateUpdate', data);
   }
   ////////// PLAYLIST STATE //////////
-
 
 }

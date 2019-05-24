@@ -1,6 +1,6 @@
-import { observable, computed, reaction, action } from 'mobx';
-import ClipModel from '../models/ClipModel';
+import { observable, action } from 'mobx';
 import ControlModel from '../models/ControlModel';
+import PlaylistStore from './PlaylistStore';
 
 // keeps track of the UI state.  put it into one spot so we can update it easily
 export default class UIStore {
@@ -10,12 +10,13 @@ export default class UIStore {
       activePlaylistItem: null, // Active playlist item on control panel
       activeControls: [], // Controls for the active scene on control panel
       currentSceneDurationRemaining: -1, // Remaining duration for current scene (-1 == infinity)
+      playState: 'STOPPED', // playing, looping current scene, or stopped
     },
     playlistsPanel: {
-      activePlaylist: null, // Active scene on control panel
+      activePlaylist: null, // Active playlist on playlists panel
     },
     scenesPanel: {
-      activeScene: null, // Active scene on control panel
+      activeScene: null, // Active scene on scenes panel
     },
     settingsPanel: {
       shouldShowFullScreenButton: false,
@@ -43,19 +44,41 @@ export default class UIStore {
     this.stateTree[panelKey][propertyKey] = value;
   }
 
-  @action setActivePlaylistItem(playlistItem) {
-    this.stateTree.controlPanel.activePlaylistItem = playlistItem;
-    this.updateControlPanelClipControls(playlistItem.scene);
-  }
+  // Triggered from Backend / websocket event
+  @action updateControlPanelActiveState(activeState) {
+    const activePlaylist = PlaylistStore.get().find('id', activeState.playlistId);
+    const activePlaylistItem = activePlaylist.items.find(i => i.id === activeState.playlistItemId);
 
-  // Update the activeControls to match the new activeScene
-  // We clone the objects because the values on the Scene itself won't be updated
-  // when we are editing the 'live' controls
-  @action updateControlPanelClipControls(scene) {
-    const controls = scene.clipControls.map((control) => {
-      return ControlModel.fromJS(control.toJS());
+    // debugger
+
+    this.setControlPanelState({
+      activePlaylist: activePlaylist,
+      activePlaylistItem: activePlaylistItem,
+      currentSceneDurationRemaining: activeState.currentSceneDurationRemaining,
+      playState: activeState.playlistPlayState,
+      activeControls: this.getControlPanelClipControls(activePlaylistItem.scene),
+      changeFromBackend: true, // is this a good idea?
     });
 
-    this.stateTree.controlPanel.activeControls.replace(controls);
+    console.log(`[UIStore.updateControlPanelActiveState] Updated control panel activeState to: 'playlist: ${ activePlaylist.displayName }' 'scene: ${ activePlaylistItem.scene.displayName }'`);
+  }
+
+  setControlPanelState(newState) {
+    this.stateTree.controlPanel = newState;
+  }
+
+  // Using this will automatically set changeFromBackend to false, unless we pass it in
+  updateControlPanelState(newState) {
+    this.setControlPanelState({
+      ...this.stateTree.controlPanel,
+      changeFromBackend: false,
+      ...newState,
+    });
+  }
+
+  getControlPanelClipControls(scene) {
+    return scene.clipControls.map((control) => {
+      return ControlModel.fromJS(control.toJS());
+    });
   }
 }

@@ -12,6 +12,13 @@ export default class PlaylistModel extends BaseModel {
   // The default duration to use when adding a new Scene
   defaultDuration = 60;
 
+  // Fake ENUM to match the Java side
+  static playState = {
+    PLAYING: 'PLAYING',
+    LOOP_SCENE: 'LOOP_SCENE',
+    STOPPED: 'STOPPED',
+  };
+
   constructor(id, displayName, items) {
     super();
 

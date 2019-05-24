@@ -7,93 +7,90 @@ import ButtonGroup from 'react-bootstrap/es/ButtonGroup';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import PlaylistsList from '../PlaylistsList';
-import { action, computed, observable } from 'mobx';
+import { action, observable } from 'mobx';
 import UIStore from '../../stores/UIStore';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ChannelControls from '../ChannelControls';
-import ScenesList from '../ScenesList';
 import PlaylistStore from '../../stores/PlaylistStore';
-import SceneStore from '../../stores/SceneStore';
 import PlaylistItemView from '../PlaylistItemView';
+import PlaylistModel from '../../models/PlaylistModel';
+import LoopIcon from '@material-ui/icons/Loop';
+import PlayIcon from '@material-ui/icons/PlayArrow';
+import StopIcon from '@material-ui/icons/Stop';
 
 @observer
 class ControlPanel extends React.Component {
-  @observable activePlaylist = null;
-  @observable isPlaying = false;
-  @observable shuffleEnabled = false;
-  @observable repeatEnabled = false;
-
-  @observable uiStore;
-
   constructor(...args) {
     super(...args);
 
-    // this.uiStore = UIStore.get();
-
-    // this isn't set here
-    // UIStore.get().stateTree.controlPanel.activePlaylist = props.playlistStore.items[0];
-
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
-    this.handleSceneClick = this.handleSceneClick.bind(this);
+    this.handlePlaylistItemClick = this.handlePlaylistItemClick.bind(this);
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
-    this.handleShuffleButtonClick = this.handleShuffleButtonClick.bind(this);
-    this.handleRepeatButtonClick = this.handleRepeatButtonClick.bind(this);
+    this.handleLoopSceneButtonClick = this.handleLoopSceneButtonClick.bind(this);
+    this.handleStopButtonClick = this.handleStopButtonClick.bind(this);
   }
 
-  @action
-  toggleIsPlaying() {
-    this.isPlaying = !this.isPlaying;
+  get currentPlayState() {
+    return UIStore.get().getValue('controlPanel', 'playState');
   }
 
-  @action
-  toggleShuffleClips() {
-    this.shuffleEnabled = !this.shuffleEnabled;
-  }
+  set currentPlayState(value) {
+    UIStore.get().updateControlPanelState({
+      playState: value,
+    });
 
-  @action
-  toggleRepeatPlaylist() {
-    this.repeatEnabled = !this.repeatEnabled;
+    // UIStore.get().setValue('controlPanel', 'playState', value);
   }
 
   // Trigger this function when we click a playlist in the PlaylistsList
   // This will set the current playlist
   // Called with the dom element and the playlist model
-  handlePlaylistClick(dom, playlist) {
-    UIStore.get().stateTree.controlPanel.activePlaylist = playlist;
+  @action handlePlaylistClick(dom, playlist) {
+    // we need to set the activePlaylistItem as well
+    // todo: this will probably break if we have an empty playlist
+    const activePlaylistItem = playlist.items[0];
+
+    UIStore.get().updateControlPanelState({
+      activePlaylist: playlist,
+      activePlaylistItem: activePlaylistItem,
+    });
   }
 
   // Trigger this function when we click a playlist in the PlaylistsList
   // This will set the current playlist
   // Called with the dom element and the playlist model
-  handleSceneClick(dom, playlist) {
+  @action handlePlaylistItemClick(dom, playlistItem) {
     // TODO: here we need to tell the backend to switch to this scene?
     // not sure what I need to do here yet
-    // UIStore.get().stateTree.controlPanel.activePlaylist = playlist;
+
+    UIStore.get().updateControlPanelState({
+      activePlaylistItem: playlistItem,
+    });
   }
 
   // Triggered when we click the play button
-  handlePlayButtonClick() {
-    this.toggleIsPlaying();
+  @action handlePlayButtonClick() {
+    this.currentPlayState = PlaylistModel.playState.PLAYING;
   }
 
-  // Triggered when we click the shuffle button
-  handleShuffleButtonClick() {
-    this.toggleShuffleClips();
+  // Triggered when we click the 'loop scene' button
+  @action handleLoopSceneButtonClick() {
+    this.currentPlayState = PlaylistModel.playState.LOOP_SCENE;
   }
 
-  // Triggered when we click the repeat button
-  handleRepeatButtonClick() {
-    this.toggleRepeatPlaylist();
+  // Triggered when we click the stop button
+  @action handleStopButtonClick() {
+    this.currentPlayState = PlaylistModel.playState.STOPPED;
   }
 
   get activePlaylistItem() {
     return UIStore.get().stateTree.controlPanel.activePlaylistItem;
   }
 
-  set activePlaylistItem(value) {
-    UIStore.get().stateTree.controlPanel.activePlaylistItem = value;
-  }
+  // set activePlaylistItem(value) {
+  //   UIStore.get().stateTree.controlPanel.activePlaylistItem = value;
+  // }
 
   // dunno if computed is the right thing here.
   get activeControls() {
@@ -103,6 +100,18 @@ class ControlPanel extends React.Component {
   // dunno if computed is the right thing here.
   getActivePlaylist() {
     return UIStore.get().stateTree.controlPanel.activePlaylist;
+  }
+
+  get isPlaying() {
+    return this.currentPlayState === PlaylistModel.playState.PLAYING;
+  }
+
+  get isLooping() {
+    return this.currentPlayState === PlaylistModel.playState.LOOP_SCENE;
+  }
+
+  get isStopped() {
+    return this.currentPlayState === PlaylistModel.playState.STOPPED;
   }
 
   // Renders the container for the currently playing Scene
@@ -127,17 +136,17 @@ class ControlPanel extends React.Component {
         <ControlPanelButton
           active={ this.isPlaying }
           onClick={ this.handlePlayButtonClick }>
-          Play
+          <PlayIcon />
         </ControlPanelButton>
         <ControlPanelButton
-          active={ this.shuffleEnabled }
-          onClick={ this.handleShuffleButtonClick }>
-          Shuffle Clips
+          active={ this.isLooping }
+          onClick={ this.handleLoopSceneButtonClick }>
+          <LoopIcon />
         </ControlPanelButton>
         <ControlPanelButton
-          active={ this.repeatEnabled }
-          onClick={ this.handleRepeatButtonClick }>
-          Repeat Playlist
+          active={ this.isStopped }
+          onClick={ this.handleStopButtonClick }>
+          <StopIcon />
         </ControlPanelButton>
       </ButtonGroup>
     );
@@ -153,7 +162,7 @@ class ControlPanel extends React.Component {
       <PlaylistItemView
         playlist={ activePlaylist }
         activePlaylistItem={ this.activePlaylistItem }
-        onItemClick={ this.handleSceneClick } />
+        onItemClick={ this.handlePlaylistItemClick } />
     );
   }
 
@@ -173,14 +182,6 @@ class ControlPanel extends React.Component {
 
     const playlistItems = PlaylistStore.get().getItems();
 
-    if (activePlaylist == null) {
-      sceneItems = [];
-    } else {
-      sceneItems = activePlaylist.items.map((item) => {
-        return item.scene;
-      });
-    }
-
     return (
       <DragDropContext>
         <Container fluid>
@@ -189,7 +190,13 @@ class ControlPanel extends React.Component {
               <Container fluid>
                 <Row>
                   <Col>
-                    Current Playlist: { activePlaylistName }
+                    <div>Current Playlist: { activePlaylistName }</div>
+                    <div>({ this.currentPlayState })</div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    { this.renderPlaylistControlButtons() }
                   </Col>
                 </Row>
                 <Row>
@@ -203,11 +210,6 @@ class ControlPanel extends React.Component {
                 <Row>
                   <Col>
                     { this.renderPlaylistItemList() }
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    { this.renderPlaylistControlButtons() }
                   </Col>
                 </Row>
               </Container>

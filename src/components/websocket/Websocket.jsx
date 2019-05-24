@@ -39,7 +39,9 @@ class Websocket extends React.Component {
 
     websocket.onerror = (evt) => {
       console.log("!!! Websocket: onError triggered", evt);
-      this.props.onError(evt.data);
+      if (this.props.onError) {
+        this.props.onError(evt.data);
+      }
     };
 
     websocket.onmessage = (evt) => {

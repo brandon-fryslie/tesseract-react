@@ -10,6 +10,9 @@ class DurationRemaining extends React.Component {
   // the time remaining on the clock in ms
   @observable timeRemaining;
 
+  // A reference to the 'setInterval' result
+  @observable timer;
+
   constructor(...args) {
     super(...args);
 
@@ -33,9 +36,11 @@ class DurationRemaining extends React.Component {
   }
 
   startTimer(timeRemaining) {
+    // console.log(`[DurationRemaining] Starting timer with timeRemaining set to ${timeRemaining}`);
     // handle infinity case
     if (timeRemaining === -1) {
       this.timeRemaining = timeRemaining;
+      clearInterval(this.timer);
       return;
     }
 
@@ -70,7 +75,7 @@ class DurationRemaining extends React.Component {
     if (this.timeRemaining === -1) {
       timeRemaining = 'Infinity';
     } else {
-      // const timeObj = Util.msToTime();
+      // const timeObj = Util.msToTime(); // this fn can render the time in a prettier format
       timeRemaining = `${ (this.timeRemaining / 1000).toFixed(2) }`;
     }
 
