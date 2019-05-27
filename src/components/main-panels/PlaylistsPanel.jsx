@@ -15,6 +15,7 @@ import { action, computed, reaction } from 'mobx';
 import PlaylistStore from '../../stores/PlaylistStore';
 import SceneStore from '../../stores/SceneStore';
 import UIStore from '../../stores/UIStore';
+import NewPlaylistModal from '../modals/NewPlaylistModal';
 
 @observer
 class PlayListsPanel extends React.Component {
@@ -32,7 +33,7 @@ class PlayListsPanel extends React.Component {
         // the disposer in this method)
         this.activePlaylist = playlistItems[0];
         setActivePlaylistOnLoadDisposer();
-      }
+      },
     );
 
     // Bind event handlers to the correct value of 'this'
@@ -112,6 +113,14 @@ class PlayListsPanel extends React.Component {
       playlistEditor = <span>No Current Playlist</span>;
     }
 
+    // TODO: refactor
+    let newPlaylistModal;
+    if (UIStore.get().stateTree.playlistsPanel.newPlaylistModalIsOpen) {
+      newPlaylistModal = <NewPlaylistModal />;
+    } else {
+      newPlaylistModal = null;
+    }
+
     return (
       <DragDropContext onDragEnd={ this.handleDragEnd }>
         <Container fluid>
@@ -122,12 +131,11 @@ class PlayListsPanel extends React.Component {
               <ButtonToolbar>
                 <NewPlaylistButton />
               </ButtonToolbar>
-
+              { newPlaylistModal }
               <PlaylistsList
                 items={ PlaylistStore.get().getItems() }
                 activePlaylist={ this.activePlaylist }
                 onItemClick={ this.handlePlaylistClick } />
-
               <ScenesList scenes={ SceneStore.get().getItems() } />
             </Col>
             <Col>

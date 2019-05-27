@@ -16,10 +16,8 @@ export default class StateManager {
   constructor(...args) {
     // Bind event handlers to the correct value of 'this'
     this.handleLiveControlsUpdated = this.handleLiveControlsUpdated.bind(this);
-    this.handlePlaylistItemChange = this.handlePlaylistItemChange.bind(this);
     this.handlePlaylistUpdate = this.handlePlaylistUpdate.bind(this);
     this.handlePlayStateUpdated = this.handlePlayStateUpdated.bind(this);
-    // this.handleActivePlaylistUpdated = this.handleActivePlaylistUpdated.bind(this);
 
     this.observeItemsForChanges();
   }
@@ -170,53 +168,46 @@ export default class StateManager {
 
     // don't send a websocket message if the change was from the backend
     if (!target.changeFromBackend) {
-      // here I need to send a stateUpdate message via websocket
+
+      const activePlaylistItemId = target.activePlaylistItem ? target.activePlaylistItem.id : null;
+
       const data = {
         stateKey: 'playState',
         value: {
           playState: target.playState,
           activePlaylistId: target.activePlaylist.id,
-          activePlaylistItemId: target.activePlaylistItem.id,
+          activePlaylistItemId: activePlaylistItemId,
         },
       };
 
       this.ws.sendMessage('stateUpdate', data);
     }
   }
+
   ////////// ACTIVE STATE / LIVE CONTROLS //////////
 
   ////////// PLAYLIST STATE //////////
   observePlaylistItems() {
     console.log('[StateManager] Playlist Items Update.  Creating observers for playlist items');
-    const items = PlaylistStore.get().items.map((p) => { return p.items; });
-    items.forEach((playlistItems) => {
+
+    PlaylistStore.get().items.forEach((p) => {
       // This handles adding/removing/reordering
-      this.createObserve(playlistItems, this.handlePlaylistUpdate);
+      this.createObserve(p.items, (change) => { this.handlePlaylistUpdate(change, p); });
 
       // This handles editing items in the grid
-      this.createObserveList(playlistItems, this.handlePlaylistItemChange);
+      this.createObserveList(p.items, (change) => { this.handlePlaylistUpdate(change, p); });
     });
   }
 
-  handlePlaylistItemChange(change) {
+  handlePlaylistUpdate(change, playlist) {
     const data = {
       stateKey: 'playlist',
-      value: PlaylistItemModel.findContainingPlaylist(change.object.id).toJS(),
+      value: playlist.toJS(),
     };
 
     this.ws.sendMessage('stateUpdate', data);
   }
 
-  handlePlaylistUpdate(change) {
-    const updatedPlaylist = PlaylistItemModel.findContainingPlaylist(change.object[0].id);
-
-    const data = {
-      stateKey: 'playlist',
-      value: updatedPlaylist.toJS(),
-    };
-
-    this.ws.sendMessage('stateUpdate', data);
-  }
   ////////// PLAYLIST STATE //////////
 
 }

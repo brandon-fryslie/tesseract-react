@@ -14,6 +14,7 @@ export default class UIStore {
     },
     playlistsPanel: {
       activePlaylist: null, // Active playlist on playlists panel
+      newPlaylistModalIsOpen: false, // Is the new playlist modal open?
     },
     scenesPanel: {
       activeScene: null, // Active scene on scenes panel
@@ -50,16 +51,27 @@ export default class UIStore {
     const activePlaylistItem = activePlaylist.items.find(i => i.id === activeState.playlistItemId);
     const clipControlValues = activeState.clipControlValues;
 
+    // This handles the case where we are trying to play a playlist with no items
+    let activeControls;
+    if (activePlaylistItem == null) {
+      activeControls = null;
+    } else {
+      activeControls = this.getControlPanelClipControls(activePlaylistItem.scene, clipControlValues);
+    }
+
     this.setControlPanelState({
       activePlaylist: activePlaylist,
       activePlaylistItem: activePlaylistItem,
       currentSceneDurationRemaining: activeState.currentSceneDurationRemaining,
       playState: activeState.playlistPlayState,
-      activeControls: this.getControlPanelClipControls(activePlaylistItem.scene, clipControlValues),
-      changeFromBackend: true, // is this a good idea?
+      activeControls: activeControls,
+      changeFromBackend: true,
     });
 
-    console.log(`[UIStore.updateControlPanelActiveState] Updated control panel activeState to: 'playlist: ${ activePlaylist.displayName }' 'scene: ${ activePlaylistItem.scene.displayName }'`);
+    // another time we're handling a playlist with no items...
+    const activeSceneName = activePlaylistItem != null ? activePlaylistItem.scene.displayName : '[none]';
+
+    console.log(`[UIStore.updateControlPanelActiveState] Updated control panel activeState to: 'playlist: ${ activePlaylist.displayName }' 'scene: ${ activeSceneName }'`);
   }
 
   setControlPanelState(newState) {

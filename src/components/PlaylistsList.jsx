@@ -10,12 +10,14 @@ class PlaylistsList extends React.Component {
   render() {
     const activePlaylist = this.props.activePlaylist;
 
+    const sortedItems = this.props.items.sort((p1, p2) => { return p1.id < p2.id ? -1 : p1.id > p2.id ? 1 : 0; });
+
     return (
       <Card className="mt-3 mb-3">
         <Card.Header>Playlists</Card.Header>
         <ListGroup as="ul">
           {
-            this.props.items.map((playlist, idx) => (
+            sortedItems.map((playlist, idx) => (
               <ListGroup.Item
                 action
                 as="li"
