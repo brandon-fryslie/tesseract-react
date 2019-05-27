@@ -9,9 +9,17 @@ import SceneStore from '../stores/SceneStore';
 
 @observer
 class ScenesList extends React.Component {
-  // constructor(...args) {
-  //   super(...args);
-  // }
+  constructor(...args) {
+    super(...args);
+
+    this.handleItemClick = this.handleItemClick.bind(this);
+  }
+
+  handleItemClick(...args) {
+    if (this.props.onItemClick) {
+      this.props.onItemClick(...args);
+    }
+  }
 
   render() {
     return (
@@ -28,7 +36,7 @@ class ScenesList extends React.Component {
                       key={ item.uuid }
                       idx={ idx }
                       item={ item }
-                      onItemClick={ this.props.onItemClick }
+                      onItemClick={ this.handleItemClick }
                       active={ this.props.activeScene && this.props.activeScene.id === item.id } />
                   );
                 },

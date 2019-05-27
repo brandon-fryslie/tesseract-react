@@ -59,6 +59,7 @@
     "one-var-declaration-per-line": "off",
     "one-var": "off",
     "object-shorthand": "off",
+    "no-param-reassign": "off",
     // disabled crap
 
 //    "react/prefer-stateless-function": "warn",

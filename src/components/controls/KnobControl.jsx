@@ -1,5 +1,4 @@
 import React from 'react';
-import ListGroup from 'react-bootstrap/ListGroup';
 import Card from 'react-bootstrap/Card';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
@@ -34,6 +33,12 @@ class KnobControl extends React.Component {
         </Card.Body>
       </Card>
     );
+  }
+
+  componentWillUnmount() {
+    // there's some situation (race condition) where we try to update this component
+    // after it is already removed from the dom.  ideally we should cleanup references here
+    // debugger
   }
 }
 

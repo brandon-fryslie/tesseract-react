@@ -132,7 +132,7 @@ class ControlPanel extends React.Component {
 
   renderPlaylistControlButtons() {
     return (
-      <ButtonGroup>
+      <ButtonGroup className="d-flex" size="lg">
         <ControlPanelButton
           active={ this.isPlaying }
           onClick={ this.handlePlayButtonClick }>
@@ -191,7 +191,7 @@ class ControlPanel extends React.Component {
                 <Row>
                   <Col>
                     <div>Current Playlist: { activePlaylistName }</div>
-                    <div>({ this.currentPlayState })</div>
+                    <div className="mt-3 mb-3">({ this.currentPlayState })</div>
                   </Col>
                 </Row>
                 <Row>
@@ -207,12 +207,10 @@ class ControlPanel extends React.Component {
                       onItemClick={ this.handlePlaylistClick } />
                   </Col>
                 </Row>
-                <Row>
-                  <Col>
-                    { this.renderPlaylistItemList() }
-                  </Col>
-                </Row>
               </Container>
+            </Col>
+            <Col sm={ 2 }>
+              { this.renderPlaylistItemList() }
             </Col>
             <Col>
               <Container fluid>

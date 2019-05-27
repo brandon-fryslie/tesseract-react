@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 import KnobControl from './controls/KnobControl';
+import FilePickerControl from './controls/FilePickerControl';
 import CardGroup from 'react-bootstrap/CardGroup';
 import ClipsList from './ClipsList';
 import ClipStore from '../stores/ClipStore';
@@ -19,23 +20,14 @@ class ChannelControls extends React.Component {
   //   super(...args);
   // }
 
-  renderKnob(control, idx) {
-    return (
-      <KnobControl control={ control } key={ idx } />
-    );
-  }
-
-  renderSlider(control, idx) {
-    return (
-      <SliderControl control={ control } key={ idx } />
-    );
-  }
 
   renderClipControl(control, idx) {
     if (control.type === 'knob') {
-      return this.renderKnob(control, idx);
+      return <KnobControl control={ control } key={ idx } />;
     } else if (control.type === 'slider') {
-      return this.renderSlider(control, idx);
+      return <SliderControl control={ control } key={ idx } />;
+    } else if (control.type === 'videoFile') {
+      return <FilePickerControl control={ control } key={ idx } />;
     }
 
     throw `renderClipControl: Not implemented for type ${ control.type }`;

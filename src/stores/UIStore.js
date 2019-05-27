@@ -48,15 +48,14 @@ export default class UIStore {
   @action updateControlPanelActiveState(activeState) {
     const activePlaylist = PlaylistStore.get().find('id', activeState.playlistId);
     const activePlaylistItem = activePlaylist.items.find(i => i.id === activeState.playlistItemId);
-
-    // debugger
+    const clipControlValues = activeState.clipControlValues;
 
     this.setControlPanelState({
       activePlaylist: activePlaylist,
       activePlaylistItem: activePlaylistItem,
       currentSceneDurationRemaining: activeState.currentSceneDurationRemaining,
       playState: activeState.playlistPlayState,
-      activeControls: this.getControlPanelClipControls(activePlaylistItem.scene),
+      activeControls: this.getControlPanelClipControls(activePlaylistItem.scene, clipControlValues),
       changeFromBackend: true, // is this a good idea?
     });
 
@@ -76,9 +75,20 @@ export default class UIStore {
     });
   }
 
-  getControlPanelClipControls(scene) {
+  // Gets the ControlModel objects that correspond to the active scene
+  // Duplicates the Models rather than changing the existing ones that are defined on the scene in the store
+  // If we didn't do this, changing the live controls would update the Scene itself
+  getControlPanelClipControls(scene, clipControlValues) {
+    if (scene.clip.clipId !== clipControlValues.clipId) {
+      throw `[UIStore] Error: Scene clipId '${scene.clip.clipId}' doesn't match clipId for values '${clipControlValues.clipId}'`;
+    }
+
+    const values = clipControlValues.values;
+
     return scene.clipControls.map((control) => {
-      return ControlModel.fromJS(control.toJS());
+      const newControlModel = ControlModel.fromJS(control.toJS());
+      newControlModel.currentValue = values[newControlModel.fieldName];
+      return newControlModel;
     });
   }
 }
