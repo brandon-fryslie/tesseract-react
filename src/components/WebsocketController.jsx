@@ -61,7 +61,7 @@ class WebsocketController extends React.Component {
   // Action: string
   // data: object
   sendMessage(action, data = {}) {
-    console.log(`[WebsocketController] Sending websocket message. action: ${ action }`);
+    console.log(`[WebsocketController] Sending websocket message. action: ${ action }`, data);
 
     const message = JSON.stringify({ action, data });
 

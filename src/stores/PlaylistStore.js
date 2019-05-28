@@ -17,8 +17,8 @@ export default class PlaylistStore extends BaseStore {
   }
 
   // this can be generified, just getting it working for now
-  addNewPlaylist(displayName, items = []) {
-    this.addItem(new PlaylistModel(this.getNextId(), displayName, items));
+  addNewPlaylist(displayName, defaultDuration, items = []) {
+    this.addItem(new PlaylistModel(this.getNextId(), displayName, defaultDuration, items));
   }
 
   getNextId() {

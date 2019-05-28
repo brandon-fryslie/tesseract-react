@@ -13,7 +13,8 @@ class NewPlaylistButton extends React.Component {
   }
 
   handleClick() {
-    UIStore.get().stateTree.playlistsPanel.newPlaylistModalIsOpen = true;
+    UIStore.get().stateTree.playlistModal.isOpen = true;
+    UIStore.get().stateTree.playlistModal.activePlaylist = null;
   }
 
   render() {

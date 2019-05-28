@@ -10,7 +10,7 @@ export default class PlaylistModel extends BaseModel {
   @observable items = [];
 
   // The default duration to use when adding a new Scene
-  defaultDuration = 60;
+  @observable defaultDuration;
 
   // Fake ENUM to match the Java side
   static playState = {
@@ -19,11 +19,17 @@ export default class PlaylistModel extends BaseModel {
     STOPPED: 'STOPPED',
   };
 
-  constructor(id, displayName, items) {
+  constructor(id, displayName, defaultDuration, items) {
     super();
+
+    if (defaultDuration == null) {
+      console.trace();
+      throw "[PlaylistModel] Default duration was null";
+    }
 
     this.id = id;
     this.displayName = displayName;
+    this.defaultDuration = defaultDuration;
     this.items.replace(items);
   }
 
@@ -46,11 +52,12 @@ export default class PlaylistModel extends BaseModel {
     return {
       id: this.id,
       displayName: this.displayName,
+      defaultDuration: this.defaultDuration,
       items: this.items.map(item => item.toJS()),
     };
   }
 
   static fromJS(obj) {
-    return new PlaylistModel(obj.id, obj.displayName, obj.items);
+    return new PlaylistModel(obj.id, obj.displayName, obj.defaultDuration, obj.items);
   }
 }

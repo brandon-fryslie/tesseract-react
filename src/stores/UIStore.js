@@ -14,7 +14,6 @@ export default class UIStore {
     },
     playlistsPanel: {
       activePlaylist: null, // Active playlist on playlists panel
-      newPlaylistModalIsOpen: false, // Is the new playlist modal open?
     },
     scenesPanel: {
       activeScene: null, // Active scene on scenes panel
@@ -24,6 +23,10 @@ export default class UIStore {
       serverAddr: 'localhost',
       // State of any edited fields, if this has values we know we have unsaved data
       editState: {},
+    },
+    playlistModal: {
+      isOpen: false,
+      activePlaylist: null, // null if we're creating a playlist, defined otherwise
     },
   };
 

@@ -54,7 +54,7 @@ class MainContent extends React.Component {
         <WebsocketController
           websocketIndicatorModel={ this.websocketIndicatorModel } />
         <PageHeader isConnected={ this.websocketIndicatorModel.isConnected } />
-        <Tab.Container defaultActiveKey="live-control">
+        <Tab.Container defaultActiveKey="playlists">
           <Row>
             <Col sm={ 1 }>
               <Nav variant="pills" className="flex-column tesseract-sidebar">

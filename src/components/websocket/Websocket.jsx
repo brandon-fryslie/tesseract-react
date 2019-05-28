@@ -7,7 +7,6 @@ class Websocket extends React.Component {
 
   constructor(props) {
     super(props);
-    // debugger
     this.state = {
       ws: new WebSocket(this.props.url, this.props.protocol),
       attempts: 1,
@@ -75,8 +74,6 @@ class Websocket extends React.Component {
 
 
   componentDidUpdate() {
-    // debugger;
-
     // close existing websocket
     clearTimeout(this.timeoutID);
     this.state.ws.close();

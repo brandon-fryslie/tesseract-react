@@ -15,7 +15,10 @@ import { action, computed, reaction } from 'mobx';
 import PlaylistStore from '../../stores/PlaylistStore';
 import SceneStore from '../../stores/SceneStore';
 import UIStore from '../../stores/UIStore';
-import NewPlaylistModal from '../modals/NewPlaylistModal';
+import PlaylistDetailModal from '../modals/PlaylistDetailModal';
+import Button from 'react-bootstrap/Button';
+import DeleteIcon from '@material-ui/icons/DeleteForever';
+import EditIcon from '@material-ui/icons/Edit';
 
 @observer
 class PlayListsPanel extends React.Component {
@@ -38,6 +41,8 @@ class PlayListsPanel extends React.Component {
 
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
+    this.handleEditClick = this.handleEditClick.bind(this);
+    this.handleDeleteClick = this.handleDeleteClick.bind(this);
     this.handleDragEnd = this.handleDragEnd.bind(this);
   }
 
@@ -103,6 +108,15 @@ class PlayListsPanel extends React.Component {
     console.log(`WARNING: No drag handler set for combo of source ${ source.droppableId } and dest ${ destination.droppableId }`);
   }
 
+  handleEditClick() {
+    UIStore.get().stateTree.playlistModal.activePlaylist = this.activePlaylist;
+    UIStore.get().stateTree.playlistModal.isOpen = true;
+  }
+
+  handleDeleteClick() {
+      // handle delete
+  }
+
   render() {
     const activePlaylist = this.activePlaylist;
 
@@ -113,13 +127,7 @@ class PlayListsPanel extends React.Component {
       playlistEditor = <span>No Current Playlist</span>;
     }
 
-    // TODO: refactor
-    let newPlaylistModal;
-    if (UIStore.get().stateTree.playlistsPanel.newPlaylistModalIsOpen) {
-      newPlaylistModal = <NewPlaylistModal />;
-    } else {
-      newPlaylistModal = null;
-    }
+    const displayName = this.activePlaylist != null ? this.activePlaylist.displayName : '<none>';
 
     return (
       <DragDropContext onDragEnd={ this.handleDragEnd }>
@@ -131,7 +139,7 @@ class PlayListsPanel extends React.Component {
               <ButtonToolbar>
                 <NewPlaylistButton />
               </ButtonToolbar>
-              { newPlaylistModal }
+              <PlaylistDetailModal />
               <PlaylistsList
                 items={ PlaylistStore.get().getItems() }
                 activePlaylist={ this.activePlaylist }
@@ -139,7 +147,16 @@ class PlayListsPanel extends React.Component {
               <ScenesList scenes={ SceneStore.get().getItems() } />
             </Col>
             <Col>
-              { playlistEditor }
+              <Row>
+                <div className="d-flex flex-row">
+                  <div className="m-2">Current playlist: { displayName }</div>
+                  <Button className="m-2" variant="primary" onClick={ this.handleEditClick }><EditIcon /></Button>
+                  <Button className="m-2" variant="primary" onClick={ this.handleDeleteClick }><DeleteIcon /></Button>
+                </div>
+              </Row>
+              <Row>
+                { playlistEditor }
+              </Row>
             </Col>
           </Row>
         </Container>

@@ -14,7 +14,6 @@ class ClipsList extends React.Component {
   // }
 
   renderClipListRow(item, idx) {
-    // debugger;
     return (
       <DraggableWrapper index={ idx } key={ item.uuid } draggableId={ item.uuid }>
         <ListGroup.Item action

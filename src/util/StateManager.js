@@ -191,6 +191,9 @@ export default class StateManager {
     console.log('[StateManager] Playlist Items Update.  Creating observers for playlist items');
 
     PlaylistStore.get().items.forEach((p) => {
+      // observe playlists for changes in displayName or defaultDuration
+      this.createObserve(p, (change) => { this.handlePlaylistUpdate(change, p); });
+
       // This handles adding/removing/reordering
       this.createObserve(p.items, (change) => { this.handlePlaylistUpdate(change, p); });
 
