@@ -7,7 +7,7 @@ import ButtonGroup from 'react-bootstrap/es/ButtonGroup';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import PlaylistsList from '../PlaylistsList';
-import { action, observable } from 'mobx';
+import { action, computed } from 'mobx';
 import UIStore from '../../stores/UIStore';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ChannelControls from '../ChannelControls';
@@ -17,6 +17,7 @@ import PlaylistModel from '../../models/PlaylistModel';
 import LoopIcon from '@material-ui/icons/Loop';
 import PlayIcon from '@material-ui/icons/PlayArrow';
 import StopIcon from '@material-ui/icons/Stop';
+import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 
 @observer
 class ControlPanel extends React.Component {
@@ -29,6 +30,9 @@ class ControlPanel extends React.Component {
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
     this.handleLoopSceneButtonClick = this.handleLoopSceneButtonClick.bind(this);
     this.handleStopButtonClick = this.handleStopButtonClick.bind(this);
+    this.handleResetSceneSettingsClick = this.handleResetSceneSettingsClick.bind(this);
+    this.handleSaveSceneSettingsClick = this.handleSaveSceneSettingsClick.bind(this);
+    this.handleSaveAsSceneSettingsClick = this.handleSaveAsSceneSettingsClick.bind(this);
   }
 
   get currentPlayState() {
@@ -84,34 +88,82 @@ class ControlPanel extends React.Component {
     this.currentPlayState = PlaylistModel.playState.STOPPED;
   }
 
-  get activePlaylistItem() {
+  @computed get activePlaylistItem() {
     return UIStore.get().stateTree.controlPanel.activePlaylistItem;
   }
 
-  // set activePlaylistItem(value) {
-  //   UIStore.get().stateTree.controlPanel.activePlaylistItem = value;
-  // }
-
   // dunno if computed is the right thing here.
-  get activeControls() {
+  @computed get activeControls() {
     return UIStore.get().stateTree.controlPanel.activeControls;
   }
 
   // dunno if computed is the right thing here.
-  getActivePlaylist() {
+  @computed get activePlaylist() {
     return UIStore.get().stateTree.controlPanel.activePlaylist;
   }
 
-  get isPlaying() {
+  @computed get isPlaying() {
     return this.currentPlayState === PlaylistModel.playState.PLAYING;
   }
 
-  get isLooping() {
+  @computed get isLooping() {
     return this.currentPlayState === PlaylistModel.playState.LOOP_SCENE;
   }
 
-  get isStopped() {
+  @computed get isStopped() {
     return this.currentPlayState === PlaylistModel.playState.STOPPED;
+  }
+
+  @action handleResetSceneSettingsClick() {
+    // TODO: find a better way to do this (gotta rethink a bunch of stuff for that to happen)
+    // The active controls should always be a clone of the activePlaylistItem's controls, so we don't have to be too careful syncing the values
+    // if we're wrong, video clip will break first :)
+    const controls = UIStore.get().stateTree.controlPanel.activeControls;
+
+    controls.forEach((control, idx) => {
+      // this contains the original value of the control
+      const originalValue = this.activePlaylistItem.scene.clipControls[idx].currentValue;
+      // console.log(`[ControlPanel] Resetting ${control.displayName} ${control.fieldName} to ${originalValue}`);
+      control.currentValue = originalValue;
+    });
+  }
+
+  @action handleSaveSceneSettingsClick() {
+    // Save current settings to scene
+    // this needs to do the opposite of reset: take the activeControls settings and apply them to 'scene'
+    console.log('[ControlPanel] Clicked "Save Scene Settings"');
+
+    const scene = this.activePlaylistItem.scene;
+
+    const controls = UIStore.get().stateTree.controlPanel.activeControls;
+
+    const controlValues = controls.map(control => control.currentValue);
+
+    scene.setClipValues(scene.clip, controlValues);
+  }
+
+  handleSaveAsSceneSettingsClick() {
+    // Pop up a modal allowing a user to choose a name for the new Scene
+    console.log('[ControlPanel] Clicked "Save as new Scene"');
+  }
+
+  // Renders the container for the currently playing Scene
+  renderSceneEditButtons() {
+    const buttonClass = 'mb-2 ml-4 mr-4';
+
+    let buttons;
+    if (this.activePlaylistItem) {
+      buttons = (
+        <ButtonToolbar className="d-flex flex-row justify-content-around">
+          <div><Button variant="primary" size="lg" className={ buttonClass } onClick={ this.handleResetSceneSettingsClick }>Reset Scene</Button></div>
+          <div><Button variant="primary" size="lg" className={ buttonClass } onClick={ this.handleSaveSceneSettingsClick }>Save Scene Settings</Button></div>
+          <div><Button variant="primary" size="lg" className={ buttonClass } onClick={ this.handleSaveAsSceneSettingsClick }>Save as new Scene</Button></div>
+        </ButtonToolbar>
+      );
+    } else {
+      buttons = null;
+    }
+    return buttons;
   }
 
   // Renders the container for the currently playing Scene
@@ -153,14 +205,12 @@ class ControlPanel extends React.Component {
   }
 
   renderPlaylistItemList() {
-    const activePlaylist = this.getActivePlaylist();
-
-    if (activePlaylist == null) {
+    if (this.activePlaylist == null) {
       return null;
     }
     return (
       <PlaylistItemView
-        playlist={ activePlaylist }
+        playlist={ this.activePlaylist }
         activePlaylistItem={ this.activePlaylistItem }
         onItemClick={ this.handlePlaylistItemClick } />
     );
@@ -214,6 +264,7 @@ class ControlPanel extends React.Component {
             </Col>
             <Col>
               <Container fluid>
+                { this.renderSceneEditButtons() }
                 { this.renderControlsContainer() }
               </Container>
             </Col>

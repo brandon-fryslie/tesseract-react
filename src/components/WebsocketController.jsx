@@ -106,7 +106,6 @@ class WebsocketController extends React.Component {
 
 }
 
-WebsocketController.propTypes = {
-};
+WebsocketController.propTypes = {};
 
 export default WebsocketController;

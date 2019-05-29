@@ -23,29 +23,24 @@ export default class SceneModel extends BaseModel {
     super();
     this.id = id;
     this.displayName = displayName;
-    this.rawClipValues = rawClipValues;
 
+    // these are weirdly interdependent.  refactor
+    this.rawClipValues = rawClipValues;
     this.setClip(clip);
+    this.setClipValues(this.clip, rawClipValues);
   }
 
   // When we set the clip, create the 'Control' objects
   setClip(clip) {
     this.clip = clip;
+    this.setClipValues(clip, this.rawClipValues);
+  }
 
-    // if we have controls, save their values to an array
-    let values;
-    if (this.clipControls && this.clipControls.length > 0) {
-      values = this.clipControls.map(control => control.currentValue);
-    } else {
-      values = this.rawClipValues;
-    }
-
-    const controls = this.createClipControls(clip, values);
-
-    this.clipControls.replace(controls);
-
-    // keep rawClipValues updated
+  // TODO: refactor
+  setClipValues(clip, values) {
     this.rawClipValues = values;
+    const controls = this.createClipControls(clip, values);
+    this.clipControls.replace(controls);
   }
 
   // Create Clip Controls.  Set values to the values in 'values'
@@ -62,6 +57,18 @@ export default class SceneModel extends BaseModel {
     });
 
     return controls;
+  }
+
+  // Clones the existing clip controls
+  cloneClipControls(values = null) {
+    return this.clipControls.map((control) => {
+      const newControlModel = ControlModel.fromJS(control.toJS());
+
+      if (values != null) {
+        newControlModel.currentValue = values[newControlModel.fieldName];
+      }
+      return newControlModel;
+    });
   }
 
   toJS() {

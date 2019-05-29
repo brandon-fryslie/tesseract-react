@@ -10,6 +10,8 @@ class PlaylistsList extends React.Component {
   render() {
     const activePlaylist = this.props.activePlaylist;
 
+    // I copied this from the internet, could fix it later
+    // eslint-disable-next-line no-nested-ternary
     const sortedItems = this.props.items.sort((p1, p2) => { return p1.id < p2.id ? -1 : p1.id > p2.id ? 1 : 0; });
 
     return (

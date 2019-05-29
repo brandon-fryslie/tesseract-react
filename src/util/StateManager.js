@@ -82,13 +82,16 @@ export default class StateManager {
     // this.createObserve(UIStore.get().stateTree, '', this.handlePlayStateUpdated);
     this.createObserve(UIStore.get().stateTree, this.handlePlayStateUpdated);
 
-    // handle changing to a different playlist
-    // this.createObserve(UIStore.get().stateTree.controlPanel, this.handleActivePlaylistUpdated);
-
     // whenever the contents of the PlaylistStore change, create playlist observers
     this.createReaction(
       () => PlaylistStore.get().items.map(p => p),
-      () => this.observePlaylistItems(),
+      () => this.observePlaylists(),
+    );
+
+    // whenever the contents of the SceneStore change, create playlist observers
+    this.createReaction(
+      () => SceneStore.get().items.map(p => p),
+      () => this.observeScenes(),
     );
   }
 
@@ -134,6 +137,10 @@ export default class StateManager {
     // Ignore these events
     if (change.type === 'splice') {
       return;
+    }
+
+    if (change.object.constructor.name !== 'ControlModel') {
+      throw `[StateManager] Got a change event for activeControls that was not an individual control change.  That isn't implemented.  Change object name: ${change.object.constructor.name}`;
     }
 
     // here I need to send a stateUpdate message via websocket
@@ -187,8 +194,8 @@ export default class StateManager {
   ////////// ACTIVE STATE / LIVE CONTROLS //////////
 
   ////////// PLAYLIST STATE //////////
-  observePlaylistItems() {
-    console.log('[StateManager] Playlist Items Update.  Creating observers for playlist items');
+  observePlaylists() {
+    console.log('[StateManager] Playlist Update.  Creating observers for playlist items');
 
     PlaylistStore.get().items.forEach((p) => {
       // observe playlists for changes in displayName or defaultDuration
@@ -210,7 +217,24 @@ export default class StateManager {
 
     this.ws.sendMessage('stateUpdate', data);
   }
-
   ////////// PLAYLIST STATE //////////
 
+  ////////// SCENE STATE //////////
+  observeScenes() {
+    console.log('[StateManager] Scene Update.  Creating observers for Scenes');
+
+    SceneStore.get().items.forEach((scene) => {
+      this.createObserve(scene, (change) => { this.handleSceneUpdate(change, scene); });
+    });
+  }
+
+  handleSceneUpdate(change, scene) {
+    const data = {
+      stateKey: 'scene',
+      value: scene.toJS(),
+    };
+
+    this.ws.sendMessage('stateUpdate', data);
+  }
+  ////////// SCENE STATE //////////
 }

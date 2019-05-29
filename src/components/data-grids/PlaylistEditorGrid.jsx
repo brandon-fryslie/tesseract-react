@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 // Data Grid for editing a playlist
 
 import * as React from 'react';
