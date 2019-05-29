@@ -39,8 +39,12 @@ class PlaylistDetailModal extends React.Component {
   }
 
   handleDefaultDurationValueChange(event) {
-    const val = parseInt(event.target.value, 10);
-    // console.log(`[PlaylistDetailModal] default duration value changed to: ${val}`);
+    let val = parseInt(event.target.value, 10);
+    if (Number.isNaN(val)) {
+      val = 60;
+      console.log(`[PlaylistDurationModel] Error: ${event.target.value} is not a valid integer.  Defaulting to 60`);
+    }
+
     this.defaultDurationValue = val;
   }
 
@@ -108,8 +112,7 @@ class PlaylistDetailModal extends React.Component {
             type="text"
             value={ this.nameValue }
             onChange={ this.handleNameFieldChange }
-            fullWidth
-          />
+            fullWidth />
           <TextField
             autoFocus
             margin="dense"
@@ -118,8 +121,7 @@ class PlaylistDetailModal extends React.Component {
             type="text"
             value={ this.defaultDurationValue }
             onChange={ this.handleDefaultDurationValueChange }
-            fullWidth
-          />
+            fullWidth />
         </DialogContent>
         <DialogActions>
           <Button onClick={ this.handleDialogClose } color="primary">

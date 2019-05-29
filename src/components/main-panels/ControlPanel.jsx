@@ -224,10 +224,7 @@ class ControlPanel extends React.Component {
   }
 }
 
-ControlPanel.propTypes = {
-  playlistStore: PropTypes.object.isRequired,
-  websocketRef: PropTypes.object,
-};
+ControlPanel.propTypes = {};
 
 export default ControlPanel;
 

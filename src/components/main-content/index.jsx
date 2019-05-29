@@ -18,7 +18,7 @@ import ClipStore from '../../stores/ClipStore';
 import SceneStore from '../../stores/SceneStore';
 import { observable } from 'mobx';
 import WebsocketController from '../WebsocketController';
-import WebsocketIndicatorModel from '../../models/WebsocketIndicatorModel';
+import SidebarButtons from '../SidebarButtons';
 
 // Don't remove this or the styles won't be imported
 import style from './MainContent.scss';
@@ -34,8 +34,6 @@ class MainContent extends React.Component {
   // Reference to websocket;
   @observable websocketRef = null;
 
-  @observable websocketIndicatorModel = null;
-
   constructor(...args) {
     super(...args);
   }
@@ -44,19 +42,16 @@ class MainContent extends React.Component {
     this.clipStore = ClipStore.get();
     this.sceneStore = SceneStore.get();
     this.playlistStore = PlaylistStore.get();
-
-    this.websocketIndicatorModel = new WebsocketIndicatorModel();
   }
 
   render() {
     return (
       <div className="MainContent ml-4 mr-4 mb-4 pt-4">
-        <WebsocketController
-          websocketIndicatorModel={ this.websocketIndicatorModel } />
-        <PageHeader isConnected={ this.websocketIndicatorModel.isConnected } />
-        <Tab.Container defaultActiveKey="playlists">
+        <WebsocketController />
+        <Tab.Container defaultActiveKey="live-control">
           <Row>
-            <Col sm={ 1 }>
+            <Col sm={ 1 } className="d-flex align-items-end flex-column">
+              <div><h2>draco ui</h2></div>
               <Nav variant="pills" className="flex-column tesseract-sidebar">
                 <Nav.Item><Nav.Link eventKey="live-control">Live Control</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="playlists">Playlists</Nav.Link></Nav.Item>
@@ -65,20 +60,20 @@ class MainContent extends React.Component {
                 <Nav.Item><Nav.Link eventKey="settings">Settings</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="about">About</Nav.Link></Nav.Item>
               </Nav>
+              <div className="mt-auto p-2">
+                <SidebarButtons />
+              </div>
             </Col>
             <Col>
               <Tab.Content>
                 <Tab.Pane eventKey="live-control">
-                  <ControlPanel
-                    playlistStore={ this.playlistStore }
-                    websocketRef={ this.websocketRef } />
+                  <ControlPanel />
                 </Tab.Pane>
                 <Tab.Pane eventKey="playlists">
-                  <PlayListsPanel sceneStore={ this.sceneStore }
-                                  playlistStore={ this.playlistStore } />
+                  <PlayListsPanel />
                 </Tab.Pane>
                 <Tab.Pane eventKey="scenes">
-                  <ScenesPanel sceneStore={ this.sceneStore } clipStore={ this.clipStore } />
+                  <ScenesPanel />
                 </Tab.Pane>
                 <Tab.Pane eventKey="clips"><ClipsPanel /></Tab.Pane>
                 <Tab.Pane eventKey="settings"><SettingsPanel /></Tab.Pane>

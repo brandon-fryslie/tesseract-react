@@ -12,19 +12,11 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import UIStore from '../../stores/UIStore';
 import { observer } from 'mobx-react';
 
+// TODO: move this functionality elsewhere.  it is no longer used
+// mainly just need to move the 'full screen' button
+
 @observer
 class PageHeader extends Component {
-  renderConnectedIndicator(isConnected) {
-    const connectedStyle = { color: 'green' };
-    const disconnectedStyle = { color: 'red' };
-
-    if (isConnected) {
-      return <span style={ connectedStyle }>Connected!</span>;
-    } else {
-      return <span style={ disconnectedStyle }>Not connected</span>;
-    }
-  }
-
   renderHeaderButtons() {
     return (
       <ButtonToolbar aria-label="Toolbar with button groups">
@@ -52,10 +44,7 @@ class PageHeader extends Component {
       <div className={ style.PageHeader }>
         <Container fluid>
           <Row>
-            <Col xs={ 2 }><h2>draco ui</h2></Col>
-            <Col />
             <Col xs={ 2 }>{ this.renderHeaderButtons() }</Col>
-            <Col xs={ 2 }><span>{ this.renderConnectedIndicator(this.props.isConnected) }</span></Col>
           </Row>
         </Container>
       </div>
@@ -63,8 +52,6 @@ class PageHeader extends Component {
   }
 }
 
-PageHeader.propTypes = {
-  isConnected: PropTypes.bool.isRequired,
-};
+PageHeader.propTypes = {};
 
 export default PageHeader;

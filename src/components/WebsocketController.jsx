@@ -24,9 +24,13 @@ class WebsocketController extends React.Component {
     this.handleWebsocketRef = this.handleWebsocketRef.bind(this);
   }
 
+  set isConnected(value) {
+    UIStore.get().stateTree.websocket.isConnected = value;
+  }
+
   handleWebsocketOpen() {
     console.log('[WebsocketController] Websocket connection opened');
-    this.props.websocketIndicatorModel.setConnected(true);
+    this.isConnected = true;
 
     this.stateManager.loadInitialState();
   }
@@ -53,9 +57,7 @@ class WebsocketController extends React.Component {
 
   handleWebsocketClose() {
     console.log('[WebsocketController] Websocket connection closed');
-    this.props.websocketIndicatorModel.setConnected(false);
-
-    // this.shouldRequestInitialState = true;
+    this.isConnected = false;
   }
 
   // Action: string
@@ -105,7 +107,6 @@ class WebsocketController extends React.Component {
 }
 
 WebsocketController.propTypes = {
-  websocketIndicatorModel: PropTypes.object.isRequired,
 };
 
 export default WebsocketController;

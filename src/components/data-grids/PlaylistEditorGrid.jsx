@@ -1,9 +1,8 @@
-/* eslint-disable react/prop-types */
 // Data Grid for editing a playlist
 
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { autorun, action, observable, observe, reaction, computed } from 'mobx';
+import { action, computed } from 'mobx';
 import ReactDataGrid from 'react-data-grid';
 import { observer } from 'mobx-react';
 import DraggableWrapper from '../dnd-wrappers/DraggableWrapper';
@@ -25,7 +24,7 @@ const columns = [
     width: 75,
     formatter: DeleteIconFormatter,
     events: {
-      onClick: function (event, rowData) {
+      onClick: (event, rowData) => {
         const playlist = PlaylistItemModel.findContainingPlaylist(rowData.rowId);
         // remove item from playlist
         playlist.removeItem(rowData.rowId);
@@ -36,6 +35,10 @@ const columns = [
 ];
 
 // Do a bit of data manipulation and add a DraggableWrapper before using the default renderer
+// eslint-disable-next-line react/prop-types
+// ^^ I have no idea why this is triggered here.  this must technically be a 'function' component, so
+// it thinks it needs proptypes?  anyway, move these functions into the class for consistency with the
+// rest of the components
 const customRowRenderer = ({ renderBaseRow, ...canvasProps }) => {
   // Extract the correct data for the row
   // eslint-disable-next-line no-param-reassign
@@ -57,8 +60,6 @@ const customRowRenderer = ({ renderBaseRow, ...canvasProps }) => {
 class PlaylistEditorGrid extends React.Component {
   constructor(...args) {
     super(...args);
-
-    const props = args[0];
 
     // Bind event handlers to the correct value of 'this'
     this.handleGridRowsUpdated = this.handleGridRowsUpdated.bind(this);

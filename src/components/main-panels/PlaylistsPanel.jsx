@@ -25,8 +25,6 @@ class PlayListsPanel extends React.Component {
   constructor(...args) {
     super(...args);
 
-    const props = args[0];
-
     // Reacts when items in the playlist store change
     const setActivePlaylistOnLoadDisposer = reaction(
       () => { return PlaylistStore.get().items.map(i => i); },
@@ -34,6 +32,7 @@ class PlayListsPanel extends React.Component {
         // TODO: put a guard here.  if you've picked a playlist, we don't want to reset that
         // if some state changes.  this is for initial load. this might alredy work by calling
         // the disposer in this method)
+
         this.activePlaylist = playlistItems[0];
         setActivePlaylistOnLoadDisposer();
       },
@@ -165,9 +164,6 @@ class PlayListsPanel extends React.Component {
   }
 }
 
-PlayListsPanel.propTypes = {
-  playlistStore: PropTypes.object.isRequired,
-  sceneStore: PropTypes.object.isRequired,
-};
+PlayListsPanel.propTypes = {};
 
 export default PlayListsPanel;

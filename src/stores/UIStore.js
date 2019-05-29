@@ -28,6 +28,10 @@ export default class UIStore {
       isOpen: false,
       activePlaylist: null, // null if we're creating a playlist, defined otherwise
     },
+    websocket: {
+      isConnected: false,
+      ref: null,
+    }
   };
 
   // singleton pattern

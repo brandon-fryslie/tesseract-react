@@ -24,9 +24,8 @@ export default class PlaylistStore extends BaseStore {
   getNextId() {
     const ids = this.items.map(i => i.id).sort();
     const maxId = Math.max.apply(null, ids);
-    // eslint-disable-next-line no-restricted-globals
-    if (isNaN(maxId)) {
-      throw "[PlaylistStore]: Got NaN when trying to find the next ID";
+    if (Number.isNaN(maxId)) {
+      throw "[PlaylistStore] Got NaN when trying to find the next ID";
     }
 
     return maxId + 1;
