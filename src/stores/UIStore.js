@@ -28,6 +28,10 @@ export default class UIStore {
       isOpen: false,
       activePlaylist: null, // null if we're creating a playlist, defined otherwise
     },
+    sceneModal: {
+      isOpen: false,
+      activeScene: null, // null if we're creating a playlist, defined otherwise
+    },
     websocket: {
       isConnected: false,
       ref: null,
@@ -58,9 +62,9 @@ export default class UIStore {
     const activePlaylistItem = activePlaylist.items.find(i => i.id === activeState.playlistItemId);
     const clipControlValues = activeState.clipControlValues;
 
-    // This handles the case where we are trying to play a playlist with no items
     let activeControls;
     if (activePlaylistItem == null) {
+      // This handles the case where we are trying to play a playlist with no items
       activeControls = null;
     } else {
       activeControls = this.getControlPanelClipControls(activePlaylistItem.scene, clipControlValues);
@@ -76,7 +80,16 @@ export default class UIStore {
     });
 
     // another time we're handling a playlist with no items...
-    const activeSceneName = activePlaylistItem != null ? activePlaylistItem.scene.displayName : '[none]';
+    let activeSceneName;
+    if (activePlaylist == null) {
+      activeSceneName = '[no playlist]';
+    } else if (activePlaylist.items.length === 0) {
+      activeSceneName = '[playlist is empty]';
+    } else if (activePlaylistItem == null) {
+      activeSceneName = '[no active playlist item]';
+    } else {
+      activeSceneName = activePlaylistItem.scene.displayName;
+    }
 
     console.log(`[UIStore.updateControlPanelActiveState] Updated control panel activeState to: 'playlist: ${ activePlaylist.displayName }' 'scene: ${ activeSceneName }'`);
   }
@@ -99,6 +112,7 @@ export default class UIStore {
   // If we didn't do this, changing the live controls would update the Scene itself and persist those changes to the backend
   getControlPanelClipControls(scene, clipControlValues) {
     if (scene.clip.clipId !== clipControlValues.clipId) {
+      debugger;
       throw `[UIStore] Error: Scene clipId '${scene.clip.clipId}' doesn't match clipId for values '${clipControlValues.clipId}'`;
     }
 

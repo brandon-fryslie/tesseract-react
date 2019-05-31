@@ -23,8 +23,9 @@ class ScenesPanel extends React.Component {
     // const props = args[0];
 
     // we don't have any scenes loaded when this runs initially
+    // TODO: does this even do anything?  probably can remove this
     if (SceneStore.get().items.length > 0) {
-      this.activeScene = SceneStore.get().items[0];
+      this.activeScene = SceneStore.get().getItems()[0];
     }
 
     this.uiStore = UIStore.get();

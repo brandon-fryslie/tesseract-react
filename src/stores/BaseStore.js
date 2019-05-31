@@ -19,11 +19,23 @@ export default class BaseStore {
   }
 
   getItems() {
-    return this.items;
+    // eslint-disable-next-line no-nested-ternary
+    return this.items.sort((p1, p2) => { return p1.id < p2.id ? -1 : p1.id > p2.id ? 1 : 0; });
   }
 
   addItem(item) {
     this.items.push(item);
+  }
+
+  removeItem(item) {
+    // find item with same ID
+    const itemToRemove = this.items.find(i => i.id === item.id);
+
+    if (itemToRemove == null) {
+      throw `[BaseStore] ERROR: Could not find item to remove matching ${item.id} ${item.displayName}`;
+    }
+
+    this.items.remove(itemToRemove);
   }
 
   // Find an item in the store

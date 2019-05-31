@@ -19,21 +19,24 @@ export default class SceneModel extends BaseModel {
 
   @observable clipControls = [];
 
-  constructor(id, displayName, clip, rawClipValues) {
+  constructor(id, displayName, clip, rawClipValues = null) {
     super();
     this.id = id;
     this.displayName = displayName;
+    this.clip = clip;
 
-    // these are weirdly interdependent.  refactor
-    this.rawClipValues = rawClipValues;
-    this.setClip(clip);
-    this.setClipValues(this.clip, rawClipValues);
+    if (rawClipValues != null) {
+      this.setClipValues(this.clip, rawClipValues);
+    }
   }
 
-  // When we set the clip, create the 'Control' objects
   setClip(clip) {
     this.clip = clip;
-    this.setClipValues(clip, this.rawClipValues);
+
+    // create clip controls with default values
+    // totally refactor this
+    const clipDefaultValues = clip.controls.map(control => control.defaultValue);
+    this.setClipValues(clip, clipDefaultValues);
   }
 
   // TODO: refactor

@@ -42,7 +42,7 @@ class PlaylistDetailModal extends React.Component {
     let val = parseInt(event.target.value, 10);
     if (Number.isNaN(val)) {
       val = 60;
-      console.log(`[PlaylistDurationModel] Error: ${event.target.value} is not a valid integer.  Defaulting to 60`);
+      console.log(`[PlaylistDetailModal] Error: ${event.target.value} is not a valid integer.  Defaulting to 60`);
     }
 
     this.defaultDurationValue = val;

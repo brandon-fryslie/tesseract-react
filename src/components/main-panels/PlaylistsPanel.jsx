@@ -26,14 +26,11 @@ class PlayListsPanel extends React.Component {
     super(...args);
 
     // Reacts when items in the playlist store change
+    // Only set this value once (after we've loaded initial data)
     const setActivePlaylistOnLoadDisposer = reaction(
-      () => { return PlaylistStore.get().items.map(i => i); },
-      (playlistItems) => {
-        // TODO: put a guard here.  if you've picked a playlist, we don't want to reset that
-        // if some state changes.  this is for initial load. this might alredy work by calling
-        // the disposer in this method)
-
-        this.activePlaylist = playlistItems[0];
+      () => { return PlaylistStore.get().getItems().map(i => i); },
+      (playlists) => {
+        this.activePlaylist = playlists[0];
         setActivePlaylistOnLoadDisposer();
       },
     );

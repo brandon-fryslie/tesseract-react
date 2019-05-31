@@ -18,6 +18,8 @@ import LoopIcon from '@material-ui/icons/Loop';
 import PlayIcon from '@material-ui/icons/PlayArrow';
 import StopIcon from '@material-ui/icons/Stop';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
+import EditIcon from '@material-ui/icons/Edit';
+import SceneModal from '../modals/SceneModal';
 
 @observer
 class ControlPanel extends React.Component {
@@ -30,6 +32,7 @@ class ControlPanel extends React.Component {
     this.handlePlayButtonClick = this.handlePlayButtonClick.bind(this);
     this.handleLoopSceneButtonClick = this.handleLoopSceneButtonClick.bind(this);
     this.handleStopButtonClick = this.handleStopButtonClick.bind(this);
+    this.handleEditSceneClick = this.handleEditSceneClick.bind(this);
     this.handleResetSceneSettingsClick = this.handleResetSceneSettingsClick.bind(this);
     this.handleSaveSceneSettingsClick = this.handleSaveSceneSettingsClick.bind(this);
     this.handleSaveAsSceneSettingsClick = this.handleSaveAsSceneSettingsClick.bind(this);
@@ -114,6 +117,11 @@ class ControlPanel extends React.Component {
     return this.currentPlayState === PlaylistModel.playState.STOPPED;
   }
 
+  @action handleEditSceneClick() {
+    UIStore.get().stateTree.sceneModal.activeScene = this.activePlaylistItem.scene;
+    UIStore.get().stateTree.sceneModal.isOpen = true;
+  }
+
   @action handleResetSceneSettingsClick() {
     // TODO: find a better way to do this (gotta rethink a bunch of stuff for that to happen)
     // The active controls should always be a clone of the activePlaylistItem's controls, so we don't have to be too careful syncing the values
@@ -142,9 +150,9 @@ class ControlPanel extends React.Component {
     scene.setClipValues(scene.clip, controlValues);
   }
 
+  // Pop up a modal allowing a user to create a new scene
   handleSaveAsSceneSettingsClick() {
-    // Pop up a modal allowing a user to choose a name for the new Scene
-    console.log('[ControlPanel] Clicked "Save as new Scene"');
+    UIStore.get().stateTree.sceneModal.isOpen = true;
   }
 
   // Renders the container for the currently playing Scene
@@ -155,6 +163,7 @@ class ControlPanel extends React.Component {
     if (this.activePlaylistItem) {
       buttons = (
         <ButtonToolbar className="d-flex flex-row justify-content-around">
+          <div><Button variant="primary" size="lg" className={ buttonClass } onClick={ this.handleEditSceneClick }><EditIcon /></Button></div>
           <div><Button variant="primary" size="lg" className={ buttonClass } onClick={ this.handleResetSceneSettingsClick }>Reset Scene</Button></div>
           <div><Button variant="primary" size="lg" className={ buttonClass } onClick={ this.handleSaveSceneSettingsClick }>Save Scene Settings</Button></div>
           <div><Button variant="primary" size="lg" className={ buttonClass } onClick={ this.handleSaveAsSceneSettingsClick }>Save as new Scene</Button></div>
@@ -270,6 +279,7 @@ class ControlPanel extends React.Component {
             </Col>
           </Row>
         </Container>
+        <SceneModal />
       </DragDropContext>
     );
   }

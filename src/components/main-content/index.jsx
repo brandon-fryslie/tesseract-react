@@ -1,18 +1,14 @@
 /* eslint-disable no-return-assign */
 import React from 'react';
-import PropTypes from 'prop-types';
 import Tab from 'react-bootstrap/Tab';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 import { observer } from 'mobx-react';
 import ControlPanel from '../main-panels/ControlPanel';
-import ClipsPanel from '../main-panels/ClipsPanel';
 import PlayListsPanel from '../main-panels/PlaylistsPanel';
-import ScenesPanel from '../main-panels/ScenesPanel';
 import SettingsPanel from '../main-panels/SettingsPanel';
 import AboutPanel from '../main-panels/AboutPanel';
-import PageHeader from '../page-header';
 import PlaylistStore from '../../stores/PlaylistStore';
 import ClipStore from '../../stores/ClipStore';
 import SceneStore from '../../stores/SceneStore';
@@ -55,8 +51,8 @@ class MainContent extends React.Component {
               <Nav variant="pills" className="flex-column tesseract-sidebar">
                 <Nav.Item><Nav.Link eventKey="live-control">Live Control</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="playlists">Playlists</Nav.Link></Nav.Item>
-                <Nav.Item><Nav.Link eventKey="scenes">Scenes</Nav.Link></Nav.Item>
-                <Nav.Item><Nav.Link eventKey="clips">Clips</Nav.Link></Nav.Item>
+                {/*<Nav.Item><Nav.Link eventKey="scenes">Scenes</Nav.Link></Nav.Item>*/}
+                {/*<Nav.Item><Nav.Link eventKey="clips">Clips</Nav.Link></Nav.Item>*/}
                 <Nav.Item><Nav.Link eventKey="settings">Settings</Nav.Link></Nav.Item>
                 <Nav.Item><Nav.Link eventKey="about">About</Nav.Link></Nav.Item>
               </Nav>
@@ -66,16 +62,10 @@ class MainContent extends React.Component {
             </Col>
             <Col>
               <Tab.Content>
-                <Tab.Pane eventKey="live-control">
-                  <ControlPanel />
-                </Tab.Pane>
-                <Tab.Pane eventKey="playlists">
-                  <PlayListsPanel />
-                </Tab.Pane>
-                <Tab.Pane eventKey="scenes">
-                  <ScenesPanel />
-                </Tab.Pane>
-                <Tab.Pane eventKey="clips"><ClipsPanel /></Tab.Pane>
+                <Tab.Pane eventKey="live-control"><ControlPanel /></Tab.Pane>
+                <Tab.Pane eventKey="playlists"><PlayListsPanel /></Tab.Pane>
+                {/*<Tab.Pane eventKey="scenes"><ScenesPanel /></Tab.Pane> Remove this for now, may not need it */}
+                {/*<Tab.Pane eventKey="clips"><ClipsPanel /></Tab.Pane>*/}
                 <Tab.Pane eventKey="settings"><SettingsPanel /></Tab.Pane>
                 <Tab.Pane eventKey="about"><AboutPanel /></Tab.Pane>
               </Tab.Content>
