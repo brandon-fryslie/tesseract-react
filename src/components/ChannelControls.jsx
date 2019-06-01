@@ -27,7 +27,7 @@ class ChannelControls extends React.Component {
     } else if (control.type === 'slider') {
       return <SliderControl control={ control } key={ idx } />;
     } else if (control.type === 'videoFile') {
-      return <FilePickerControl control={ control } key={ idx } />;
+      return <FilePickerControl mediaType="videos" control={ control } key={ idx } />;
     }
 
     throw `renderClipControl: Not implemented for type ${ control.type }`;

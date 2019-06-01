@@ -19,13 +19,20 @@ export default class SceneModel extends BaseModel {
 
   @observable clipControls = [];
 
-  constructor(id, displayName, clip, rawClipValues = null) {
+  @observable filename;
+
+  constructor(id, displayName, clip, rawClipValues = null, filename = null) {
     super();
     this.id = id;
     this.displayName = displayName;
     this.clip = clip;
 
-    if (rawClipValues != null) {
+    // handle filename controls
+    if (filename != null) {
+      // hacky way to make this both work in both cases
+      this.setFilenameValue(this.clip, filename);
+    // we can only do ONE of these two things, because they both set the clipControls!
+    } else if (rawClipValues != null) {
       this.setClipValues(this.clip, rawClipValues);
     }
   }
@@ -40,9 +47,16 @@ export default class SceneModel extends BaseModel {
   }
 
   // TODO: refactor
+  // the Clip Values are all floats, the 'filename' is a string.  in the future we'll refactor this so its not so bespoke
   setClipValues(clip, values) {
     this.rawClipValues = values;
     const controls = this.createClipControls(clip, values);
+    this.clipControls.replace(controls);
+  }
+
+  setFilenameValue(clip, filename) {
+    this.filename = filename;
+    const controls = this.createClipControls(clip, [filename]);
     this.clipControls.replace(controls);
   }
 
@@ -80,10 +94,11 @@ export default class SceneModel extends BaseModel {
       displayName: this.displayName,
       clipId: this.clip.clipId,
       clipValues: this.rawClipValues,
+      filename: this.filename,
     };
   }
 
   static fromJS(obj) {
-    return new SceneModel(obj.id, obj.displayName, obj.clip, obj.clipValues);
+    return new SceneModel(obj.id, obj.displayName, obj.clip, obj.clipValues, obj.filename);
   }
 }

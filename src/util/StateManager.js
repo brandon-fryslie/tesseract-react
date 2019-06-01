@@ -4,7 +4,7 @@ import PlaylistStore from '../stores/PlaylistStore';
 import UIStore from '../stores/UIStore';
 import { observe, reaction, action, transaction, runInAction } from 'mobx';
 import { deepObserve } from 'mobx-utils';
-import PlaylistItemModel from '../models/PlaylistItemModel';
+import MediaStore from '../stores/MediaStore';
 
 export default class StateManager {
 
@@ -131,6 +131,7 @@ export default class StateManager {
     ClipStore.get().refreshFromJS(data.clipData);
     SceneStore.get().refreshFromJS(data.sceneData);
     PlaylistStore.get().refreshFromJS(data.playlistData);
+    MediaStore.get().refreshFromJS(data.mediaData);
 
     // Set the active state on the Live Controls panel
     this.setControlPanelActiveState(data.activeState);
@@ -164,7 +165,7 @@ export default class StateManager {
 
   // handle activeControl state updated on frontend
   // e.g., a user used a knob to change the value
-  handleLiveControlsUpdated(change, path) {
+  handleLiveControlsUpdated(change) {
     // Ignore these events
     if (change.type === 'splice') {
       return;
@@ -259,8 +260,8 @@ export default class StateManager {
       // hack for now.  todo: refactor.  make a better API that can handle CRUD for multiple items
       data = { stateKey: 'sceneDelete', value: change.removed[0].toJS() };
     } else {
-      throw '[StateManager] Don\'t know when this happens';
       debugger;
+      throw '[StateManager] Don\'t know when this happens';
     }
 
     this.ws.sendMessage('stateUpdate', data);
@@ -307,8 +308,8 @@ export default class StateManager {
       // hack for now.  todo: refactor.  make a better API that can handle CRUD for multiple items
       data = { stateKey: 'sceneDelete', value: change.removed[0].toJS() };
     } else {
-      throw '[StateManager] Don\'t know when this happens';
       debugger;
+      throw '[StateManager] Don\'t know when this happens';
     }
 
     this.ws.sendMessage('stateUpdate', data);

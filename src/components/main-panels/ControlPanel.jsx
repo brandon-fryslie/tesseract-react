@@ -20,6 +20,7 @@ import StopIcon from '@material-ui/icons/Stop';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import EditIcon from '@material-ui/icons/Edit';
 import SceneModal from '../modals/SceneModal';
+import FilePickerModal from '../modals/FilePickerModal';
 
 @observer
 class ControlPanel extends React.Component {
@@ -145,9 +146,13 @@ class ControlPanel extends React.Component {
 
     const controls = UIStore.get().stateTree.controlPanel.activeControls;
 
-    const controlValues = controls.map(control => control.currentValue);
-
-    scene.setClipValues(scene.clip, controlValues);
+    // special case to handle filename control
+    if (controls.length === 1 && controls[0].fieldName === 'filename') {
+      scene.setFilenameValue(scene.clip, controls[0].currentValue);
+    } else {
+      const controlValues = controls.map(control => control.currentValue);
+      scene.setClipValues(scene.clip, controlValues);
+    }
   }
 
   // Pop up a modal allowing a user to create a new scene
@@ -280,6 +285,7 @@ class ControlPanel extends React.Component {
           </Row>
         </Container>
         <SceneModal />
+        <FilePickerModal />
       </DragDropContext>
     );
   }

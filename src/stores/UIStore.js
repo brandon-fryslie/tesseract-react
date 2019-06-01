@@ -32,6 +32,10 @@ export default class UIStore {
       isOpen: false,
       activeScene: null, // null if we're creating a playlist, defined otherwise
     },
+    filePickerModal: {
+      isOpen: false,
+      control: null,
+    },
     websocket: {
       isConnected: false,
       ref: null,
