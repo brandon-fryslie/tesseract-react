@@ -27,3 +27,6 @@ package-lock.json
 # Editor/IDE
 .idea
 packages/api/etc/
+
+# tmp files used in docker build
+docker/tmp
