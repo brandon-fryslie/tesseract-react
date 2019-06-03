@@ -1,7 +1,6 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { action, computed, observable, reaction } from 'mobx';
-import PlaylistStore from '../../stores/PlaylistStore';
+import { action, computed, observable } from 'mobx';
 import UIStore from '../../stores/UIStore';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Dialog from '@material-ui/core/Dialog';
@@ -14,7 +13,6 @@ import SceneStore from '../../stores/SceneStore';
 import ClipsList from '../ClipsList';
 import ClipStore from '../../stores/ClipStore';
 import DeleteIcon from '@material-ui/icons/DeleteForever';
-import Box from '@material-ui/core/Box';
 
 @observer
 class SceneModal extends React.Component {
@@ -110,7 +108,7 @@ class SceneModal extends React.Component {
   }
 
   handleDialogExited() {
-    this.clearDialogValues()
+    this.clearDialogValues();
   }
 
   // remove the active scene from the store
