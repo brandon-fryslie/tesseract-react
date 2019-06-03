@@ -5,12 +5,12 @@ import { observer } from 'mobx-react';
 @observer
 class Websocket extends React.Component {
 
+  websocket;
+  attempts = 1;
+
   constructor(props) {
     super(props);
-    this.state = {
-      ws: new WebSocket(this.props.url, this.props.protocol),
-      attempts: 1,
-    };
+    this.websocket = this.createWebsocket();
     this.sendMessage = this.sendMessage.bind(this);
     this.setupWebsocket = this.setupWebsocket.bind(this);
   }
@@ -28,8 +28,13 @@ class Websocket extends React.Component {
     return 1000;
   }
 
+  createWebsocket() {
+    return new WebSocket(this.props.url, this.props.protocol);
+  }
+
   setupWebsocket() {
-    const websocket = this.state.ws;
+    this.websocket = this.createWebsocket();
+    const websocket = this.websocket;
 
     websocket.onopen = () => {
       // this.logging('[Websocket] Websocket connected');
@@ -52,10 +57,9 @@ class Websocket extends React.Component {
       this.logging('Websocket disconnected');
       if (typeof this.props.onClose === 'function') this.props.onClose();
       if (this.shouldReconnect) {
-        const time = this.generateInterval(this.state.attempts);
+        const time = this.generateInterval(this.attempts);
         this.timeoutID = setTimeout(() => {
-          this.setState(prevState => ({ attempts: prevState.attempts + 1 }));
-          this.setState({ ws: new WebSocket(this.props.url, this.props.protocol) });
+          this.attempts++;
           this.setupWebsocket();
         }, time);
       }
@@ -73,10 +77,16 @@ class Websocket extends React.Component {
   }
 
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    // in the future we can check more props, for now we just need to try reconnecting if the URL changed
+    if (prevProps.url === this.props.url) {
+      return;
+    }
+
     // close existing websocket
     clearTimeout(this.timeoutID);
-    this.state.ws.close();
+    this.websocket.close();
+    this.websocket = null;
 
     // setup new one
     this.setupWebsocket();
@@ -84,8 +94,7 @@ class Websocket extends React.Component {
 
 
   sendMessage(message) {
-    const websocket = this.state.ws;
-    websocket.send(message);
+    this.websocket.send(message);
   }
 
   render() {

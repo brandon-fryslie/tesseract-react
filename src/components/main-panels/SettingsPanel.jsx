@@ -126,6 +126,11 @@ class SettingsPanel extends React.Component {
     });
   }
 
+  // Prevents pressing enter on the settings page from 'submitting' the form and reloading the page
+  handleFormSubmit(e) {
+    e.preventDefault();
+  }
+
   render() {
     let saveButtonDisabled;
     const editFields = Object.keys(UIStore.get().getValue('settingsPanel', 'editState'));
@@ -136,7 +141,7 @@ class SettingsPanel extends React.Component {
     }
 
     return (
-      <Form>
+      <Form onSubmit={this.handleFormSubmit}>
         { this.renderFormControls(settingsData) }
         <Form.Group as={ Row }>
           <Col sm={ { span: 10, offset: 2 } }>

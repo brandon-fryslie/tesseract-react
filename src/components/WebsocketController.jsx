@@ -83,7 +83,7 @@ class WebsocketController extends React.Component {
   }
 
   render() {
-    const serverAddr = UIStore.get().getValue('settingsPanel', 'serverAddr');
+    const serverAddr = UIStore.get().stateTree.settingsPanel.serverAddr;
     const wsUrl = `ws://${ serverAddr }:8883`;
 
     console.log(`[WebsocketController] Opening websocket connection to: ${ wsUrl }`);
