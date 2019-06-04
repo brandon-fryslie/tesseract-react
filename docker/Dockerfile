@@ -14,7 +14,7 @@ COPY tmp ./
 
 RUN yarn install
 
-RUN yarn build
+RUN yarn build-dev
 
 # Copy the assets into an nginx container
 FROM nginx:1.15.12-alpine
