@@ -18,6 +18,7 @@ import SidebarButtons from '../SidebarButtons';
 
 // Don't remove this or the styles won't be imported
 import style from './MainContent.scss';
+import bootstrapStyle from '../../css/bootstrap.min.css';
 
 @observer
 class MainContent extends React.Component {

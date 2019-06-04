@@ -20,7 +20,7 @@ export default class UIStore {
     },
     settingsPanel: {
       shouldShowFullScreenButton: false,
-      serverAddr: 'localhost',
+      serverAddr: 'nukamini.local',
       // State of any edited fields, if this has values we know we have unsaved data
       editState: {},
     },
