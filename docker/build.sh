@@ -2,7 +2,7 @@
 
 script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 tmp_dir="${script_path}/tmp"
-image_name="tesseractpixel/tesseract-ui:draco"
+image_name="tesseractpixel/tesseract-ui"
 
 mkdir -p $tmp_dir
 
