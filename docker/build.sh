@@ -7,6 +7,7 @@ image_name="tesseractpixel/tesseract-ui"
 mkdir -p $tmp_dir
 
 cp \
+  "${script_path}/../babel.config.js" \
   "${script_path}/../package.json" \
   "${script_path}/../yarn.lock" \
   "${script_path}/../webpack.config.js" \

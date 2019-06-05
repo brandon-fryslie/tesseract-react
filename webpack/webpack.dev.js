@@ -12,6 +12,13 @@ module.exports = {
   module: {
     rules: [
       {
+        use: {
+          loader: 'babel-loader',
+        },
+        test: /\.js$/,
+        exclude: /node_modules/
+      },
+      {
         test: /\.(css|scss)$/,
         use: [
           'style-loader',
@@ -26,7 +33,7 @@ module.exports = {
           },
           'sass-loader',
         ],
-      },
+      }
     ],
   },
   devServer: {

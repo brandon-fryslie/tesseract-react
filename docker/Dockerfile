@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 
 # Copy the necessary files for the build
 COPY \
+  tmp/babel.config.js \
   tmp/package.json \
   tmp/yarn.lock \
   tmp/webpack.config.js \

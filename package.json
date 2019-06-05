@@ -54,6 +54,7 @@
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/lab": "^3.0.0-alpha.30",
+    "babel-loader": "^8.0.6",
     "bootstrap": "^4.3.1",
     "lodash": "4.17.11",
     "mobx": "^5.9.4",
@@ -70,11 +71,8 @@
     "react-rotary-knob": "^1.1.5",
     "uuid": "^3.3.2"
   },
-  "resolutions": {
-    "babel-core": "7.0.0-bridge.0"
-  },
   "devDependencies": {
-    "@babel/core": "7.4.3",
+    "@babel/core": "^7.4.5",
     "@babel/plugin-proposal-class-properties": "7.4.0",
     "@babel/plugin-proposal-decorators": "7.4.0",
     "@babel/plugin-proposal-export-namespace-from": "7.2.0",
@@ -86,14 +84,12 @@
     "@babel/plugin-syntax-import-meta": "7.2.0",
     "@babel/plugin-transform-runtime": "7.4.3",
     "@babel/polyfill": "7.4.3",
-    "@babel/preset-env": "7.4.3",
-    "@babel/preset-react": "7.0.0",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
     "@babel/register": "7.4.0",
     "@babel/runtime": "7.4.3",
-    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "babel-jest": "24.7.1",
-    "babel-loader": "8.0.5",
     "babel-plugin-lodash": "3.3.4",
     "browserslist": "4.5.4",
     "clean-webpack-plugin": "2.0.1",
