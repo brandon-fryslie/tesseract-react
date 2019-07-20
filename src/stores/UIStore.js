@@ -52,6 +52,23 @@ export default class UIStore {
     return this.instance;
   }
 
+  constructor() {
+    // Load some stuff from local storage
+    this.loadLocalStorage();
+  }
+
+  loadLocalStorage() {
+    const serverAddr = localStorage.getItem('serverAddr');
+
+    if (serverAddr != null) {
+      this.stateTree.settingsPanel.serverAddr = serverAddr;
+    }
+  }
+
+  saveLocalStorage() {
+    localStorage.setItem('serverAddr', this.stateTree.settingsPanel.serverAddr);
+  }
+
   getValue(panelKey, propertyKey) {
     return this.stateTree[panelKey][propertyKey];
   }

@@ -60,6 +60,9 @@ class SettingsPanel extends React.Component {
 
     Object.keys(editState).forEach((changedField) => {
       UIStore.get().setValue('settingsPanel', changedField, editState[changedField]);
+
+      // TODO: abstract this out a bit and autosave changes to localStorage whenever we change anything that should be persisted
+      UIStore.get().saveLocalStorage();
       delete editState[changedField];
     });
   }
