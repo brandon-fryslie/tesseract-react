@@ -27,11 +27,14 @@ export default class SceneModel extends BaseModel {
     this.displayName = displayName;
     this.clip = clip;
 
-    // handle filename controls
-    if (filename != null) {
-      // hacky way to make this both work in both cases
+    // Handle creating the clipControl objects
+    // This is our hacky way to make this both work in both cases
+    // Clips can have EITHER p1-p8 values OR a filename right now
+    // To make this fully generic, we have to abstract the clip controls in a better way than we are doing right now
+    // If we have another type of clip that uses a 'filename' control, we must update this here or it will break!
+    if (clip.clipId === 'video') {
       this.setFilenameValue(this.clip, filename);
-    // we can only do ONE of these two things, because they both set the clipControls!
+      // we can only do ONE of these two things, because they both set the clipControls!
     } else if (rawClipValues != null) {
       this.setClipValues(this.clip, rawClipValues);
     }
