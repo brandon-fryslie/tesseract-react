@@ -29,6 +29,29 @@ This project uses `jest` for testing.  Run the tests with `yarn test`.
 
 To build and bundle the resources for prod, run `yarn build`.
 
+
+## Configuring the application
+
+To allow users to configure defaults in the application at runtime, there is a configuration file where we can set values.
+
+This file is called 'envConfig.js'.  It is not part of the webpack bundle, but loaded as a separate file.
+
+This works slightly differently in dev mode (locally via webpack) vs prod mode (running in the docker container).
+
+### dev mode
+
+The webpack dev server will serve files in the 'build' directory.  In dev mode, we directly read the file from that directory.
+Change that file manually if you want to change defaults during development.
+
+### prod mode
+
+When running in the docker container, you can create a file called 'tesseract-config.yml' with your settings.  You then
+volume mount that file into the docker container, and it is read on startup to generate the 'envConfig.js' file.  That
+allows people to configure the application without rebuilding the docker container.  See the files in the 'deploy/draco/' directory
+for an example of using docker compose.
+
+You can also configure the application via environment variables: `docker run -ti -p 8080:80 -e "defaultServerAddr=my-server.local" tesseractpixel/tesseract-ui:latest`
+
 ---
 
 This repo was originally cloned from:

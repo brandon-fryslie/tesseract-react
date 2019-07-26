@@ -2,7 +2,31 @@
 
 script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 tmp_dir="${script_path}/tmp"
-image_name="tesseractpixel/tesseract-ui"
+
+cleanup() {
+  rm -rf $tmp_dir
+
+  local exit_code=$1
+  local previous_command=$BASH_COMMAND
+  [[ $exit_code -ne 0 ]] && [[ ! $previous_command =~ exit* ]] && echo "INFO: Script exited with code $exit_code from command $previous_command"
+  exit $exit_code
+}
+trap 'cleanup $?' EXIT
+
+# default tag to latest
+image_tag="latest"
+
+# Parse options
+while [[ $# -gt 0 ]]; do
+  key="$1"
+
+  case $key in
+    -t|--tag) image_tag="$2"; shift; shift;;
+    *) red "Unknown option: $1"; exit 1;;
+  esac
+done
+
+image_name="tesseractpixel/tesseract-ui:${image_tag}"
 
 mkdir -p $tmp_dir
 
