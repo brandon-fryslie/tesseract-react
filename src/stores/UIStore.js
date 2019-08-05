@@ -1,6 +1,7 @@
 import { observable, action } from 'mobx';
 import ControlModel from '../models/ControlModel';
 import PlaylistStore from './PlaylistStore';
+import SettingsStore from './SettingsStore';
 
 // keeps track of the UI state.  put it into one spot so we can update it easily
 export default class UIStore {
@@ -20,7 +21,7 @@ export default class UIStore {
     },
     settingsPanel: {
       shouldShowFullScreenButton: false,
-      serverAddr: 'nukamini.local',
+      serverAddr: SettingsStore.get().getValue('defaultServerAddr'),
       // State of any edited fields, if this has values we know we have unsaved data
       editState: {},
     },

@@ -16,8 +16,9 @@ const settingsData = [
     type: 'text',
     settingsField: 'serverAddr', // The field in the stateTree in UIStore that this field corresponds to
     validationFunction: (value) => {
-      const result = !!value.match(/^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/);
-      return result;
+      // const result = !!value.match(/^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/);
+      // return result;
+      return true; // this is wrong, we allow hostnames.  instead, validate that we can connect to the host via websocket
     },
   },
   {

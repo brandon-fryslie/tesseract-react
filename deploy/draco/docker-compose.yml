@@ -1,0 +1,8 @@
+version: '3'
+services:
+  tesseract-ui:
+    image: tesseractpixel/tesseract-ui:latest
+    ports:
+      - 8080:80
+    volumes:
+      - ${PWD}/deploy/draco/tesseract-config.yml:/app/tesseract-config.yml
