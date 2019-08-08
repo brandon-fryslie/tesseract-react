@@ -22,8 +22,8 @@ yarn.lock*
 package-lock.json
 /build/bundle.js
 /build/index.html
-/build*
 /build/*
+!build/envConfig.js
 # Editor/IDE
 .idea
 packages/api/etc/
