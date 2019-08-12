@@ -69,7 +69,7 @@ class FilePickerModal extends React.Component {
 
   render() {
     return (
-      <Dialog open={ this.isOpen } onEnter={ this.handleDialogOpen } onClose={ this.handleDialogClose } onExited={ this.handleDialogExited } aria-labelledby="form-dialog-title">
+      <Dialog open={ this.isOpen } onEnter={ this.handleDialogOpen } onBackdropClick={this.closeDialog} onClose={ this.handleDialogClose } onExited={ this.handleDialogExited } aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Choose File</DialogTitle>
         <DialogContent>
           <ListGroup as="ul">
