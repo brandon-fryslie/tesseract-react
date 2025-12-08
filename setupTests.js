@@ -1,24 +1,23 @@
-import { JSDOM } from 'jsdom';
-import { configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+// React Testing Library setup
+import '@testing-library/jest-dom';
 
-configure({ adapter: new Adapter() });
+// Mock fetch for testing
 global.fetch = require('jest-fetch-mock');
 
-const exposedProperties = ['window', 'navigator', 'document'];
-const { document } = new JSDOM('').window;
-global.document = document;
-global.window = document.defaultView;
-global.HTMLElement = window.HTMLElement;
-global.HTMLAnchorElement = window.HTMLAnchorElement;
-
-Object.keys(document.defaultView).forEach(property => {
-  if (typeof global[property] === 'undefined') {
-    exposedProperties.push(property);
-    global[property] = document.defaultView[property];
-  }
-});
-
-global.navigator = {
-  userAgent: 'node.js',
+// Mock ENV_CONFIG which is normally injected by webpack
+window.ENV_CONFIG = {
+  WEBSOCKET_HOST: 'localhost',
+  WEBSOCKET_PORT: '8080',
+  defaultServerAddr: 'ws://localhost:8080'
 };
+
+// Mock WebSocket
+class MockWebSocket {
+  constructor(url) {
+    this.url = url;
+    this.readyState = 1;
+  }
+  send() {}
+  close() {}
+}
+global.WebSocket = MockWebSocket;
