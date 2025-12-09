@@ -13,24 +13,12 @@ interface WebsocketController {
   sendMessage(type: string, data?: any): void;
 }
 
-// Type for MobX change events
-interface MobXChange {
-  type: string;
-  name?: string;
-  object: any;
-  newValue?: any;
-  addedCount?: number;
-  removedCount?: number;
-  added?: any[];
-  removed?: any[];
-}
-
 // Type for initial state data
 interface InitialStateData {
   clipData: any[];
   sceneData: any[];
   playlistData: any[];
-  mediaData: any[];
+  mediaData: Record<string, string[]>;
   activeState: any;
 }
 
@@ -48,125 +36,32 @@ interface RefreshData {
 
 export default class StateManager {
   // Instance of WebsocketController
-  ws!: WebsocketController;
+  websocketController: WebsocketController | null = null;
 
-  disposers: Record<string, Array<IReactionDisposer | IDisposer | Lambda>> = {};
+  // MobX disposers for cleanup
+  sceneStoreDisposer: IDisposer | null = null;
+  playlistStoreDisposer: IDisposer | null = null;
+  controlPanelDisposer: IReactionDisposer | null = null;
 
-  constructor(...args: any[]) {
+  constructor() {
     makeObservable(this);
-    // Bind event handlers to the correct value of 'this'
-    this.handleLiveControlsUpdated = this.handleLiveControlsUpdated.bind(this);
-    this.handlePlaylistAddRemove = this.handlePlaylistAddRemove.bind(this);
-    this.handleSceneAddRemove = this.handleSceneAddRemove.bind(this);
-    this.handlePlaylistUpdate = this.handlePlaylistUpdate.bind(this);
-    this.handlePlayStateUpdated = this.handlePlayStateUpdated.bind(this);
-
-    this.observeItemsForChanges();
   }
 
-  // singleton pattern
-  static instance: StateManager | undefined;
-
-  static get(): StateManager {
-    if (this.instance == null) {
-      this.instance = new StateManager();
-    }
-    return this.instance;
+  setWebsocketController(controller: WebsocketController): void {
+    this.websocketController = controller;
   }
 
-  setWebsocketController(ws: WebsocketController): void {
-    this.ws = ws;
-  }
-
-  // Create a reaction.  tracks the disposer so we can get rid of it later
-  createReaction<T>(key: string, expression: () => T, effect: (arg: T) => void): void {
-    this.addDisposer(key, reaction(expression, effect));
-  }
-
-  // Observe items
-  createDeepObserve(key: string, obj: any, fn: (change: any) => void): void {
-    this.addDisposer(key, deepObserve(obj, fn));
-  }
-
-  // Observe items
-  createObserve(key: string, obj: any, property: string | ((change: MobXChange) => void), fn?: (change: MobXChange) => void): void {
-    if (typeof property === 'string' && fn) {
-      this.addDisposer(key, observe(obj, property, fn));
-    } else if (typeof property === 'function') {
-      this.addDisposer(key, observe(obj, property));
+  // Send a message through the websocket
+  sendMessage(type: string, data?: any): void {
+    if (this.websocketController) {
+      this.websocketController.sendMessage(type, data);
     }
   }
 
-  // Observe a list
-  createObserveList(key: string, items: any[], fn: (change: MobXChange) => void): void {
-    items.forEach((item) => {
-      this.createObserve(key, item, fn);
-    });
-  }
-
-  // Observe a list
-  createDeepObserveList(key: string, items: any[], fn: (change: any) => void): void {
-    items.forEach((item) => {
-      this.createDeepObserve(key, item, fn);
-    });
-  }
-
-  // Keep track of disposers
-  addDisposer(key: string, disposer: IReactionDisposer | IDisposer | Lambda): void {
-    if (this.disposers[key] == null) {
-      this.disposers[key] = [];
-    }
-
-    this.disposers[key].push(disposer);
-  }
-
-  disposeObservers(key: string): void {
-    if (this.disposers[key] == null) {
-      // throw `[StateManager] No existing disposers for key ${ key }`;
-      return;
-    }
-
-    this.disposers[key].forEach((disposer) => { disposer(); });
-  }
-
-  // This is a conglomeration of a method that sets up observers for the data we care about
-  // In some cases, it sets up a reaction that will create the observers when the necessary data is available
-  // todo: each of these calls to 'observe' is a memory leak unless we clean it up
-  observeItemsForChanges(): void {
-    console.log('[StateManager] Observing Items for Changes');
-
-    // clean up any previous playstate, playlistStore, or sceneStore observers
-    this.disposeObservers('playState');
-    this.disposeObservers('playlistStore');
-    this.disposeObservers('sceneStore');
-
-    // Handle clicks on play/loop scene/stop buttons
-    // this.createObserve(UIStore.get().stateTree, '', this.handlePlayStateUpdated);
-    this.createObserve('playState', UIStore.get().stateTree, this.handlePlayStateUpdated);
-
-    // whenever the contents of the PlaylistStore change, create playlist observers
-    this.createReaction(
-      'playlistStore',
-      () => PlaylistStore.get().getItems().map((p) => p),
-      () => this.observePlaylists(),
-    );
-
-    // whenever the contents of the SceneStore change, create playlist observers
-    this.createReaction(
-      'sceneStore',
-      () => SceneStore.get().getItems().map((p) => p),
-      () => this.observeScenes(),
-    );
-  }
-
-  /// /////// INITIAL STATE //////////
-  loadInitialState(): void {
-    console.log('[StateManager] Requesting Initital State');
-    this.ws.sendMessage('requestInitialState');
-  }
-
-  handleSendInitialStateAction(data: InitialStateData): void {
-    console.log('[StateManager] Received initial state', data);
+  // Initialize stores with data from backend
+  @action
+  initializeStoresFromBackend(data: InitialStateData): void {
+    console.log('[StateManager] Initializing stores from backend data');
 
     ClipStore.get().refreshFromJS(data.clipData);
     SceneStore.get().refreshFromJS(data.sceneData);
@@ -177,192 +72,114 @@ export default class StateManager {
     this.setControlPanelActiveState(data.activeState);
   }
 
-  /// /////// INITIAL STATE //////////
+  // Update a single state value
+  @action
+  updateStateValue(data: StateUpdateData): void {
+    console.log(`[StateManager] Updating state: ${data.key} = ${data.value}`);
+    // Implementation depends on what state values need to be updated
+  }
 
-  /// /////// ACTIVE STATE / LIVE CONTROLS //////////
-  // handle a state updated action from the backend
-  handleStateUpdatedAction(data: StateUpdateData): void {
-    // console.log("got a stateUpdate action");
-    // console.log(data);
+  // Refresh specific stores
+  @action
+  refreshStores(data: RefreshData): void {
+    console.log('[StateManager] Refreshing stores');
+    PlaylistStore.get().refreshFromJS(data.playlistData);
+    SceneStore.get().refreshFromJS(data.sceneData);
+  }
 
-    if (data.key === 'activeState') {
-      this.setControlPanelActiveState(data.value);
-    } else if (data.key === 'storeRefresh') {
-      this.refreshStores(data.value);
-    } else {
-      throw `[StateManager] Error: ${data.key} is not a valid stateKey`;
+  // Set the control panel active state
+  @action
+  setControlPanelActiveState(activeState: any): void {
+    if (activeState) {
+      UIStore.get().updateControlPanelActiveState(activeState);
     }
   }
 
-  @action setControlPanelActiveState(activeState: any): void {
-    UIStore.get().updateControlPanelActiveState(activeState);
-  }
+  // Set up observers for store changes
+  setupStoreObservers(): void {
+    console.log('[StateManager] Setting up store observers');
 
-  @action refreshStores(refreshData: RefreshData): void {
-    PlaylistStore.get().refreshFromJS(refreshData.playlistData);
-    SceneStore.get().refreshFromJS(refreshData.sceneData);
-  }
-
-  // handle activeControl state updated on frontend
-  // e.g., a user used a knob to change the value
-  handleLiveControlsUpdated(change: MobXChange): void {
-    // Ignore these events
-    if (change.type === 'splice') {
-      return;
-    }
-
-    if (change.object.constructor.name !== 'ControlModel') {
-      throw `[StateManager] Got a change event for activeControls that was not an individual control change.  That isn't implemented.  Change object name: ${change.object.constructor.name}`;
-    }
-
-    // here I need to send a stateUpdate message via websocket
-    const data = {
-      // these state keys are going to be pretty arbitrary at this point
-      stateKey: 'activeControls',
-      // value is arbitrary shape, the handler on the backend for stateKey 'activeControls' needs to handle it
-      value: {
-        fieldName: change.object.fieldName,
-        newValue: change.newValue,
-      },
-    };
-
-    this.ws.sendMessage('stateUpdate', data);
-  }
-
-  // Handle changing active playlist, playlistItem, or playing/paused/stopped
-  // Only sends a stateUpdate event if 'controlPanel.changeFromBackend' is false, this is my hacky way of keeping us from running in an infinite loop
-  @action handlePlayStateUpdated(change: MobXChange): void {
-    // Ignore these events
-    if (change.type === 'splice') {
-      return;
-    }
-
-    // we only care about controlPanel updates here
-    if (change.name !== 'controlPanel') { return; }
-
-    const target = change.object.controlPanel;
-
-    // We have to (re)observe the live controls so they will work
-    this.createDeepObserve('activeControl', target.activeControls, this.handleLiveControlsUpdated);
-
-    // don't send a websocket message if the change was from the backend
-    if (!target.changeFromBackend) {
-      const activePlaylistItemId = target.activePlaylistItem ? target.activePlaylistItem.id : null;
-
-      const data = {
-        stateKey: 'playState',
-        value: {
-          playState: target.playState,
-          activePlaylistId: target.activePlaylist.id,
-          activePlaylistItemId,
-        },
-      };
-
-      this.ws.sendMessage('stateUpdate', data);
-    }
-  }
-
-  /// /////// ACTIVE STATE / LIVE CONTROLS //////////
-
-  /// /////// PLAYLIST STATE //////////
-  observePlaylists(): void {
-    console.log('[StateManager] Playlist Update.  Creating observers for playlist items');
-
-    // clear existing observers
-    this.disposeObservers('playlist');
-
-    this.createObserve('playlist', PlaylistStore.get().items, this.handlePlaylistAddRemove);
-
-    PlaylistStore.get().getItems().forEach((p) => {
-      // observe playlists for changes in displayName or defaultDuration
-      this.createObserve('playlist', p, (change) => { this.handlePlaylistUpdate(change, p); });
-
-      // This handles adding/removing/reordering
-      this.createObserve('playlist', p.items, (change) => { this.handlePlaylistUpdate(change, p); });
-
-      // This handles editing items in the grid
-      this.createObserveList('playlist', p.items, (change) => { this.handlePlaylistUpdate(change, p); });
+    // Observe SceneStore changes
+    this.sceneStoreDisposer = deepObserve(SceneStore.get(), (change: any, path: string) => {
+      this.handleSceneStoreChange(change);
     });
-  }
 
-  handlePlaylistAddRemove(change: MobXChange): void {
-    let data;
-    if ((change.addedCount && change.addedCount > 1) || (change.removedCount && change.removedCount > 1)) {
-      // this happens when we're refreshing the entire store from the backend.  ignore these changes
-      return;
-
-      // throw '[StateManager] Added or removed more than one playlist at the time!  Error!';
-    }
-
-    if (change.addedCount && change.addedCount > 0) { // this is only ever going to be one right now
-      data = { stateKey: 'playlist', value: change.added![0].toJS() };
-    } else if (change.removedCount && change.removedCount > 0) {
-      // hack for now.  todo: refactor.  make a better API that can handle CRUD for multiple items
-      data = { stateKey: 'sceneDelete', value: change.removed![0].toJS() };
-    } else {
-      debugger;
-      throw '[StateManager] Don\'t know when this happens';
-    }
-
-    this.ws.sendMessage('stateUpdate', data);
-  }
-
-  handlePlaylistUpdate(change: MobXChange, playlist: any): void {
-    const data = {
-      stateKey: 'playlist',
-      value: playlist.toJS(),
-    };
-
-    this.ws.sendMessage('stateUpdate', data);
-  }
-
-  /// /////// PLAYLIST STATE //////////
-
-  /// /////// SCENE STATE //////////
-  observeScenes(): void {
-    console.log('[StateManager] Scene Update.  Creating observers for Scenes');
-
-    // clear existing observers
-    this.disposeObservers('scene');
-
-    this.createObserve('scene', SceneStore.get().items, this.handleSceneAddRemove);
-
-    SceneStore.get().getItems().forEach((scene) => {
-      this.createObserve('scene', scene, (change) => { this.handleSceneUpdate(change, scene); });
+    // Observe PlaylistStore changes
+    this.playlistStoreDisposer = deepObserve(PlaylistStore.get(), (change: any, path: string) => {
+      this.handlePlaylistStoreChange(change);
     });
+
+    // Observe control panel changes
+    this.controlPanelDisposer = reaction(
+      () => UIStore.get().stateTree.controlPanel,
+      (controlPanel) => {
+        this.handleControlPanelChange(controlPanel);
+      }
+    );
   }
 
-  handleSceneAddRemove(change: MobXChange): void {
-    let data;
+  // Handle SceneStore changes
+  handleSceneStoreChange(change: any): void {
+    console.log('[StateManager] SceneStore changed:', change.type);
 
-    if ((change.addedCount && change.addedCount > 1) || (change.removedCount && change.removedCount > 1)) {
-      // this happens when we're refreshing the entire store from the backend.  ignore these changes
-      return;
+    if (change.type === 'add' || change.type === 'update' || change.type === 'delete') {
+      this.sendSceneUpdate();
+    }
+  }
 
-      // throw '[StateManager] Added or removed more than one scene at the time!  Error!';
+  // Handle PlaylistStore changes
+  handlePlaylistStoreChange(change: any): void {
+    console.log('[StateManager] PlaylistStore changed:', change.type);
+
+    if (change.type === 'add' || change.type === 'update' || change.type === 'delete') {
+      this.sendPlaylistUpdate();
+    }
+  }
+
+  // Handle control panel changes
+  handleControlPanelChange(controlPanel: any): void {
+    // Only send updates if the change originated from the frontend
+    if (!controlPanel.changeFromBackend) {
+      console.log('[StateManager] Control panel changed (from frontend)');
+      this.sendControlPanelUpdate();
+    }
+  }
+
+  // Send scene updates to backend
+  sendSceneUpdate(): void {
+    const scenes = SceneStore.get().getItems().map(scene => scene.toJS());
+    this.sendMessage('scene_update', { scenes });
+  }
+
+  // Send playlist updates to backend
+  sendPlaylistUpdate(): void {
+    const playlists = PlaylistStore.get().getItems().map(playlist => playlist.toJS());
+    this.sendMessage('playlist_update', { playlists });
+  }
+
+  // Send control panel updates to backend
+  sendControlPanelUpdate(): void {
+    const controlPanel = UIStore.get().stateTree.controlPanel;
+    this.sendMessage('control_panel_update', { controlPanel });
+  }
+
+  // Clean up observers
+  dispose(): void {
+    console.log('[StateManager] Disposing observers');
+
+    if (this.sceneStoreDisposer) {
+      this.sceneStoreDisposer();
+      this.sceneStoreDisposer = null;
     }
 
-    if (change.addedCount && change.addedCount > 0) { // this is only ever going to be one right now
-      data = { stateKey: 'scene', value: change.added![0].toJS() };
-    } else if (change.removedCount && change.removedCount > 0) {
-      // hack for now.  todo: refactor.  make a better API that can handle CRUD for multiple items
-      data = { stateKey: 'sceneDelete', value: change.removed![0].toJS() };
-    } else {
-      debugger;
-      throw '[StateManager] Don\'t know when this happens';
+    if (this.playlistStoreDisposer) {
+      this.playlistStoreDisposer();
+      this.playlistStoreDisposer = null;
     }
 
-    this.ws.sendMessage('stateUpdate', data);
+    if (this.controlPanelDisposer) {
+      this.controlPanelDisposer();
+      this.controlPanelDisposer = null;
+    }
   }
-
-  handleSceneUpdate(change: MobXChange, scene: any): void {
-    const data = {
-      stateKey: 'scene',
-      value: scene.toJS(),
-    };
-
-    this.ws.sendMessage('stateUpdate', data);
-  }
-
-  /// /////// SCENE STATE //////////
 }

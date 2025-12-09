@@ -1,7 +1,7 @@
 import BaseStore from './BaseStore';
 import ClipModel from '../models/ClipModel';
 
-export default class ClipStore extends BaseStore {
+export default class ClipStore extends BaseStore<ClipModel> {
   getModelType() {
     return ClipModel;
   }
