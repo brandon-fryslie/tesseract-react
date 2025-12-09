@@ -1,32 +1,50 @@
+import * as mobx from 'mobx';
 import { observable, makeObservable } from 'mobx';
 import BaseModel from './BaseModel';
 import ClipModel from './ClipModel';
 import ControlModel from './ControlModel';
 
+// Interface for scene data serialization
+export interface ISceneData {
+  id: string | number;
+  displayName: string;
+  clipId: string;
+  clipValues: number[];
+  filename: string | null;
+}
+
 // A Scene is one or more clips loaded into channels with specific parameters defined
 // Scenes have two channels (for now, can expand to 4 later)
 export default class SceneModel extends BaseModel {
-  id;
+  id: string | number;
 
   // Pretty name
-  @observable displayName;
+  @observable displayName!: string;
 
   // Clip for the scene.  type: ClipModel
-  @observable clip;
+  @observable clip!: ClipModel;
 
   // Array of 7 floats
-  @observable rawClipValues = [];
+  @observable rawClipValues!: number[];
 
-  @observable clipControls = [];
+  @observable clipControls!: mobx.IObservableArray<ControlModel>;
 
-  @observable filename;
+  @observable filename!: string | null;
 
-  constructor(id, displayName, clip, rawClipValues = null, filename = null) {
+  constructor(
+    id: string | number,
+    displayName: string,
+    clip: ClipModel,
+    rawClipValues: number[] | null = null,
+    filename: string | null = null
+  ) {
     super();
     makeObservable(this);
     this.id = id;
     this.displayName = displayName;
     this.clip = clip;
+    this.rawClipValues = [];
+    this.clipControls = observable.array([]);
 
     // Handle creating the clipControl objects
     // This is our hacky way to make this both work in both cases
@@ -41,38 +59,38 @@ export default class SceneModel extends BaseModel {
     }
   }
 
-  setClip(clip) {
+  setClip(clip: ClipModel): void {
     this.clip = clip;
 
     // create clip controls with default values
     // totally refactor this
-    const clipDefaultValues = clip.controls.map(control => control.defaultValue);
+    const clipDefaultValues = clip.controls.map(control => control.defaultValue as number);
     this.setClipValues(clip, clipDefaultValues);
   }
 
   // TODO: refactor
   // the Clip Values are all floats, the 'filename' is a string.  in the future we'll refactor this so its not so bespoke
-  setClipValues(clip, values) {
+  setClipValues(clip: ClipModel, values: number[]): void {
     this.rawClipValues = values;
     const controls = this.createClipControls(clip, values);
     this.clipControls.replace(controls);
   }
 
-  setFilenameValue(clip, filename) {
+  setFilenameValue(clip: ClipModel, filename: string | null): void {
     this.filename = filename;
     const controls = this.createClipControls(clip, [filename]);
     this.clipControls.replace(controls);
   }
 
   // Create Clip Controls.  Set values to the values in 'values'
-  createClipControls(clip, values) {
+  createClipControls(clip: ClipModel, values: (number | string | null)[]): ControlModel[] {
     const controls = clip.controls.map((control) => {
       return ControlModel.fromJS(control.toJS());
     });
 
     // hacky but does the job
     values.forEach((value, idx) => {
-      if (controls.length > idx) {
+      if (controls.length > idx && value != null) {
         controls[idx].currentValue = value;
       }
     });
@@ -81,7 +99,7 @@ export default class SceneModel extends BaseModel {
   }
 
   // Clones the existing clip controls
-  cloneClipControls(values = null) {
+  cloneClipControls(values: Record<string, number | string> | null = null): ControlModel[] {
     return this.clipControls.map((control) => {
       const newControlModel = ControlModel.fromJS(control.toJS());
 
@@ -92,7 +110,7 @@ export default class SceneModel extends BaseModel {
     });
   }
 
-  toJS() {
+  toJS(): ISceneData {
     return {
       id: this.id,
       displayName: this.displayName,
@@ -102,7 +120,7 @@ export default class SceneModel extends BaseModel {
     };
   }
 
-  static fromJS(obj) {
+  static fromJS(obj: ISceneData & { clip: ClipModel }): SceneModel {
     return new SceneModel(obj.id, obj.displayName, obj.clip, obj.clipValues, obj.filename);
   }
 }

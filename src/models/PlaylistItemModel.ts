@@ -1,17 +1,25 @@
 import { observable, makeObservable } from 'mobx';
-import { v1 as uuidv1, v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import BaseModel from './BaseModel';
+import SceneModel from './SceneModel';
 import PlaylistStore from '../stores/PlaylistStore';
+
+// Interface for playlist item data serialization
+export interface IPlaylistItemData {
+  id: string;
+  sceneId: string | number;
+  duration: number;
+}
 
 // This class is basically just a scene with a duration at this point
 export default class PlaylistItemModel extends BaseModel {
-  id;
-  @observable scene;
-  @observable duration;
+  id: string;
+  @observable scene!: SceneModel;
+  @observable duration!: number;
 
   // scene: SceneModel object
   // duration: Number in seconds
-  constructor(id, scene, duration) {
+  constructor(id: string, scene: SceneModel, duration: number) {
     super();
     makeObservable(this);
 
@@ -20,19 +28,19 @@ export default class PlaylistItemModel extends BaseModel {
     this.duration = duration;
   }
 
-  get displayName() {
+  get displayName(): string {
     return this.scene.displayName;
   }
 
-  static findContainingPlaylist(playlistItemId) {
+  static findContainingPlaylist(playlistItemId: string): any {
     return PlaylistStore.get().items.find((playlist) => {
-      return playlist.items.find((playlistItem) => {
+      return playlist.items.find((playlistItem: PlaylistItemModel) => {
         return playlistItem.id === playlistItemId;
       });
     });
   }
 
-  toJS() {
+  toJS(): IPlaylistItemData {
     return {
       id: this.id,
       sceneId: this.scene.id,
@@ -41,7 +49,7 @@ export default class PlaylistItemModel extends BaseModel {
   }
 
   // these should be updated to save and hydrate from the same shape of data
-  static fromJS(obj) {
+  static fromJS(obj: { id?: string; scene: SceneModel; duration: number }): PlaylistItemModel {
     const id = obj.id != null ? obj.id : uuidv4();
     return new PlaylistItemModel(id, obj.scene, obj.duration);
   }
