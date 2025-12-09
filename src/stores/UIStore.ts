@@ -164,7 +164,7 @@ export default class UIStore {
   @action
   updateControlPanelActiveState(activeState: ActiveStateUpdate): void {
     const activePlaylist = PlaylistStore.get().find('id', activeState.playlistId);
-    const activePlaylistItem = activePlaylist.items.find(i => i.id === activeState.playlistItemId);
+    const activePlaylistItem = activePlaylist.items.find((i: PlaylistItemModel) => i.id === activeState.playlistItemId);
     const clipControlValues = activeState.clipControlValues;
 
     let activeControls: ControlModel[] | null;

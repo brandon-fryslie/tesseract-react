@@ -101,7 +101,7 @@ class PlaylistDetailModal extends React.Component {
     return (
       <Dialog
         open={this.isOpen}
-        onEnter={this.handleDialogOpen}
+        TransitionProps={{ onEnter: this.handleDialogOpen }}
         onClose={this.handleDialogClose}
         aria-labelledby="form-dialog-title"
       >

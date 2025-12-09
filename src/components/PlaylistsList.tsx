@@ -37,7 +37,7 @@ class PlaylistsList extends React.Component<PlaylistsListProps> {
                 as="li"
                 key={ idx }
                 onClick={ (event: React.MouseEvent) => this.props.onItemClick(event, playlist) }
-                active={ activePlaylist && activePlaylist.id === playlist.id }>
+                active={ Boolean(activePlaylist && activePlaylist.id === playlist.id) }>
                 { playlist.displayName }
               </ListGroup.Item>
             ))

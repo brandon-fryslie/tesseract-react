@@ -26,7 +26,7 @@ class PlaylistItemView extends React.Component<PlaylistItemViewProps> {
                 as="li"
                 key={ idx }
                 onClick={ (dom: React.MouseEvent) => this.props.onItemClick(dom, item) }
-                active={ this.props.activePlaylistItem && this.props.activePlaylistItem.id === item.id }>
+                active={ Boolean(this.props.activePlaylistItem && this.props.activePlaylistItem.id === item.id) }>
                 { item.scene.displayName }
               </ListGroup.Item>
             ))

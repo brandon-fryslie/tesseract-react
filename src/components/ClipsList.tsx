@@ -30,7 +30,7 @@ class ClipsList extends React.Component<ClipsListProps> {
         <ListGroup.Item action
                         as="li"
                         key={ idx }
-                        active={ this.props.activeClip && this.props.activeClip.clipId === item.clipId }
+                        active={ Boolean(this.props.activeClip && this.props.activeClip.clipId === item.clipId) }
                         onClick={ (event: React.MouseEvent) => {
                           if (this.props.onItemClick) {
                             this.props.onItemClick(event, item);

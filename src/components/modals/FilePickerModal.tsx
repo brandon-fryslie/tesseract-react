@@ -40,11 +40,11 @@ class FilePickerModal extends React.Component {
   }
 
   @computed get items(): string[] {
-    if (UIStore.get().stateTree.filePickerModal.items != null) {
-      return UIStore.get().stateTree.filePickerModal.items;
-    } else {
-      return [];
+    const maybeItems = UIStore.get().stateTree.filePickerModal.items;
+    if (maybeItems != null) {
+      return maybeItems.filter((item): item is string => typeof item === 'string');
     }
+    return [];
   }
 
   @computed get control(): ControlModel | null {

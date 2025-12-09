@@ -66,8 +66,8 @@ class SceneModal extends React.Component {
     }
 
     if (UIStore.get().stateTree.controlPanel.activePlaylistItem != null) {
-      this.nameValue = UIStore.get().stateTree.controlPanel.activePlaylistItem.scene.displayName;
-      this.sceneClipValue = UIStore.get().stateTree.controlPanel.activePlaylistItem.scene.clip;
+      this.nameValue = UIStore.get().stateTree.controlPanel.activePlaylistItem!.scene.displayName;
+      this.sceneClipValue = UIStore.get().stateTree.controlPanel.activePlaylistItem!.scene.clip;
       return;
     }
 
@@ -130,9 +130,8 @@ class SceneModal extends React.Component {
     return (
       <Dialog
         open={this.isOpen}
-        onEnter={this.handleDialogOpen}
+        TransitionProps={{ onEnter: this.handleDialogOpen, onExited: this.handleDialogExited }}
         onClose={this.handleDialogClose}
-        onExited={this.handleDialogExited}
         aria-labelledby="form-dialog-title"
       >
         <DialogTitle id="form-dialog-title">

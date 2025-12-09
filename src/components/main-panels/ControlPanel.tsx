@@ -102,7 +102,7 @@ class ControlPanel extends React.Component<ControlPanelProps> {
   }
 
   // dunno if computed is the right thing here.
-  @computed get activeControls(): ControlModel[] {
+  @computed get activeControls(): ControlModel[] | null {
     return UIStore.get().stateTree.controlPanel.activeControls;
   }
 
@@ -136,7 +136,7 @@ class ControlPanel extends React.Component<ControlPanelProps> {
     // if we're wrong, video clip will break first :)
     const controls = UIStore.get().stateTree.controlPanel.activeControls;
 
-    if (this.activePlaylistItem) {
+    if (this.activePlaylistItem && controls) {
       controls.forEach((control, idx) => {
         // this contains the original value of the control
         const originalValue = this.activePlaylistItem!.scene.clipControls[idx].currentValue;
@@ -158,6 +158,10 @@ class ControlPanel extends React.Component<ControlPanelProps> {
     const scene = this.activePlaylistItem.scene;
 
     const controls = UIStore.get().stateTree.controlPanel.activeControls;
+
+    if (!controls) {
+      return;
+    }
 
     // special case to handle filename control
     if (controls.length === 1 && controls[0].fieldName === 'filename') {
@@ -196,7 +200,7 @@ class ControlPanel extends React.Component<ControlPanelProps> {
   // Renders the container for the currently playing Scene
   renderControlsContainer(): React.ReactNode {
     let channelControls: React.ReactNode;
-    if (this.activePlaylistItem) {
+    if (this.activePlaylistItem && this.activeControls) {
       channelControls = (
         <ChannelControls
           showClipSelector={ false }

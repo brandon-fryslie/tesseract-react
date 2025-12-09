@@ -50,7 +50,7 @@ class ScenesList extends React.Component<ScenesListProps> {
                       idx={ idx }
                       item={ item }
                       onItemClick={ this.handleItemClick }
-                      active={ this.props.activeScene && this.props.activeScene.id === item.id } />
+                      active={ Boolean(this.props.activeScene && this.props.activeScene.id === item.id) } />
                   );
                 },
               )

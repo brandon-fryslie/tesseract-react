@@ -98,11 +98,12 @@ class ScenesPanel extends React.Component<ScenesPanelProps> {
             {/* Two columns. Col one: playlists list, scenes list.  Col two: Current playlist state */ }
             <Col sm={ 2 }>
               <ButtonToolbar>
-                <Button
-                  block
-                  variant="primary"
-                  onClick={ this.handleNewSceneButtonClick }>+ New Scene
-                </Button>
+                <div className="d-grid">
+                  <Button
+                    variant="primary"
+                    onClick={ this.handleNewSceneButtonClick }>+ New Scene
+                  </Button>
+                </div>
               </ButtonToolbar>
               <ScenesList
                 scenes={ scenes }

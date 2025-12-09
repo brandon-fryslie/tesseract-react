@@ -31,7 +31,11 @@ class PageHeader extends Component<PageHeaderProps> {
   renderFullScreenButton(): React.ReactNode {
     const shouldShowFullScreenButton = UIStore.get().getValue('settingsPanel', 'shouldShowFullScreenButton');
     if (shouldShowFullScreenButton) {
-      return <Button variant="primary" onClick={ this.handleFullScreenButtonClick } block>Fullscreen</Button>;
+      return (
+        <div className="d-grid">
+          <Button variant="primary" onClick={ this.handleFullScreenButtonClick }>Fullscreen</Button>
+        </div>
+      );
     }
     return null;
   }

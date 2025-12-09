@@ -1,0 +1,3 @@
+Agent: project-evaluator | 2025-12-09 03:43:34
+Completion: 85% | Gaps: 41 type errors | Test Quality: 4/5
+Ambiguities: 2 found | Workflow: PAUSE (2 questions need answers first)

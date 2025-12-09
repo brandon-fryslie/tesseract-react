@@ -22,7 +22,9 @@ class NewPlaylistButton extends React.Component<NewPlaylistButtonProps> {
 
   render(): React.ReactNode {
     return (
-      <Button variant="primary" onClick={ this.handleClick } block>+ New Playlist</Button>
+      <div className="d-grid">
+        <Button variant="primary" onClick={ this.handleClick }>+ New Playlist</Button>
+      </div>
     );
   }
 }

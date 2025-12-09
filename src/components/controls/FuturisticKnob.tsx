@@ -146,7 +146,7 @@ const FuturisticKnob: React.FC<FuturisticKnobProps> = ({
           valueRawRoundFn={roundValue}
           valueRawDisplayFn={displayValue}
           onValueRawChange={handleValueChange}
-          aria-label={label || undefined}
+          aria-label={label || 'Knob control'}
           includeIntoTabOrder
           ref={knobRef}
           onKeyDown={handleKeyDown}
