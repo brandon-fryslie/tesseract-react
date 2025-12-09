@@ -35,6 +35,8 @@ interface RefreshData {
 }
 
 export default class StateManager {
+  private static instance: StateManager;
+
   // Instance of WebsocketController
   websocketController: WebsocketController | null = null;
 
@@ -47,6 +49,13 @@ export default class StateManager {
     makeObservable(this);
   }
 
+  static get(): StateManager {
+    if (!StateManager.instance) {
+      StateManager.instance = new StateManager();
+    }
+    return StateManager.instance;
+  }
+
   setWebsocketController(controller: WebsocketController): void {
     this.websocketController = controller;
   }
@@ -55,6 +64,33 @@ export default class StateManager {
   sendMessage(type: string, data?: any): void {
     if (this.websocketController) {
       this.websocketController.sendMessage(type, data);
+    }
+  }
+
+  // Load initial state from backend
+  loadInitialState(): void {
+    console.log('[StateManager] Requesting initial state from backend');
+    this.sendMessage('request_initial_state');
+  }
+
+  // Handle initial state from backend
+  @action
+  handleSendInitialStateAction(data: InitialStateData): void {
+    console.log('[StateManager] Received initial state from backend');
+    this.initializeStoresFromBackend(data);
+    this.setupStoreObservers();
+  }
+
+  // Handle state update from backend
+  @action
+  handleStateUpdatedAction(data: StateUpdateData | RefreshData): void {
+    console.log('[StateManager] Received state update from backend');
+
+    // Check if this is a refresh operation
+    if ('playlistData' in data && 'sceneData' in data) {
+      this.refreshStores(data as RefreshData);
+    } else {
+      this.updateStateValue(data as StateUpdateData);
     }
   }
 

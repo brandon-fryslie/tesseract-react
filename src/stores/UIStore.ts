@@ -43,6 +43,7 @@ interface SceneModalState {
 interface FilePickerModalState {
   isOpen: boolean;
   control: ControlModel | null;
+  items?: any[]; // Media items to display in the picker
 }
 
 interface WebsocketState {
@@ -124,6 +125,7 @@ export default class UIStore {
       filePickerModal: {
         isOpen: false,
         control: null,
+        items: [],
       },
       websocket: {
         isConnected: false,
