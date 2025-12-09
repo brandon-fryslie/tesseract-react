@@ -35,6 +35,13 @@ const settingsData: SettingsDataItem[] = [
     type: 'checkbox',
     settingsField: 'shouldShowFullScreenButton',
   },
+  {
+    id: 'settingsUseNewUI',
+    labelText: 'Use New Dark UI',
+    description: 'Enable the beautiful dark mode interface with cyan accents',
+    type: 'checkbox',
+    settingsField: 'useNewUI',
+  },
 ];
 
 interface SettingsPanelProps {}

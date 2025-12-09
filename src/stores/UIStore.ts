@@ -27,6 +27,7 @@ interface ScenesPanelState {
 interface SettingsPanelState {
   shouldShowFullScreenButton: boolean;
   serverAddr: string;
+  useNewUI: boolean;
   editState: Record<string, any>;
 }
 
@@ -111,6 +112,7 @@ export default class UIStore {
       settingsPanel: {
         shouldShowFullScreenButton: false,
         serverAddr: defaultServerAddr,
+        useNewUI: false, // Default to old UI
         // State of any edited fields, if this has values we know we have unsaved data
         editState: {},
       },
@@ -141,14 +143,20 @@ export default class UIStore {
 
   loadLocalStorage(): void {
     const serverAddr = localStorage.getItem('serverAddr');
+    const useNewUI = localStorage.getItem('useNewUI');
 
     if (serverAddr != null) {
       this.stateTree.settingsPanel.serverAddr = serverAddr;
+    }
+
+    if (useNewUI != null) {
+      this.stateTree.settingsPanel.useNewUI = useNewUI === 'true';
     }
   }
 
   saveLocalStorage(): void {
     localStorage.setItem('serverAddr', this.stateTree.settingsPanel.serverAddr);
+    localStorage.setItem('useNewUI', String(this.stateTree.settingsPanel.useNewUI));
   }
 
   getValue(panelKey: keyof StateTree, propertyKey: string): any {

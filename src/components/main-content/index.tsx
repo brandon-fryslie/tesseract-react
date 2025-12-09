@@ -12,12 +12,14 @@ import AboutPanel from '../main-panels/AboutPanel';
 import PlaylistStore from '../../stores/PlaylistStore';
 import ClipStore from '../../stores/ClipStore';
 import SceneStore from '../../stores/SceneStore';
+import UIStore from '../../stores/UIStore';
 import { observable, makeObservable } from 'mobx';
 import WebsocketController from '../WebsocketController';
 import SidebarButtons from '../SidebarButtons';
 
 // Don't remove this or the styles won't be imported
 import style from './MainContent.scss';
+import '../../styles/dark-theme.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface MainContentProps {}
@@ -49,8 +51,11 @@ class MainContent extends React.Component<MainContentProps> {
   }
 
   render(): React.ReactNode {
+    const useNewUI = UIStore.get().getValue('settingsPanel', 'useNewUI');
+    const containerClass = useNewUI ? 'MainContent dark-theme ml-4 mr-4 mb-4 pt-4' : 'MainContent ml-4 mr-4 mb-4 pt-4';
+
     return (
-      <div className="MainContent ml-4 mr-4 mb-4 pt-4">
+      <div className={containerClass}>
         <WebsocketController />
         <Tab.Container defaultActiveKey="live-control">
           <Row>

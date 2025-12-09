@@ -1,0 +1,498 @@
+// Beautiful Dark Mode Theme for Tesseract React
+// Consistent with FuturisticKnob cyan (#00ffff) accent color
+
+// Color palette
+$dark-bg-primary: #0a0a0f;
+$dark-bg-elevated: #121218;
+$dark-bg-card: #1a1a24;
+$dark-border: rgba(0, 255, 255, 0.1);
+$dark-text-primary: #e0e0e0;
+$dark-text-secondary: #888888;
+$dark-accent-primary: #00ffff;
+$dark-accent-glow: rgba(0, 255, 255, 0.3);
+$dark-success: #00ff88;
+$dark-warning: #ffaa00;
+$dark-danger: #ff4466;
+
+// Dark theme wrapper class
+.dark-theme {
+  background-color: $dark-bg-primary;
+  color: $dark-text-primary;
+  min-height: 100vh;
+
+  // Smooth transitions for all interactive elements
+  * {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  // Custom scrollbar
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: $dark-bg-elevated;
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 255, 0.2);
+    border-radius: 6px;
+    border: 2px solid $dark-bg-elevated;
+
+    &:hover {
+      background: rgba(0, 255, 255, 0.3);
+    }
+  }
+
+  // Override Bootstrap navbar
+  .navbar {
+    background: linear-gradient(135deg, $dark-bg-elevated 0%, #16161f 100%);
+    border-bottom: 1px solid $dark-border;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .navbar-brand {
+    color: $dark-accent-primary !important;
+    text-shadow: 0 0 10px $dark-accent-glow;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  // Sidebar styling
+  .tesseract-sidebar {
+    .nav-link {
+      color: $dark-text-secondary !important;
+      border: 1px solid transparent;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: $dark-accent-primary !important;
+        background-color: rgba(0, 255, 255, 0.05);
+        border-color: $dark-border;
+      }
+
+      &.active {
+        color: $dark-accent-primary !important;
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(0, 255, 255, 0.05) 100%);
+        border-color: $dark-accent-primary;
+        box-shadow: 0 0 15px $dark-accent-glow, inset 0 1px 2px rgba(0, 255, 255, 0.2);
+      }
+    }
+  }
+
+  // Heading styling
+  h1, h2, h3, h4, h5, h6 {
+    color: $dark-text-primary;
+  }
+
+  h2 {
+    color: $dark-accent-primary;
+    text-shadow: 0 0 10px $dark-accent-glow;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 1rem;
+  }
+
+  // Cards with glass-morphism effect
+  .card {
+    background: linear-gradient(135deg, $dark-bg-card 0%, #1c1c28 100%);
+    border: 1px solid $dark-border;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    color: $dark-text-primary;
+
+    .card-header {
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.08) 0%, rgba(0, 255, 255, 0.04) 100%);
+      border-bottom: 1px solid $dark-border;
+      color: $dark-accent-primary;
+      font-weight: bold;
+    }
+
+    .card-body {
+      background: transparent;
+    }
+  }
+
+  // Buttons
+  .btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &.btn-primary {
+      background: linear-gradient(135deg, $dark-accent-primary 0%, #00cccc 100%);
+      border: none;
+      color: $dark-bg-primary;
+      box-shadow: 0 2px 8px rgba(0, 255, 255, 0.3);
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #00ffff 0%, #00e5e5 100%);
+        box-shadow: 0 4px 16px rgba(0, 255, 255, 0.5);
+        transform: translateY(-1px);
+      }
+
+      &:disabled {
+        background: linear-gradient(135deg, #333338 0%, #2a2a30 100%);
+        color: $dark-text-secondary;
+        box-shadow: none;
+      }
+    }
+
+    &.btn-outline-primary {
+      border: 1px solid $dark-accent-primary;
+      color: $dark-accent-primary;
+      background: transparent;
+
+      &:hover:not(:disabled) {
+        background: rgba(0, 255, 255, 0.1);
+        border-color: $dark-accent-primary;
+        color: $dark-accent-primary;
+        box-shadow: 0 0 12px $dark-accent-glow;
+      }
+    }
+
+    &.btn-secondary {
+      background: linear-gradient(135deg, #2a2a30 0%, #222228 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: $dark-text-primary;
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #333338 0%, #2a2a30 100%);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    &.btn-success {
+      background: linear-gradient(135deg, $dark-success 0%, #00dd77 100%);
+      border: none;
+      color: $dark-bg-primary;
+      box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #00ff99 0%, #00ee88 100%);
+        box-shadow: 0 4px 16px rgba(0, 255, 136, 0.5);
+      }
+    }
+
+    &.btn-danger {
+      background: linear-gradient(135deg, $dark-danger 0%, #ee3355 100%);
+      border: none;
+      color: white;
+      box-shadow: 0 2px 8px rgba(255, 68, 102, 0.3);
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #ff5577 0%, #ff4466 100%);
+        box-shadow: 0 4px 16px rgba(255, 68, 102, 0.5);
+      }
+    }
+  }
+
+  // Form controls
+  .form-control {
+    background-color: $dark-bg-elevated;
+    border: 1px solid $dark-border;
+    color: $dark-text-primary;
+    border-radius: 8px;
+
+    &:focus {
+      background-color: $dark-bg-elevated;
+      border-color: $dark-accent-primary;
+      color: $dark-text-primary;
+      box-shadow: 0 0 0 0.2rem rgba(0, 255, 255, 0.15);
+    }
+
+    &::placeholder {
+      color: $dark-text-secondary;
+    }
+
+    &:disabled {
+      background-color: #1a1a1f;
+      color: $dark-text-secondary;
+    }
+  }
+
+  .form-check-input {
+    background-color: $dark-bg-elevated;
+    border: 1px solid $dark-border;
+
+    &:checked {
+      background-color: $dark-accent-primary;
+      border-color: $dark-accent-primary;
+      box-shadow: 0 0 8px $dark-accent-glow;
+    }
+
+    &:focus {
+      border-color: $dark-accent-primary;
+      box-shadow: 0 0 0 0.2rem rgba(0, 255, 255, 0.15);
+    }
+  }
+
+  .form-label {
+    color: $dark-text-primary;
+    font-weight: 500;
+  }
+
+  .form-text {
+    color: $dark-text-secondary;
+  }
+
+  // Tab navigation
+  .nav-tabs {
+    border-bottom: 1px solid $dark-border;
+
+    .nav-link {
+      color: $dark-text-secondary;
+      border: none;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: $dark-accent-primary;
+        border-bottom-color: rgba(0, 255, 255, 0.3);
+      }
+
+      &.active {
+        color: $dark-accent-primary;
+        background: transparent;
+        border-bottom-color: $dark-accent-primary;
+        text-shadow: 0 0 8px $dark-accent-glow;
+      }
+    }
+  }
+
+  // Tab content
+  .tab-pane {
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // Tables
+  .table {
+    color: $dark-text-primary;
+
+    thead {
+      border-bottom: 2px solid $dark-border;
+
+      th {
+        color: $dark-accent-primary;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.05) 0%, transparent 100%);
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid rgba(0, 255, 255, 0.05);
+        transition: all 0.2s ease;
+
+        &:hover {
+          background-color: rgba(0, 255, 255, 0.03);
+        }
+      }
+
+      td {
+        color: $dark-text-primary;
+      }
+    }
+  }
+
+  // Modals
+  .modal-content {
+    background: linear-gradient(135deg, $dark-bg-card 0%, #1c1c28 100%);
+    border: 1px solid $dark-border;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+
+    .modal-header {
+      border-bottom: 1px solid $dark-border;
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.08) 0%, rgba(0, 255, 255, 0.04) 100%);
+
+      .modal-title {
+        color: $dark-accent-primary;
+        font-weight: bold;
+      }
+
+      .btn-close {
+        filter: invert(1) brightness(0.8);
+        opacity: 0.6;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    .modal-body {
+      color: $dark-text-primary;
+    }
+
+    .modal-footer {
+      border-top: 1px solid $dark-border;
+    }
+  }
+
+  .modal-backdrop {
+    background-color: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(4px);
+  }
+
+  // Alerts
+  .alert {
+    border-radius: 8px;
+    border: 1px solid;
+
+    &.alert-success {
+      background-color: rgba(0, 255, 136, 0.1);
+      border-color: rgba(0, 255, 136, 0.3);
+      color: $dark-success;
+    }
+
+    &.alert-warning {
+      background-color: rgba(255, 170, 0, 0.1);
+      border-color: rgba(255, 170, 0, 0.3);
+      color: $dark-warning;
+    }
+
+    &.alert-danger {
+      background-color: rgba(255, 68, 102, 0.1);
+      border-color: rgba(255, 68, 102, 0.3);
+      color: $dark-danger;
+    }
+
+    &.alert-info {
+      background-color: rgba(0, 255, 255, 0.1);
+      border-color: rgba(0, 255, 255, 0.3);
+      color: $dark-accent-primary;
+    }
+  }
+
+  // Badges
+  .badge {
+    &.bg-primary {
+      background-color: $dark-accent-primary !important;
+      color: $dark-bg-primary;
+      box-shadow: 0 0 8px $dark-accent-glow;
+    }
+
+    &.bg-success {
+      background-color: $dark-success !important;
+      color: $dark-bg-primary;
+    }
+
+    &.bg-danger {
+      background-color: $dark-danger !important;
+      color: white;
+    }
+  }
+
+  // List groups
+  .list-group {
+    .list-group-item {
+      background-color: $dark-bg-card;
+      border: 1px solid $dark-border;
+      color: $dark-text-primary;
+
+      &:hover {
+        background-color: rgba(0, 255, 255, 0.05);
+        border-color: rgba(0, 255, 255, 0.2);
+      }
+
+      &.active {
+        background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(0, 255, 255, 0.1) 100%);
+        border-color: $dark-accent-primary;
+        color: $dark-accent-primary;
+        box-shadow: 0 0 12px $dark-accent-glow;
+      }
+    }
+  }
+
+  // Text utilities
+  .text-muted {
+    color: $dark-text-secondary !important;
+  }
+
+  // Border utilities
+  .border {
+    border-color: $dark-border !important;
+  }
+
+  // Background utilities
+  .bg-light {
+    background-color: $dark-bg-elevated !important;
+  }
+
+  .bg-dark {
+    background-color: $dark-bg-primary !important;
+  }
+
+  // Dropdown menus
+  .dropdown-menu {
+    background-color: $dark-bg-card;
+    border: 1px solid $dark-border;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+    .dropdown-item {
+      color: $dark-text-primary;
+
+      &:hover {
+        background-color: rgba(0, 255, 255, 0.1);
+        color: $dark-accent-primary;
+      }
+
+      &.active {
+        background-color: rgba(0, 255, 255, 0.2);
+        color: $dark-accent-primary;
+      }
+    }
+
+    .dropdown-divider {
+      border-color: $dark-border;
+    }
+  }
+
+  // Progress bars
+  .progress {
+    background-color: $dark-bg-elevated;
+    border: 1px solid $dark-border;
+
+    .progress-bar {
+      background: linear-gradient(90deg, $dark-accent-primary 0%, #00cccc 100%);
+      box-shadow: 0 0 10px $dark-accent-glow;
+    }
+  }
+
+  // Special styling for active elements
+  .active-indicator {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 2px solid $dark-accent-primary;
+      border-radius: 8px;
+      pointer-events: none;
+      box-shadow: 0 0 15px $dark-accent-glow, inset 0 0 15px rgba(0, 255, 255, 0.1);
+    }
+  }
+}
