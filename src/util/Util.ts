@@ -1,3 +1,5 @@
+import React from 'react';
+
 const grid = 1;
 
 // Registry for droppable lists, keyed by droppable ID

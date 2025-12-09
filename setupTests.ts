@@ -2,10 +2,10 @@
 import '@testing-library/jest-dom';
 
 // Mock fetch for testing
-global.fetch = require('jest-fetch-mock');
+(global as any).fetch = require('jest-fetch-mock');
 
 // Mock ENV_CONFIG which is normally injected by webpack
-window.ENV_CONFIG = {
+(window as any).ENV_CONFIG = {
   WEBSOCKET_HOST: 'localhost',
   WEBSOCKET_PORT: '8080',
   defaultServerAddr: 'ws://localhost:8080'
@@ -13,11 +13,15 @@ window.ENV_CONFIG = {
 
 // Mock WebSocket
 class MockWebSocket {
-  constructor(url) {
+  url: string;
+  readyState: number;
+
+  constructor(url: string) {
     this.url = url;
     this.readyState = 1;
   }
-  send() {}
-  close() {}
+  send(): void {}
+  close(): void {}
 }
-global.WebSocket = MockWebSocket;
+
+(global as any).WebSocket = MockWebSocket;

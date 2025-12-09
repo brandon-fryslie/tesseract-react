@@ -26,7 +26,7 @@ import userEvent from '@testing-library/user-event';
 
 // Import will be added when component exists
 // For now, we create a placeholder that will fail until real implementation exists
-let FuturisticKnob;
+let FuturisticKnob: React.ComponentType<any> | null;
 try {
   FuturisticKnob = require('../src/components/controls/FuturisticKnob').default;
 } catch (e) {
@@ -34,11 +34,19 @@ try {
   FuturisticKnob = null;
 }
 
+interface KnobProps {
+  value: number;
+  min: number;
+  max: number;
+  onChange?: (value: number) => void;
+  label?: string;
+}
+
 describe('FuturisticKnob - Real User Experience Tests', () => {
 
   // Test setup helper - creates real component with real callbacks
-  const createKnob = (props = {}) => {
-    const defaultProps = {
+  const createKnob = (props: Partial<KnobProps> = {}) => {
+    const defaultProps: KnobProps = {
       value: 50,
       min: 0,
       max: 100,
