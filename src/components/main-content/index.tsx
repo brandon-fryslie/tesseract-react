@@ -37,15 +37,15 @@ class MainContent extends React.Component<MainContentProps> {
   // Reference to websocket;
   @observable websocketRef: any = null;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(props: MainContentProps) {
+    super(props);
     makeObservable(this);
   }
 
   componentDidMount(): void {
-    this.clipStore = ClipStore.get();
-    this.sceneStore = SceneStore.get();
-    this.playlistStore = PlaylistStore.get();
+    this.clipStore = ClipStore.get<ClipStore>();
+    this.sceneStore = SceneStore.get<SceneStore>();
+    this.playlistStore = PlaylistStore.get<PlaylistStore>();
   }
 
   render(): React.ReactNode {

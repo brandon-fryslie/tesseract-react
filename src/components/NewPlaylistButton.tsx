@@ -8,8 +8,8 @@ interface NewPlaylistButtonProps {}
 class NewPlaylistButton extends React.Component<NewPlaylistButtonProps> {
   readonly props!: NewPlaylistButtonProps;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(props: NewPlaylistButtonProps) {
+    super(props);
 
     // Bind event handlers to the correct value of 'this'
     this.handleClick = this.handleClick.bind(this);

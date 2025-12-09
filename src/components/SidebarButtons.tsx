@@ -10,8 +10,8 @@ interface SidebarButtonsProps {}
 class SidebarButtons extends Component<SidebarButtonsProps> {
   readonly props!: SidebarButtonsProps;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(props: SidebarButtonsProps) {
+    super(props);
     makeObservable(this);
   }
 

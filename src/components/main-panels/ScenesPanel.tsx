@@ -22,8 +22,8 @@ class ScenesPanel extends React.Component<ScenesPanelProps> {
   @observable activeScene: SceneModel | null = null;
   @observable uiStore: UIStore;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(props: ScenesPanelProps) {
+    super(props);
     makeObservable(this);
 
     // const props = args[0];

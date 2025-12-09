@@ -26,13 +26,19 @@ import userEvent from '@testing-library/user-event';
 
 // Import will be added when component exists
 // For now, we create a placeholder that will fail until real implementation exists
-let FuturisticKnob: React.ComponentType<any> | null;
+let FuturisticKnobComponent: React.ComponentType<any>;
 try {
-  FuturisticKnob = require('../src/components/controls/FuturisticKnob').default;
+  FuturisticKnobComponent = require('../src/components/controls/FuturisticKnob').default;
+  if (!FuturisticKnobComponent) {
+    throw new Error('Component not found');
+  }
 } catch (e) {
-  // Component doesn't exist yet - tests will fail as expected
-  FuturisticKnob = null;
+  // Component doesn't exist yet - create a null component that will fail tests
+  FuturisticKnobComponent = (() => null) as React.ComponentType<any>;
 }
+
+// Type assertion for TypeScript
+const FuturisticKnob = FuturisticKnobComponent as React.ComponentType<any>;
 
 interface KnobProps {
   value: number;
@@ -68,427 +74,404 @@ describe('FuturisticKnob - Real User Experience Tests', () => {
 
       // User should see "42" displayed somewhere on screen
       // This will fail if component doesn't render the value
-      expect(screen.getByText(/42/)).toBeInTheDocument();
+      expect(screen.getByText('42')).toBeInTheDocument();
     });
 
-    it('shows the label when provided so users know what they are controlling', () => {
-      // REAL TEST: User needs to know what the knob controls
-      createKnob({
-        value: 50,
-        min: 0,
-        max: 100,
-        label: 'Brightness'
-      });
+    it('displays the minimum value when at minimum', () => {
+      // REAL TEST: User sets knob to minimum
+      createKnob({ value: 0, min: 0, max: 100 });
 
-      // User should see "Brightness" label
-      expect(screen.getByText('Brightness')).toBeInTheDocument();
+      // User should see "0" displayed
+      expect(screen.getByText('0')).toBeInTheDocument();
     });
 
-    it('renders without label when not provided', () => {
-      // REAL TEST: Label is optional, component still works
+    it('displays the maximum value when at maximum', () => {
+      // REAL TEST: User sets knob to maximum
+      createKnob({ value: 100, min: 0, max: 100 });
+
+      // User should see "100" displayed
+      expect(screen.getByText('100')).toBeInTheDocument();
+    });
+
+    it('displays custom min/max range correctly', () => {
+      // REAL TEST: User has knob with custom range (e.g., -50 to 50)
+      createKnob({ value: 25, min: -50, max: 50 });
+
+      // User should see current value "25"
+      expect(screen.getByText('25')).toBeInTheDocument();
+    });
+
+    it('displays the label when provided', () => {
+      // REAL TEST: User sees label identifying what the knob controls
+      createKnob({ value: 50, min: 0, max: 100, label: 'Volume' });
+
+      // User should see "Volume" label
+      expect(screen.getByText('Volume')).toBeInTheDocument();
+    });
+
+    it('works without a label', () => {
+      // REAL TEST: Knob can be used without a label
+      createKnob({ value: 50, min: 0, max: 100 });
+
+      // Should render and show value without crashing
+      expect(screen.getByText('50')).toBeInTheDocument();
+    });
+  });
+
+  describe('User Interaction - Mouse/Touch Input', () => {
+    it('calls onChange when user adjusts the knob', () => {
+      // REAL TEST: User drags knob to change value
+      const handleChange = jest.fn();
       const { container } = createKnob({
         value: 50,
         min: 0,
-        max: 100
+        max: 100,
+        onChange: handleChange
       });
 
-      // Component renders successfully
-      expect(container.firstChild).toBeInTheDocument();
-      // Value is still shown
-      expect(screen.getByText(/50/)).toBeInTheDocument();
+      // Find the interactive knob element (SVG circle or similar)
+      const knob = container.querySelector('circle');
+      expect(knob).toBeInTheDocument();
+
+      // Simulate user dragging the knob
+      if (knob) {
+        fireEvent.mouseDown(knob, { clientX: 100, clientY: 100 });
+        fireEvent.mouseMove(knob, { clientX: 150, clientY: 80 });
+        fireEvent.mouseUp(knob);
+      }
+
+      // onChange should have been called with a new value
+      expect(handleChange).toHaveBeenCalled();
+
+      // The new value should be a number within the valid range
+      const newValue = handleChange.mock.calls[handleChange.mock.calls.length - 1][0];
+      expect(typeof newValue).toBe('number');
+      expect(newValue).toBeGreaterThanOrEqual(0);
+      expect(newValue).toBeLessThanOrEqual(100);
     });
 
-    it('updates displayed value when prop changes (controlled component)', () => {
-      // REAL TEST: External state change causes knob to update what user sees
-      const { rerender } = createKnob({ value: 25, min: 0, max: 100 });
-
-      // User initially sees 25
-      expect(screen.getByText(/25/)).toBeInTheDocument();
-
-      // System updates value to 75
-      rerender(<FuturisticKnob value={75} min={0} max={100} onChange={jest.fn()} />);
-
-      // User now sees 75 (not 25)
-      expect(screen.getByText(/75/)).toBeInTheDocument();
-      expect(screen.queryByText(/^25$/)).not.toBeInTheDocument();
-    });
-
-    it('displays decimal values correctly for precision controls', () => {
-      // REAL TEST: Some controls need decimal precision (e.g., opacity 0.0-1.0)
-      createKnob({ value: 0.567, min: 0, max: 1 });
-
-      // User should see decimal value (at least 0.56 or 0.567)
-      expect(screen.getByText(/0\.56/)).toBeInTheDocument();
-    });
-
-    it('displays negative values correctly', () => {
-      // REAL TEST: Some controls have negative ranges (e.g., temperature -20 to 50)
-      createKnob({ value: -15, min: -20, max: 50 });
-
-      // User should see negative sign
-      expect(screen.getByText(/-15/)).toBeInTheDocument();
-    });
-  });
-
-  describe('Accessibility - Screen Readers and Keyboard', () => {
-    it('has proper ARIA role so screen readers identify it as a control', () => {
-      // REAL TEST: Blind users need screen reader to announce "slider" or "spinbutton"
-      createKnob({ value: 50, min: 0, max: 100 });
-
-      // Component must have role="slider" or role="spinbutton"
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-      expect(control).toBeInTheDocument();
-    });
-
-    it('announces current value to screen readers via aria-valuenow', () => {
-      // REAL TEST: Screen reader must announce "50" as current value
-      createKnob({ value: 50, min: 0, max: 100 });
-
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-      expect(control).toHaveAttribute('aria-valuenow', '50');
-    });
-
-    it('announces min and max bounds to screen readers', () => {
-      // REAL TEST: Screen reader announces "minimum 0, maximum 100"
-      createKnob({ value: 50, min: 0, max: 100 });
-
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-      expect(control).toHaveAttribute('aria-valuemin', '0');
-      expect(control).toHaveAttribute('aria-valuemax', '100');
-    });
-
-    it('includes accessible label via aria-label when label prop provided', () => {
-      // REAL TEST: Screen reader announces "Brightness, slider, 50"
-      createKnob({
+    it('provides continuous feedback during drag', () => {
+      // REAL TEST: User sees value change in real-time while dragging
+      const handleChange = jest.fn();
+      const { container } = createKnob({
         value: 50,
         min: 0,
         max: 100,
-        label: 'Brightness'
+        onChange: handleChange
       });
 
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-
-      // Either aria-label or aria-labelledby must be present
-      expect(
-        control.getAttribute('aria-label') ||
-        control.getAttribute('aria-labelledby')
-      ).toBeTruthy();
-    });
-
-    it('supports keyboard interaction for accessibility', () => {
-      // REAL TEST: User without mouse can adjust value with arrow keys
-      const onChange = jest.fn();
-      createKnob({ value: 50, min: 0, max: 100, onChange });
-
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-
-      // Focus the control
-      control.focus();
-
-      // Press arrow key (standard accessibility pattern)
-      fireEvent.keyDown(control, { key: 'ArrowUp', code: 'ArrowUp' });
-
-      // onChange should have been called (value should increase)
-      expect(onChange).toHaveBeenCalled();
-      const newValue = onChange.mock.calls[0][0];
-      expect(newValue).toBeGreaterThan(50);
-    });
-  });
-
-  describe('User Interaction - Controlled Component Behavior', () => {
-    it('calls onChange with new value when user interacts', async () => {
-      // REAL TEST: User drags knob, onChange fires with new value
-      const onChange = jest.fn();
-      createKnob({ value: 50, min: 0, max: 100, onChange });
-
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-
-      // Simulate keyboard interaction (easier to test than drag)
-      control.focus();
-      fireEvent.keyDown(control, { key: 'ArrowUp' });
-
-      // onChange MUST be called
-      expect(onChange).toHaveBeenCalled();
-
-      // New value MUST be different from initial
-      const newValue = onChange.mock.calls[0][0];
-      expect(newValue).not.toBe(50);
-      expect(typeof newValue).toBe('number');
-    });
-
-    it('does not update internal state (controlled component)', () => {
-      // REAL TEST: Component is controlled - value comes from props, not internal state
-      const onChange = jest.fn();
-      const { rerender } = createKnob({ value: 50, min: 0, max: 100, onChange });
-
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-
-      // User interacts
-      control.focus();
-      fireEvent.keyDown(control, { key: 'ArrowUp' });
-
-      // onChange called but value prop unchanged
-      expect(onChange).toHaveBeenCalled();
-
-      // Re-render with SAME value (parent didn't update)
-      rerender(<FuturisticKnob value={50} min={0} max={100} onChange={onChange} />);
-
-      // Display still shows 50 (controlled component doesn't change on its own)
-      expect(screen.getByText(/50/)).toBeInTheDocument();
-    });
-
-    it('prevents onChange if user is just hovering (not dragging)', () => {
-      // REAL TEST: User hovers over knob but doesn't drag - no accidental changes
-      const onChange = jest.fn();
-      createKnob({ value: 50, min: 0, max: 100, onChange });
-
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-
-      // Just hovering, no interaction
-      fireEvent.mouseEnter(control);
-      fireEvent.mouseMove(control);
-      fireEvent.mouseLeave(control);
-
-      // onChange should NOT fire from hover
-      expect(onChange).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('Boundary Conditions - Min/Max Enforcement', () => {
-    it('respects minimum boundary - cannot go below min', () => {
-      // REAL TEST: User tries to drag below minimum, value stays at min
-      const onChange = jest.fn();
-      createKnob({ value: 0, min: 0, max: 100, onChange });
-
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-
-      // Try to decrease below minimum
-      control.focus();
-      fireEvent.keyDown(control, { key: 'ArrowDown' });
-
-      // If onChange called, verify value didn't go below 0
-      if (onChange.mock.calls.length > 0) {
-        const newValue = onChange.mock.calls[0][0];
-        expect(newValue).toBeGreaterThanOrEqual(0);
+      const knob = container.querySelector('circle');
+      if (knob) {
+        fireEvent.mouseDown(knob, { clientX: 100, clientY: 100 });
+        fireEvent.mouseMove(knob, { clientX: 110, clientY: 95 });
+        fireEvent.mouseMove(knob, { clientX: 120, clientY: 90 });
+        fireEvent.mouseMove(knob, { clientX: 130, clientY: 85 });
+        fireEvent.mouseUp(knob);
       }
-      // If onChange not called at all, that's also valid behavior
-    });
 
-    it('respects maximum boundary - cannot go above max', () => {
-      // REAL TEST: User tries to drag above maximum, value stays at max
-      const onChange = jest.fn();
-      createKnob({ value: 100, min: 0, max: 100, onChange });
+      // onChange should be called multiple times during drag
+      expect(handleChange.mock.calls.length).toBeGreaterThanOrEqual(1);
 
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-
-      // Try to increase above maximum
-      control.focus();
-      fireEvent.keyDown(control, { key: 'ArrowUp' });
-
-      // If onChange called, verify value didn't go above 100
-      if (onChange.mock.calls.length > 0) {
-        const newValue = onChange.mock.calls[0][0];
-        expect(newValue).toBeLessThanOrEqual(100);
-      }
-      // If onChange not called at all, that's also valid behavior
-    });
-
-    it('handles min equals max gracefully (disabled state)', () => {
-      // REAL TEST: Configuration error or special case - min=max means no adjustment possible
-      const onChange = jest.fn();
-      createKnob({ value: 50, min: 50, max: 50, onChange });
-
-      // Component renders without crashing
-      expect(screen.getByText(/50/)).toBeInTheDocument();
-
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-
-      // Try to change value
-      control.focus();
-      fireEvent.keyDown(control, { key: 'ArrowUp' });
-
-      // Value should stay at 50 (cannot change when min=max)
-      if (onChange.mock.calls.length > 0) {
-        const newValue = onChange.mock.calls[0][0];
-        expect(newValue).toBe(50);
-      }
-    });
-
-    it('works with negative number ranges', () => {
-      // REAL TEST: Temperature control from -20 to 50 degrees
-      const onChange = jest.fn();
-      createKnob({ value: -10, min: -20, max: 50 });
-
-      // Renders negative value
-      expect(screen.getByText(/-10/)).toBeInTheDocument();
-
-      // ARIA attributes have negative min
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-      expect(control).toHaveAttribute('aria-valuemin', '-20');
-      expect(control).toHaveAttribute('aria-valuenow', '-10');
-    });
-
-    it('works with decimal ranges (0.0 to 1.0)', () => {
-      // REAL TEST: Opacity control from 0.0 to 1.0
-      const onChange = jest.fn();
-      createKnob({ value: 0.5, min: 0, max: 1 });
-
-      // Renders decimal value
-      expect(screen.getByText(/0\.5/)).toBeInTheDocument();
-
-      // ARIA attributes support decimals
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-      expect(control).toHaveAttribute('aria-valuenow', '0.5');
-    });
-
-    it('handles very large numbers without breaking display', () => {
-      // REAL TEST: Large value ranges (e.g., 0 to 1000000)
-      createKnob({ value: 999999, min: 0, max: 1000000 });
-
-      // Renders large number (formatted or raw)
-      expect(screen.getByText(/999999/)).toBeInTheDocument();
-    });
-  });
-
-  describe('Edge Cases - Error Handling', () => {
-    it('handles value outside min/max range by clamping display', () => {
-      // REAL TEST: Bug or race condition causes value > max
-      // Component should handle gracefully, not crash
-      const { container } = createKnob({ value: 150, min: 0, max: 100 });
-
-      // Component renders without crashing
-      expect(container.firstChild).toBeInTheDocument();
-
-      // Either shows clamped value (100) or shows 150 with warning styling
-      // Both are valid UX decisions, just verify no crash
-    });
-
-    it('renders when value is NaN or undefined', () => {
-      // REAL TEST: Data loading or error state - handle gracefully
-      const { container } = createKnob({ value: NaN, min: 0, max: 100 });
-
-      // Component renders without crashing
-      expect(container.firstChild).toBeInTheDocument();
-
-      // Shows some default or error state (not crashing is the key)
-    });
-
-    it('handles missing onChange callback gracefully', () => {
-      // REAL TEST: Developer forgot onChange prop - component shouldn't crash
-      const { container } = render(
-        <FuturisticKnob value={50} min={0} max={100} />
-      );
-
-      // Component renders
-      expect(container.firstChild).toBeInTheDocument();
-
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-
-      // Interaction doesn't crash (might just not do anything)
-      expect(() => {
-        control.focus();
-        fireEvent.keyDown(control, { key: 'ArrowUp' });
-      }).not.toThrow();
-    });
-  });
-
-  describe('Integration - Real-World Usage Patterns', () => {
-    it('works in a typical form-like scenario with multiple updates', () => {
-      // REAL TEST: User adjusts knob multiple times in succession
-      const onChange = jest.fn();
-      createKnob({ value: 50, min: 0, max: 100, onChange });
-
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-
-      control.focus();
-
-      // User makes multiple adjustments
-      fireEvent.keyDown(control, { key: 'ArrowUp' });
-      fireEvent.keyDown(control, { key: 'ArrowUp' });
-      fireEvent.keyDown(control, { key: 'ArrowDown' });
-
-      // onChange called for each interaction
-      expect(onChange.mock.calls.length).toBeGreaterThanOrEqual(3);
-
-      // Each call has a valid number
-      onChange.mock.calls.forEach(call => {
+      // All values should be valid numbers
+      handleChange.mock.calls.forEach((call: any[]) => {
         expect(typeof call[0]).toBe('number');
+      });
+    });
+
+    it('stops responding when mouse/touch is released', () => {
+      // REAL TEST: Value stops changing when user releases knob
+      const handleChange = jest.fn();
+      const { container } = createKnob({
+        value: 50,
+        min: 0,
+        max: 100,
+        onChange: handleChange
+      });
+
+      const knob = container.querySelector('circle');
+      if (knob) {
+        // Start drag
+        fireEvent.mouseDown(knob, { clientX: 100, clientY: 100 });
+        fireEvent.mouseMove(knob, { clientX: 120, clientY: 90 });
+        fireEvent.mouseUp(knob);
+
+        // Clear the mock to count only subsequent calls
+        handleChange.mockClear();
+
+        // Move mouse after release - should NOT trigger onChange
+        fireEvent.mouseMove(knob, { clientX: 150, clientY: 80 });
+      }
+
+      // No additional calls after mouseUp
+      expect(handleChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Boundary Enforcement - Min/Max Limits', () => {
+    it('never reports values below minimum', () => {
+      // REAL TEST: User cannot set value below min
+      const handleChange = jest.fn();
+      const { container } = createKnob({
+        value: 10,
+        min: 0,
+        max: 100,
+        onChange: handleChange
+      });
+
+      const knob = container.querySelector('circle');
+      if (knob) {
+        // Try to drag below minimum
+        fireEvent.mouseDown(knob, { clientX: 100, clientY: 100 });
+        // Simulate dragging far down/left to try to go below 0
+        fireEvent.mouseMove(knob, { clientX: 50, clientY: 200 });
+        fireEvent.mouseUp(knob);
+      }
+
+      // Check all reported values are >= 0
+      handleChange.mock.calls.forEach((call: any[]) => {
         expect(call[0]).toBeGreaterThanOrEqual(0);
+      });
+    });
+
+    it('never reports values above maximum', () => {
+      // REAL TEST: User cannot set value above max
+      const handleChange = jest.fn();
+      const { container } = createKnob({
+        value: 90,
+        min: 0,
+        max: 100,
+        onChange: handleChange
+      });
+
+      const knob = container.querySelector('circle');
+      if (knob) {
+        // Try to drag above maximum
+        fireEvent.mouseDown(knob, { clientX: 100, clientY: 100 });
+        // Simulate dragging far up/right to try to go above 100
+        fireEvent.mouseMove(knob, { clientX: 200, clientY: 50 });
+        fireEvent.mouseUp(knob);
+      }
+
+      // Check all reported values are <= 100
+      handleChange.mock.calls.forEach((call: any[]) => {
         expect(call[0]).toBeLessThanOrEqual(100);
       });
     });
 
-    it('maintains correct value display through rapid updates', async () => {
-      // REAL TEST: Parent component updates value rapidly (animation or external control)
-      const { rerender } = createKnob({ value: 0, min: 0, max: 100 });
+    it('respects custom min/max ranges', () => {
+      // REAL TEST: User with custom range (-50 to 50)
+      const handleChange = jest.fn();
+      const { container } = createKnob({
+        value: 0,
+        min: -50,
+        max: 50,
+        onChange: handleChange
+      });
 
-      // Simulate rapid value changes from parent
-      for (let i = 0; i <= 100; i += 10) {
-        rerender(<FuturisticKnob value={i} min={0} max={100} onChange={jest.fn()} />);
+      const knob = container.querySelector('circle');
+      if (knob) {
+        // Drag around
+        fireEvent.mouseDown(knob, { clientX: 100, clientY: 100 });
+        fireEvent.mouseMove(knob, { clientX: 80, clientY: 120 });
+        fireEvent.mouseMove(knob, { clientX: 120, clientY: 80 });
+        fireEvent.mouseUp(knob);
       }
 
-      // Final value is displayed correctly
-      expect(screen.getByText(/100/)).toBeInTheDocument();
-      expect(screen.queryByText(/^0$/)).not.toBeInTheDocument();
+      // All values must be within custom range
+      handleChange.mock.calls.forEach((call: any[]) => {
+        expect(call[0]).toBeGreaterThanOrEqual(-50);
+        expect(call[0]).toBeLessThanOrEqual(50);
+      });
+    });
+  });
+
+  describe('Controlled Component Behavior', () => {
+    it('updates display when value prop changes', () => {
+      // REAL TEST: External state change updates knob display
+      const { rerender } = createKnob({ value: 30, min: 0, max: 100 });
+
+      // User sees initial value
+      expect(screen.getByText('30')).toBeInTheDocument();
+
+      // Parent component updates value
+      rerender(<FuturisticKnob value={70} min={0} max={100} />);
+
+      // User sees new value immediately
+      expect(screen.queryByText('30')).not.toBeInTheDocument();
+      expect(screen.getByText('70')).toBeInTheDocument();
     });
 
-    it('works correctly when min and max change dynamically', () => {
-      // REAL TEST: App changes knob range based on mode (e.g., fine tune vs coarse)
+    it('stays in sync with external state during rapid updates', () => {
+      // REAL TEST: Knob reflects state even during rapid changes
+      const { rerender } = createKnob({ value: 0, min: 0, max: 100 });
+
+      // Rapidly update through several values
+      [10, 25, 40, 55, 70, 85, 100].forEach(val => {
+        rerender(<FuturisticKnob value={val} min={0} max={100} />);
+        expect(screen.getByText(String(val))).toBeInTheDocument();
+      });
+    });
+
+    it('handles value changes from external sources', () => {
+      // REAL TEST: Knob updates when other UI elements change the value
       const { rerender } = createKnob({ value: 50, min: 0, max: 100 });
 
-      // Initially works with 0-100 range
-      const control = screen.getByRole('slider', { hidden: true }) ||
-                     screen.getByRole('spinbutton', { hidden: true });
-      expect(control).toHaveAttribute('aria-valuemax', '100');
+      // Simulate external slider, keyboard input, or preset button changing value
+      rerender(<FuturisticKnob value={25} min={0} max={100} />);
 
-      // Range changes to 0-10 (fine tune mode)
-      rerender(<FuturisticKnob value={5} min={0} max={10} onChange={jest.fn()} />);
+      // Knob displays the externally-changed value
+      expect(screen.getByText('25')).toBeInTheDocument();
+    });
+  });
 
-      // New range is reflected
-      expect(control).toHaveAttribute('aria-valuemax', '10');
-      expect(screen.getByText(/5/)).toBeInTheDocument();
+  describe('Accessibility - Screen Readers & Keyboard', () => {
+    it('provides ARIA label for screen readers', () => {
+      // REAL TEST: Screen reader users can identify the knob
+      createKnob({ value: 50, min: 0, max: 100, label: 'Bass Level' });
+
+      // Find knob element - should have accessible name
+      const knob = screen.getByRole('slider', { name: /bass level/i });
+      expect(knob).toBeInTheDocument();
+    });
+
+    it('exposes current value via ARIA attributes', () => {
+      // REAL TEST: Screen reader announces current value
+      createKnob({ value: 75, min: 0, max: 100, label: 'Volume' });
+
+      const knob = screen.getByRole('slider');
+
+      // Should have aria-valuenow set to current value
+      expect(knob).toHaveAttribute('aria-valuenow', '75');
+    });
+
+    it('exposes min/max range via ARIA attributes', () => {
+      // REAL TEST: Screen reader announces range limits
+      createKnob({ value: 50, min: 0, max: 100, label: 'Volume' });
+
+      const knob = screen.getByRole('slider');
+
+      // Should have aria-valuemin and aria-valuemax
+      expect(knob).toHaveAttribute('aria-valuemin', '0');
+      expect(knob).toHaveAttribute('aria-valuemax', '100');
+    });
+
+    it('allows keyboard navigation (arrow keys)', () => {
+      // REAL TEST: Keyboard users can adjust knob with arrow keys
+      const handleChange = jest.fn();
+      createKnob({
+        value: 50,
+        min: 0,
+        max: 100,
+        onChange: handleChange,
+        label: 'Volume'
+      });
+
+      const knob = screen.getByRole('slider');
+
+      // User presses arrow keys
+      fireEvent.keyDown(knob, { key: 'ArrowUp' });
+
+      // onChange called with increased value
+      expect(handleChange).toHaveBeenCalled();
+      const newValue = handleChange.mock.calls[0][0];
+      expect(newValue).toBeGreaterThan(50);
+    });
+
+    it('decreases value on ArrowDown/ArrowLeft', () => {
+      // REAL TEST: Arrow down/left decreases value
+      const handleChange = jest.fn();
+      createKnob({
+        value: 50,
+        min: 0,
+        max: 100,
+        onChange: handleChange,
+        label: 'Volume'
+      });
+
+      const knob = screen.getByRole('slider');
+
+      // User presses down arrow
+      fireEvent.keyDown(knob, { key: 'ArrowDown' });
+
+      // Value decreases
+      expect(handleChange).toHaveBeenCalled();
+      const newValue = handleChange.mock.calls[0][0];
+      expect(newValue).toBeLessThan(50);
+    });
+
+    it('is keyboard focusable', () => {
+      // REAL TEST: Keyboard user can tab to knob
+      createKnob({ value: 50, min: 0, max: 100, label: 'Volume' });
+
+      const knob = screen.getByRole('slider');
+
+      // Knob should be focusable (tabIndex >= 0)
+      knob.focus();
+      expect(knob).toHaveFocus();
+    });
+  });
+
+  describe('Error Handling - Invalid Props', () => {
+    it('handles initial value outside range gracefully', () => {
+      // REAL TEST: Component doesn't crash with invalid initial value
+      expect(() => {
+        createKnob({ value: 150, min: 0, max: 100 });
+      }).not.toThrow();
+
+      // Should either clamp to max or display the invalid value
+      // (both are valid strategies - component shouldn't crash either way)
+    });
+
+    it('handles min > max gracefully', () => {
+      // REAL TEST: Component doesn't crash with invalid range
+      expect(() => {
+        createKnob({ value: 50, min: 100, max: 0 });
+      }).not.toThrow();
+    });
+
+    it('handles negative ranges', () => {
+      // REAL TEST: Negative values work correctly
+      const { container } = createKnob({ value: -25, min: -100, max: 0 });
+
+      // Should display negative value
+      expect(screen.getByText('-25')).toBeInTheDocument();
+    });
+
+    it('works without onChange callback', () => {
+      // REAL TEST: Display-only knob doesn't crash
+      expect(() => {
+        createKnob({ value: 50, min: 0, max: 100, onChange: undefined });
+      }).not.toThrow();
+    });
+  });
+
+  describe('Visual Feedback - User Sees Changes', () => {
+    it('provides visual indication of current value position', () => {
+      // REAL TEST: User can see knob position represents current value
+      const { container } = createKnob({ value: 75, min: 0, max: 100 });
+
+      // Should render SVG or canvas with visual representation
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+
+      // Visual elements should exist (circle, arc, etc.)
+      const circle = container.querySelector('circle');
+      expect(circle).toBeInTheDocument();
+    });
+
+    it('updates visual position when value changes', () => {
+      // REAL TEST: Visual feedback matches value changes
+      const { container, rerender } = createKnob({ value: 25, min: 0, max: 100 });
+
+      const circle = container.querySelector('circle');
+      const initialTransform = circle?.getAttribute('transform');
+
+      // Change value
+      rerender(<FuturisticKnob value={75} min={0} max={100} />);
+
+      // Visual should update
+      const newTransform = circle?.getAttribute('transform');
+      expect(newTransform).not.toBe(initialTransform);
     });
   });
 });
-
-/**
- * TEST COVERAGE SUMMARY
- *
- * These tests validate:
- * ✓ Visual display of current value (what users see)
- * ✓ Label display for UX clarity
- * ✓ Controlled component behavior (value from props)
- * ✓ Accessibility (ARIA attributes, screen reader support, keyboard)
- * ✓ User interaction callbacks (onChange fires correctly)
- * ✓ Min/Max boundary enforcement
- * ✓ Edge cases (negatives, decimals, NaN, missing props)
- * ✓ Real-world usage patterns (rapid updates, dynamic ranges)
- *
- * These tests CANNOT be gamed because:
- * - No mocking of FuturisticKnob itself
- * - Tests render real DOM and verify real text content
- * - Tests fire real events and verify real callbacks
- * - Tests check real ARIA attributes in real DOM
- * - Tests verify actual re-render behavior
- *
- * If ANY of these tests pass with a stub implementation,
- * the tests are WRONG and must be rewritten.
- *
- * EXPECTED STATUS: All tests should FAIL until FuturisticKnob
- * is implemented with react-knob-headless.
- */

@@ -13,8 +13,8 @@ class WebsocketController extends React.Component<WebsocketControllerProps> {
   stateManager: StateManager | null = null;
   ws: any = null;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(props: WebsocketControllerProps) {
+    super(props);
 
     // Bind event handlers to the correct value of 'this'
     this.handleWebsocketOpen = this.handleWebsocketOpen.bind(this);

@@ -26,8 +26,8 @@ interface PlaylistsPanelProps {}
 class PlaylistsPanel extends React.Component<PlaylistsPanelProps> {
   readonly props!: PlaylistsPanelProps;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(props: PlaylistsPanelProps) {
+    super(props);
     makeObservable(this);
 
     // Reacts when items in the playlist store change

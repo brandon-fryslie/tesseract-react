@@ -83,8 +83,8 @@ interface PlaylistEditorGridProps {
 class PlaylistEditorGrid extends React.Component<PlaylistEditorGridProps> {
   readonly props!: PlaylistEditorGridProps;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(props: PlaylistEditorGridProps) {
+    super(props);
     makeObservable(this);
 
     // Bind event handlers to the correct value of 'this'

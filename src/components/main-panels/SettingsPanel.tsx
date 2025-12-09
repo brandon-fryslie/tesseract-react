@@ -43,8 +43,8 @@ interface SettingsPanelProps {}
 class SettingsPanel extends React.Component<SettingsPanelProps> {
   readonly props!: SettingsPanelProps;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(props: SettingsPanelProps) {
+    super(props);
 
     // this.uiStore = UIStore.get();
 

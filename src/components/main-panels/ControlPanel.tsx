@@ -28,8 +28,8 @@ interface ControlPanelProps {}
 class ControlPanel extends React.Component<ControlPanelProps> {
   readonly props!: ControlPanelProps;
 
-  constructor(...args: any[]) {
-    super(...args);
+  constructor(props: ControlPanelProps) {
+    super(props);
     makeObservable(this);
 
     // Bind event handlers to the correct value of 'this'
