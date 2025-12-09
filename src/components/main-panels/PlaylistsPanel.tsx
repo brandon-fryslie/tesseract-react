@@ -8,7 +8,7 @@ import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import PlaylistsList from '../PlaylistsList';
 import PlaylistEditor from '../PlaylistEditor';
 import Util from '../../util/Util';
-import { DragDropContext, DropResult, DraggableLocation } from 'react-beautiful-dnd';
+import { DragDropContext, DropResult, DraggableLocation } from '@hello-pangea/dnd';
 import ScenesList from '../ScenesList';
 import { action, computed, reaction, makeObservable } from 'mobx';
 import PlaylistStore from '../../stores/PlaylistStore';

@@ -67,6 +67,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@hello-pangea/dnd": "^18.0.1",
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
     "babel-loader": "^8.0.6",
@@ -78,7 +79,6 @@
     "mobx-utils": "^6.1.1",
     "prop-types": "15",
     "react": "18.3.1",
-    "react-beautiful-dnd": "^11.0.1",
     "react-bootstrap": "^2.10.10",
     "react-data-grid": "^6.1.0",
     "react-data-grid-addons": "^6.1.0",

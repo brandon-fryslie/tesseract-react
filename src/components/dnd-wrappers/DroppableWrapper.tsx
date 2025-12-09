@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Droppable, DroppableProvided, DroppableStateSnapshot } from 'react-beautiful-dnd';
+import { Droppable, DroppableProvided, DroppableStateSnapshot } from '@hello-pangea/dnd';
 import Util from '../../util/Util';
 
 interface DroppableWrapperProps {
@@ -19,8 +19,10 @@ const DroppableWrapper: React.FC<DroppableWrapperProps> = (props) => {
 
   Util.registerDroppableList(props.droppableId, props.list);
 
+  const DroppableComponent = Droppable as any;
+
   return (
-    <Droppable
+    <DroppableComponent
       isDropDisabled={props.isDropDisabled}
       droppableId={props.droppableId}
     >
@@ -32,10 +34,10 @@ const DroppableWrapper: React.FC<DroppableWrapperProps> = (props) => {
           style={Util.getListStyle(snapshot.isDraggingOver)}
         >
           {props.children}
-          {provided.placeholder}
+          {provided.placeholder as React.ReactNode}
         </ElType>
       )}
-    </Droppable>
+    </DroppableComponent>
   );
 };
 

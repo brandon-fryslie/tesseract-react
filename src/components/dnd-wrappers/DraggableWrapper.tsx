@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Draggable, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
+import { Draggable, DraggableProvided, DraggableStateSnapshot } from '@hello-pangea/dnd';
 import Util from '../../util/Util';
 
 interface DraggableWrapperProps {

@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext } from '@hello-pangea/dnd';
 import ScenesList from '../ScenesList';
 import { observable, action, makeObservable } from 'mobx';
 import Button from 'react-bootstrap/Button';

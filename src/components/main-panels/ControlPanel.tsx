@@ -8,7 +8,7 @@ import { observer } from 'mobx-react';
 import PlaylistsList from '../PlaylistsList';
 import { action, computed, makeObservable } from 'mobx';
 import UIStore from '../../stores/UIStore';
-import { DragDropContext } from 'react-beautiful-dnd';
+import { DragDropContext } from '@hello-pangea/dnd';
 import ChannelControls from '../ChannelControls';
 import PlaylistStore from '../../stores/PlaylistStore';
 import PlaylistItemView from '../PlaylistItemView';
@@ -264,7 +264,7 @@ class ControlPanel extends React.Component<ControlPanelProps> {
     const playlistItems = PlaylistStore.get().getItems();
 
     return (
-      <DragDropContext>
+      <DragDropContext onDragEnd={() => {}}>
         <Container fluid>
           <Row>
             <Col sm={ 2 }>

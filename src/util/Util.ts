@@ -1,4 +1,5 @@
 import React from 'react';
+import type { DraggableStyle } from '@hello-pangea/dnd';
 
 const grid = 1;
 
@@ -10,11 +11,6 @@ export interface TimeObject {
   h: number;
   m: number;
   s: number;
-}
-
-// Type for draggable style object (from react-beautiful-dnd)
-export interface DraggableStyle {
-  [key: string]: any;
 }
 
 class Util {
@@ -34,7 +30,7 @@ class Util {
     };
   }
 
-  static getItemStyle(isDragging: boolean, draggableStyle: DraggableStyle): React.CSSProperties {
+  static getItemStyle(isDragging: boolean, draggableStyle: DraggableStyle | undefined): React.CSSProperties {
     return {
       // some basic styles to make the items look a bit nicer
       // userSelect: 'none',
@@ -45,7 +41,7 @@ class Util {
       // background: isDragging ? 'lightgreen' : 'grey',
 
       // styles we need to apply on draggables
-      ...draggableStyle,
+      ...(draggableStyle || {}),
     };
   }
 
