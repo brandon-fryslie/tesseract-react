@@ -1,4 +1,4 @@
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import BaseModel from './BaseModel';
 
 export default class ControlModel extends BaseModel {
@@ -29,6 +29,7 @@ export default class ControlModel extends BaseModel {
 
   constructor(displayName, type, defaultValue, currentValue, fieldName, maxValue = 1, minValue = 0) {
     super();
+    makeObservable(this);
 
     this.displayName = displayName;
     this.type = type;

@@ -11,19 +11,20 @@ import PlaylistEditor from '../PlaylistEditor';
 import Util from '../../util/Util';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ScenesList from '../ScenesList';
-import { action, computed, reaction } from 'mobx';
+import { action, computed, reaction, makeObservable } from 'mobx';
 import PlaylistStore from '../../stores/PlaylistStore';
 import SceneStore from '../../stores/SceneStore';
 import UIStore from '../../stores/UIStore';
 import PlaylistDetailModal from '../modals/PlaylistDetailModal';
 import Button from 'react-bootstrap/Button';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
-import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@mui/icons-material/DeleteForever';
+import EditIcon from '@mui/icons-material/Edit';
 
 @observer
 class PlayListsPanel extends React.Component {
   constructor(...args) {
     super(...args);
+    makeObservable(this);
 
     // Reacts when items in the playlist store change
     // Only set this value once (after we've loaded initial data)

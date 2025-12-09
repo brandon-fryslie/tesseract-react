@@ -1,4 +1,4 @@
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import BaseModel from './BaseModel';
 import ClipModel from './ClipModel';
 import ControlModel from './ControlModel';
@@ -23,6 +23,7 @@ export default class SceneModel extends BaseModel {
 
   constructor(id, displayName, clip, rawClipValues = null, filename = null) {
     super();
+    makeObservable(this);
     this.id = id;
     this.displayName = displayName;
     this.clip = clip;

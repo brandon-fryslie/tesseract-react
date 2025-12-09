@@ -1,6 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const commonPaths = require('./paths');
@@ -8,25 +8,20 @@ const commonPaths = require('./paths');
 module.exports = {
   mode: 'production',
   output: {
-    filename: `${commonPaths.jsFolder}/[name].[hash].js`,
+    filename: `${commonPaths.jsFolder}/[name].[contenthash].js`,
     path: commonPaths.outputPath,
-    chunkFilename: `${commonPaths.jsFolder}/[name].[chunkhash].js`,
+    chunkFilename: `${commonPaths.jsFolder}/[name].[contenthash].js`,
   },
   optimization: {
     minimizer: [
       new TerserPlugin({
-        // Use multi-process parallel running to improve the build speed
-        // Default number of concurrent runs: os.cpus().length - 1
         parallel: true,
-        // Enable file caching
-        cache: true,
-        sourceMap: true,
+        terserOptions: {
+          sourceMap: true,
+        },
       }),
-      new OptimizeCSSAssetsPlugin(),
+      new CssMinimizerPlugin(),
     ],
-    // Automatically split vendor and commons
-    // https://twitter.com/wSokra/status/969633336732905474
-    // https://medium.com/webpack/webpack-4-code-splitting-chunk-graph-and-the-splitchunks-optimization-be739a861366
     splitChunks: {
       cacheGroups: {
         vendors: {
@@ -42,8 +37,6 @@ module.exports = {
         },
       },
     },
-    // Keep the runtime chunk seperated to enable long term caching
-    // https://twitter.com/wSokra/status/969679223278505985
     runtimeChunk: true,
   },
 
@@ -57,9 +50,12 @@ module.exports = {
             loader: 'css-loader',
             options: {
               sourceMap: false,
-              modules: true,
-              camelCase: true,
-              localIdentName: '[local]___[hash:base64:5]',
+              modules: {
+                mode: 'local',
+                localIdentName: '[local]___[hash:base64:5]',
+                auto: false,
+              },
+              importLoaders: 1,
             },
           },
           'sass-loader',

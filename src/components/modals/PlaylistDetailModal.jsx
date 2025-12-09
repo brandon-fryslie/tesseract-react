@@ -1,15 +1,15 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { action, computed, observable, reaction } from 'mobx';
+import { action, computed, observable, reaction, makeObservable } from 'mobx';
 import PlaylistStore from '../../stores/PlaylistStore';
 import UIStore from '../../stores/UIStore';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import TextField from '@material-ui/core/TextField';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
+import DialogContentText from '@mui/material/DialogContentText';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import TextField from '@mui/material/TextField';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 
 @observer
 class PlaylistDetailModal extends React.Component {
@@ -21,6 +21,7 @@ class PlaylistDetailModal extends React.Component {
 
   constructor(...args) {
     super(...args);
+    makeObservable(this);
 
     // Bind event handlers to the correct value of 'this'
     this.handleNameFieldChange = this.handleNameFieldChange.bind(this);

@@ -1,10 +1,14 @@
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 
 export default class BaseStore {
   @observable items = [];
 
   // singleton pattern
   static instance;
+
+  constructor() {
+    makeObservable(this);
+  }
 
   static get() {
     if (this.instance == null) {

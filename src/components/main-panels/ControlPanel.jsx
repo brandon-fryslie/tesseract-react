@@ -3,22 +3,22 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/es/ButtonGroup';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import PropTypes from 'prop-types';
 import { observer } from 'mobx-react';
 import PlaylistsList from '../PlaylistsList';
-import { action, computed } from 'mobx';
+import { action, computed, makeObservable } from 'mobx';
 import UIStore from '../../stores/UIStore';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ChannelControls from '../ChannelControls';
 import PlaylistStore from '../../stores/PlaylistStore';
 import PlaylistItemView from '../PlaylistItemView';
 import PlaylistModel from '../../models/PlaylistModel';
-import LoopIcon from '@material-ui/icons/Loop';
-import PlayIcon from '@material-ui/icons/PlayArrow';
-import StopIcon from '@material-ui/icons/Stop';
+import LoopIcon from '@mui/icons-material/Loop';
+import PlayIcon from '@mui/icons-material/PlayArrow';
+import StopIcon from '@mui/icons-material/Stop';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import EditIcon from '@material-ui/icons/Edit';
+import EditIcon from '@mui/icons-material/Edit';
 import SceneModal from '../modals/SceneModal';
 import FilePickerModal from '../modals/FilePickerModal';
 
@@ -26,6 +26,7 @@ import FilePickerModal from '../modals/FilePickerModal';
 class ControlPanel extends React.Component {
   constructor(...args) {
     super(...args);
+    makeObservable(this);
 
     // Bind event handlers to the correct value of 'this'
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
@@ -291,7 +292,7 @@ class ControlPanel extends React.Component {
   }
 }
 
-ControlPanel.propTypes = {};
+ ControlPanel.propTypes = {};
 
 export default ControlPanel;
 
@@ -302,7 +303,7 @@ const ControlPanelButton = (props) => {
   return <Button variant={ variant } onClick={ props.onClick }>{ props.children }</Button>;
 };
 
-ControlPanelButton.propTypes = {
+ ControlPanelButton.propTypes = {
   onClick: PropTypes.func.isRequired,
   active: PropTypes.bool.isRequired,
   children: PropTypes.any,

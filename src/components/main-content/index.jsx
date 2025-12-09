@@ -12,13 +12,13 @@ import AboutPanel from '../main-panels/AboutPanel';
 import PlaylistStore from '../../stores/PlaylistStore';
 import ClipStore from '../../stores/ClipStore';
 import SceneStore from '../../stores/SceneStore';
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import WebsocketController from '../WebsocketController';
 import SidebarButtons from '../SidebarButtons';
 
 // Don't remove this or the styles won't be imported
 import style from './MainContent.scss';
-import bootstrapStyle from '../../css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 @observer
 class MainContent extends React.Component {
@@ -33,9 +33,10 @@ class MainContent extends React.Component {
 
   constructor(...args) {
     super(...args);
+    makeObservable(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.clipStore = ClipStore.get();
     this.sceneStore = SceneStore.get();
     this.playlistStore = PlaylistStore.get();

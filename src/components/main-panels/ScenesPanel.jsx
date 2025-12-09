@@ -6,7 +6,7 @@ import Container from 'react-bootstrap/Container';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import { DragDropContext } from 'react-beautiful-dnd';
 import ScenesList from '../ScenesList';
-import { observable, action } from 'mobx';
+import { observable, action, makeObservable } from 'mobx';
 import Button from 'react-bootstrap/Button';
 import SceneStore from '../../stores/SceneStore';
 import ChannelControls from '../ChannelControls';
@@ -19,6 +19,7 @@ class ScenesPanel extends React.Component {
 
   constructor(...args) {
     super(...args);
+    makeObservable(this);
 
     // const props = args[0];
 

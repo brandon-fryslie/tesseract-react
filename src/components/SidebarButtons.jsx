@@ -3,10 +3,15 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import UIStore from '../stores/UIStore';
 import { observer } from 'mobx-react';
-import { computed } from 'mobx';
+import { computed, makeObservable } from 'mobx';
 
 @observer
 class SidebarButtons extends Component {
+  constructor(...args) {
+    super(...args);
+    makeObservable(this);
+  }
+
   renderConnectedIndicator(isConnected) {
     // adding 'disabled' to the button reduced the opacity, but we don't want that
     const buttonStyle = { opacity: 1.0 };

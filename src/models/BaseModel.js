@@ -1,5 +1,5 @@
 import { observable } from 'mobx';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 // A Scene is one or more clips loaded into channels with specific parameters defined
 // Scenes have two channels (for now, can expand to 4 later)

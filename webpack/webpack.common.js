@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const convert = require('koa-connect');
 const history = require('connect-history-api-fallback');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const commonPaths = require('./paths');
 
 module.exports = {
@@ -10,16 +10,7 @@ module.exports = {
   module: {
     rules: [
       {
-        enforce: 'pre',
-        test: /\.(js|jsx)$/,
-        loader: 'eslint-loader',
-        exclude: /(node_modules)/,
-        options: {
-          emitWarning: process.env.NODE_ENV !== 'production',
-        },
-      },
-      {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|jsx|ts|tsx)$/,
         loader: 'babel-loader',
         exclude: /(node_modules)/,
         options: {
@@ -31,74 +22,61 @@ module.exports = {
                   esmodules: true,
                 },
                 useBuiltIns: 'usage',
+                corejs: 3,
               },
             ],
             '@babel/preset-react',
+            '@babel/preset-typescript',
           ],
           plugins: [
             '@babel/plugin-transform-runtime',
-            'react-hot-loader/babel',
 
-            // Stage 2 https://github.com/babel/babel/tree/master/packages/babel-preset-stage-2
+            // Stage 2 - using transform versions for merged proposals
             ['@babel/plugin-proposal-decorators', { legacy: true }],
             '@babel/plugin-proposal-function-sent',
-            '@babel/plugin-proposal-export-namespace-from',
-            '@babel/plugin-proposal-numeric-separator',
+            '@babel/plugin-transform-export-namespace-from',
+            '@babel/plugin-transform-numeric-separator',
             '@babel/plugin-proposal-throw-expressions',
 
             // Stage 3
             '@babel/plugin-syntax-dynamic-import',
             '@babel/plugin-syntax-import-meta',
-            ['@babel/plugin-proposal-class-properties', { loose: true }],
-            '@babel/plugin-proposal-json-strings',
+            ['@babel/plugin-transform-class-properties', { loose: true }],
+            ['@babel/plugin-transform-private-methods', { loose: true }],
+            ['@babel/plugin-transform-private-property-in-object', { loose: true }],
+            '@babel/plugin-transform-json-strings',
           ],
         },
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              outputPath: commonPaths.imagesFolder,
-            },
-          },
-        ],
+        type: 'asset/resource',
+        generator: {
+          filename: `${commonPaths.imagesFolder}/[name][ext]`,
+        },
       },
       {
         test: /\.(woff2|ttf|woff|eot)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              outputPath: commonPaths.fontsFolder,
-            },
-          },
-        ],
+        type: 'asset/resource',
+        generator: {
+          filename: `${commonPaths.fontsFolder}/[name][ext]`,
+        },
       },
     ],
   },
-  serve: {
-    add: app => {
-      app.use(convert(history()));
-    },
-    content: commonPaths.entryPath,
-    dev: {
-      publicPath: commonPaths.outputPath,
-    },
-    open: true,
-  },
   resolve: {
     modules: ['src', 'node_modules'],
-    extensions: ['*', '.js', '.jsx', '.css', '.scss'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.css', '.scss'],
   },
   plugins: [
     new webpack.ProgressPlugin(),
     new HtmlWebpackPlugin({
       template: commonPaths.templatePath,
     }),
-    new ScriptExtHtmlWebpackPlugin({
-      defaultAttribute: 'async',
+    new ESLintPlugin({
+      extensions: ['js', 'jsx', 'ts', 'tsx'],
+      exclude: ['node_modules'],
+      emitWarning: process.env.NODE_ENV !== 'production',
     }),
   ],
 };

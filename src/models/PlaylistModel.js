@@ -1,4 +1,4 @@
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import PlaylistItemModel from './PlaylistItemModel';
 import BaseModel from './BaseModel';
 
@@ -21,6 +21,7 @@ export default class PlaylistModel extends BaseModel {
 
   constructor(id, displayName, defaultDuration, items) {
     super();
+    makeObservable(this);
 
     if (defaultDuration == null) {
       console.trace();

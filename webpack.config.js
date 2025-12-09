@@ -1,11 +1,9 @@
-const webpackMerge = require('webpack-merge');
-const common = require('./webpack/webpack.common');
+const { merge } = require('webpack-merge');
+const common = require('./webpack/webpack.common.js');
+const dev = require('./webpack/webpack.dev.js');
+const prod = require('./webpack/webpack.prod.js');
 
-const envs = {
-  development: 'dev',
-  production: 'prod',
+module.exports = (env, argv) => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  return merge(common, isProduction ? prod : dev);
 };
-/* eslint-disable global-require,import/no-dynamic-require */
-const env = envs[process.env.NODE_ENV || 'development'];
-const envConfig = require(`./webpack/webpack.${env}.js`);
-module.exports = webpackMerge(common, envConfig);

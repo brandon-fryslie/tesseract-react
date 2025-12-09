@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 
 // Displays remaining time in seconds
 
@@ -15,6 +15,7 @@ class DurationRemaining extends React.Component {
 
   constructor(...args) {
     super(...args);
+    makeObservable(this);
 
     this.startTimer = this.startTimer.bind(this);
     this.countDown = this.countDown.bind(this);
@@ -25,14 +26,10 @@ class DurationRemaining extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    // console.log("ComponentDidUpdate");
-    // this.startTimer(this.props.initialTime);
-  }
-
-  // This will break in React 17 :( shouldn't be too hard to rework this though
-  // we want to reset the timer any time we receive new props
-  componentWillReceiveProps(nextProps, prevState) {
-    this.startTimer(nextProps.initialTime);
+    // Reset the timer when initialTime prop changes
+    if (prevProps.initialTime !== this.props.initialTime) {
+      this.startTimer(this.props.initialTime);
+    }
   }
 
   startTimer(timeRemaining) {

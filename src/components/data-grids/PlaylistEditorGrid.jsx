@@ -3,12 +3,12 @@
 
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { action, computed } from 'mobx';
+import { action, computed, makeObservable } from 'mobx';
 import ReactDataGrid from 'react-data-grid';
 import { observer } from 'mobx-react';
 import DraggableWrapper from '../dnd-wrappers/DraggableWrapper';
 import DroppableWrapper from '../dnd-wrappers/DroppableWrapper';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
+import DeleteIcon from '@mui/icons-material/DeleteForever';
 import PlaylistItemModel from '../../models/PlaylistItemModel';
 
 const DeleteIconFormatter = () => {
@@ -61,6 +61,7 @@ const customRowRenderer = ({ renderBaseRow, ...canvasProps }) => {
 class PlaylistEditorGrid extends React.Component {
   constructor(...args) {
     super(...args);
+    makeObservable(this);
 
     // Bind event handlers to the correct value of 'this'
     this.handleGridRowsUpdated = this.handleGridRowsUpdated.bind(this);
@@ -123,4 +124,3 @@ PlaylistEditorGrid.propTypes = {
 };
 
 export default PlaylistEditorGrid;
-

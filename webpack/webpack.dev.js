@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const commonPaths = require('./paths');
 
@@ -14,6 +15,9 @@ module.exports = {
       {
         use: {
           loader: 'babel-loader',
+          options: {
+            plugins: ['react-refresh/babel'],
+          },
         },
         test: /\.js$/,
         exclude: /node_modules/
@@ -26,9 +30,12 @@ module.exports = {
             loader: 'css-loader',
             options: {
               sourceMap: true,
-              modules: false,
-              camelCase: true,
-              localIdentName: '[local]___[hash:base64:5]',
+              modules: {
+                mode: 'local',
+                localIdentName: '[local]___[hash:base64:5]',
+                auto: false,
+              },
+              importLoaders: 1,
             },
           },
           'sass-loader',
@@ -37,10 +44,14 @@ module.exports = {
     ],
   },
   devServer: {
-    contentBase: commonPaths.outputPath,
+    static: {
+      directory: commonPaths.outputPath,
+    },
     compress: true,
     hot: true,
-    disableHostCheck: true, // This is insecure!!! Be careful!
+    allowedHosts: 'all',
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    new ReactRefreshWebpackPlugin(),
+  ],
 };

@@ -1,8 +1,7 @@
-import { observable } from 'mobx';
-import uuidv1 from 'uuid/v1';
+import { observable, makeObservable } from 'mobx';
+import { v1 as uuidv1, v4 as uuidv4 } from 'uuid';
 import BaseModel from './BaseModel';
 import PlaylistStore from '../stores/PlaylistStore';
-import uuidv4 from 'uuid/v4';
 
 // This class is basically just a scene with a duration at this point
 export default class PlaylistItemModel extends BaseModel {
@@ -14,6 +13,7 @@ export default class PlaylistItemModel extends BaseModel {
   // duration: Number in seconds
   constructor(id, scene, duration) {
     super();
+    makeObservable(this);
 
     this.id = id;
     this.scene = scene;

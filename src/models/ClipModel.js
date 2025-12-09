@@ -1,4 +1,4 @@
-import { observable } from 'mobx';
+import { observable, makeObservable } from 'mobx';
 import ControlModel from './ControlModel';
 import BaseModel from './BaseModel';
 
@@ -14,6 +14,7 @@ export default class ClipModel extends BaseModel {
 
   constructor(displayName, clipId, controls) {
     super();
+    makeObservable(this);
 
     this.displayName = displayName;
     this.clipId = clipId;

@@ -1,10 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import { action, computed, observable, reaction } from 'mobx';
+import { action, computed, observable, reaction, makeObservable } from 'mobx';
 import UIStore from '../../stores/UIStore';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 @observer
@@ -12,6 +12,7 @@ class FilePickerModal extends React.Component {
 
   constructor(...args) {
     super(...args);
+    makeObservable(this);
 
     // Bind event handlers to the correct value of 'this'
     this.handleFileClick = this.handleFileClick.bind(this);

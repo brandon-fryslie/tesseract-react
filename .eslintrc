@@ -1,9 +1,13 @@
 {
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "requireConfigFile": false,
+    "babelOptions": {
+      "presets": ["@babel/preset-react"]
+    }
+  },
   "plugins": ["react", "jest"],
-//  "plugins": ["react", "jest", "prettier"], Remove prettier for now because its annoying me
   "extends": ["airbnb"],
-//  "extends": ["airbnb", "plugin:prettier/recommended", "prettier/react"],
   "globals": {
     "React": true,
     "document": true,
@@ -15,9 +19,6 @@
   },
   "root": true,
   "rules": {
-//    "indent": ["error", 2],
-
-    // turn off a bunch of dumb rules that suck for development
     "no-unused-vars": "off",
     "class-methods-use-this": "off",
     "object-curly-newline": "off",
@@ -46,7 +47,6 @@
     "no-trailing-spaces": "off",
     "import/order": "off",
     "react/jsx-indent": "off",
-    "eslint-disable-next-line no-throw-literal": "off",
     "no-debugger": "off",
     "no-throw-literal": "off",
     "arrow-body-style": "off",
@@ -60,9 +60,15 @@
     "one-var": "off",
     "object-shorthand": "off",
     "no-param-reassign": "off",
-    // disabled crap
-
-//    "react/prefer-stateless-function": "warn",
+    "arrow-parens": "off",
+    "react/no-unused-class-component-methods": "off",
+    "import/no-cycle": "off",
+    "max-classes-per-file": "off",
+    "grouped-accessor-pairs": "off",
+    "react/function-component-definition": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/state-in-constructor": "off",
+    "default-param-last": "off",
     "react/self-closing-comp": [
       "warn",
       {
@@ -70,33 +76,16 @@
         "html": false
       }
     ],
-//    "react/sort-comp": [ // this wants me to define my class properties after my lifecycle methods.  dumb
-//      1,
-//      {
-//        "order": [
-//          "static-methods",
-//          "lifecycle",
-//          "everything-else",
-//          "rendering"
-//        ],
-//        "groups": {
-//          "rendering": ["/^render.+$/", "render"]
-//        }
-//      }
-//    ],
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
     "jest/no-identical-title": "error",
     "jest/prefer-to-have-length": "warn",
     "jest/valid-expect": "error",
     "react/require-default-props": 0,
-    "jsx-a11y/href-no-hash": "off",
     "jsx-a11y/anchor-is-valid": ["warn", { "aspects": ["invalidHref"] }],
     "react/jsx-boolean-value": ["warn", "never"],
     "react/jsx-closing-bracket-location": ["warn", "after-props"],
-//    "react/jsx-curly-spacing": ["warn", "never"],
-    "react/jsx-filename-extension": ["warn", { "extensions": [".jsx"] }],
-//    "react/jsx-first-prop-new-line": ["warn", "multiline"],
+    "react/jsx-filename-extension": ["warn", { "extensions": [".jsx", ".tsx"] }],
     "react/jsx-handler-names": [
       "warn",
       {
@@ -104,22 +93,46 @@
         "eventHandlerPropPrefix": "on"
       }
     ],
-//    "react/jsx-indent": ["warn", 2],
     "react/jsx-key": "error",
     "react/jsx-wrap-multilines": ["warn"],
     "react/jsx-indent-props": 0,
-//    "no-trailing-spaces": [2, { "skipBlankLines": true }],
     "prefer-template": 0,
     "import/prefer-default-export": 0,
     "import/no-unresolved": 0,
     "import/no-extraneous-dependencies": 0,
-    "import/extensions": 0,
-    "babel/object-curly-spacing": 0
+    "import/extensions": 0
   },
   "env": {
     "es6": true,
     "jest": true,
     "browser": true,
     "node": true
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        }
+      },
+      "plugins": ["@typescript-eslint"],
+      "extends": [
+        "airbnb",
+        "plugin:@typescript-eslint/recommended"
+      ],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "react/jsx-filename-extension": ["warn", { "extensions": [".jsx", ".tsx"] }],
+        "react/prop-types": "off",
+        "import/extensions": "off",
+        "import/no-unresolved": "off"
+      }
+    }
+  ]
 }

@@ -2,7 +2,7 @@ import ClipStore from '../stores/ClipStore';
 import SceneStore from '../stores/SceneStore';
 import PlaylistStore from '../stores/PlaylistStore';
 import UIStore from '../stores/UIStore';
-import { observe, reaction, action, transaction, runInAction } from 'mobx';
+import { observe, reaction, action, transaction, runInAction, makeObservable } from 'mobx';
 import { deepObserve } from 'mobx-utils';
 import MediaStore from '../stores/MediaStore';
 
@@ -14,6 +14,7 @@ export default class StateManager {
   disposers = {};
 
   constructor(...args) {
+    makeObservable(this);
     // Bind event handlers to the correct value of 'this'
     this.handleLiveControlsUpdated = this.handleLiveControlsUpdated.bind(this);
     this.handlePlaylistAddRemove = this.handlePlaylistAddRemove.bind(this);

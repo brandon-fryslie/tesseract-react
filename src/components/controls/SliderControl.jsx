@@ -1,10 +1,8 @@
 import React from 'react';
-import ListGroup from 'react-bootstrap/ListGroup';
 import Card from 'react-bootstrap/Card';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
-import { Knob } from 'react-rotary-knob';
-import Slider from '@material-ui/lab/Slider';
+import Slider from '@mui/material/Slider';
 
 @observer
 class SliderControl extends React.Component {

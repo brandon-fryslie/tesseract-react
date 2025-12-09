@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, makeObservable } from 'mobx';
 import ControlModel from '../models/ControlModel';
 import PlaylistStore from './PlaylistStore';
 import SettingsStore from './SettingsStore';
@@ -54,6 +54,7 @@ export default class UIStore {
   }
 
   constructor() {
+    makeObservable(this);
     // Load some stuff from local storage
     this.loadLocalStorage();
   }
