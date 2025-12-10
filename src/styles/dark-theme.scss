@@ -1,536 +1,679 @@
-// Beautiful Dark Mode Theme for Tesseract React
-// Consistent with FuturisticKnob cyan (#00ffff) accent color
-// Future minimalist responsive design with mobile-first approach
+// =============================================================================
+// DRACO CONTROLLER - Premium Dark Theme
+// =============================================================================
+// A sophisticated control interface for LED art installations
+// Bold but functional - beautiful without distraction
 
-// Color palette
-$dark-bg-primary: #0a0a0f;
-$dark-bg-elevated: #121218;
-$dark-bg-card: #1a1a24;
-$dark-border: rgba(0, 255, 255, 0.1);
-$dark-text-primary: #e0e0e0;
-$dark-text-secondary: #888888;
-$dark-accent-primary: #00ffff;
-$dark-accent-glow: rgba(0, 255, 255, 0.3);
-$dark-success: #00ff88;
-$dark-warning: #ffaa00;
-$dark-danger: #ff4466;
+@use 'sass:color';
+@use 'variables' as *;
+@use 'mixins' as m;
 
-// Responsive breakpoints (Bootstrap 5 standard)
-$breakpoint-xs: 0;
-$breakpoint-sm: 576px;
-$breakpoint-md: 768px;
-$breakpoint-lg: 992px;
-$breakpoint-xl: 1200px;
-$breakpoint-xxl: 1400px;
+// -----------------------------------------------------------------------------
+// ROOT & GLOBAL STYLES
+// -----------------------------------------------------------------------------
 
-// Fluid spacing scale (mobile-first)
-$spacing-mobile: (
-  'xs': 0.25rem,
-  'sm': 0.5rem,
-  'md': 1rem,
-  'lg': 1.5rem,
-  'xl': 2rem,
-);
+:root {
+  // Expose tokens as CSS custom properties for runtime access
+  --color-bg-void: #{$bg-void};
+  --color-bg-base: #{$bg-base};
+  --color-bg-surface: #{$bg-surface};
+  --color-bg-elevated: #{$bg-elevated};
+  --color-bg-overlay: #{$bg-overlay};
+  --color-accent-primary: #{$accent-primary};
+  --color-accent-secondary: #{$accent-secondary};
+  --color-text-primary: #{$text-primary};
+  --color-text-secondary: #{$text-secondary};
+}
 
-$spacing-desktop: (
-  'xs': 0.5rem,
-  'sm': 1rem,
-  'md': 1.5rem,
-  'lg': 2rem,
-  'xl': 3rem,
-);
-
-// Dark theme wrapper class
+// Dark theme container
 .dark-theme {
-  background-color: $dark-bg-primary;
-  color: $dark-text-primary;
+  background-color: $bg-base;
+  color: $text-primary;
+  font-family: $font-family-base;
+  font-size: $text-base;
+  line-height: $leading-normal;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-  // Smooth transitions for all interactive elements
-  * {
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  @include m.custom-scrollbar;
+
+  // -----------------------------------------------------------------------------
+  // RESET & BASE ELEMENTS
+  // -----------------------------------------------------------------------------
+
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
 
-  // Custom scrollbar - thinner on mobile
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-
-    @media (min-width: $breakpoint-lg) {
-      width: 12px;
-      height: 12px;
-    }
-  }
-
-  ::-webkit-scrollbar-track {
-    background: $dark-bg-elevated;
-    border-radius: 6px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(0, 255, 255, 0.2);
-    border-radius: 6px;
-    border: 2px solid $dark-bg-elevated;
+  // Links
+  a {
+    color: $accent-primary;
+    text-decoration: none;
+    transition: color $transition-fast;
 
     &:hover {
-      background: rgba(0, 255, 255, 0.3);
+      color: color.adjust($accent-primary, $lightness: 10%);
     }
   }
 
-  // Responsive typography - fluid font sizes
-  font-size: clamp(14px, 1vw + 12px, 16px);
-  line-height: 1.6;
+  // Selection
+  ::selection {
+    background: rgba($accent-primary, 0.3);
+    color: $text-bright;
+  }
+
+  // Focus outline (global)
+  *:focus-visible {
+    outline: 2px solid $accent-primary;
+    outline-offset: 2px;
+  }
+
+  // -----------------------------------------------------------------------------
+  // TYPOGRAPHY
+  // -----------------------------------------------------------------------------
+
+  h1, h2, h3, h4, h5, h6 {
+    @include m.heading;
+    margin-bottom: $space-4;
+  }
 
   h1 {
-    font-size: clamp(1.75rem, 3vw + 1rem, 2.5rem);
-    line-height: 1.2;
-    margin-bottom: clamp(1rem, 2vw, 1.5rem);
+    font-size: $text-3xl;
+    letter-spacing: $tracking-tight;
   }
 
   h2 {
-    font-size: clamp(1rem, 2vw + 0.5rem, 1.5rem);
-    color: $dark-accent-primary;
-    text-shadow: 0 0 10px $dark-accent-glow;
-    letter-spacing: clamp(1px, 0.15em, 2px);
-    text-transform: uppercase;
-    line-height: 1.3;
-    margin-bottom: clamp(0.75rem, 1.5vw, 1rem);
+    font-size: $text-2xl;
+    color: $accent-primary;
+    text-shadow: 0 0 20px rgba($accent-primary, 0.3);
   }
 
   h3 {
-    font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
-    line-height: 1.4;
-    margin-bottom: clamp(0.5rem, 1vw, 0.75rem);
+    font-size: $text-xl;
   }
 
-  h4, h5, h6 {
-    font-size: clamp(0.875rem, 1vw + 0.5rem, 1.125rem);
-    line-height: 1.5;
-    color: $dark-text-primary;
+  h4 {
+    font-size: $text-lg;
+    color: $text-primary;
   }
 
-  // Readable content max-width
-  .content-readable {
-    max-width: 70ch;
-    margin-left: auto;
-    margin-right: auto;
+  p {
+    line-height: $leading-relaxed;
+    margin-bottom: $space-4;
+    color: $text-primary;
   }
 
-  // Override Bootstrap navbar - responsive
-  .navbar {
-    background: linear-gradient(135deg, $dark-bg-elevated 0%, #16161f 100%);
-    border-bottom: 1px solid $dark-border;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    padding: clamp(0.5rem, 2vw, 1rem);
+  small, .text-sm {
+    font-size: $text-sm;
+    color: $text-secondary;
   }
 
-  .navbar-brand {
-    color: $dark-accent-primary !important;
-    text-shadow: 0 0 10px $dark-accent-glow;
-    font-weight: bold;
-    letter-spacing: 1px;
-    font-size: clamp(1rem, 2vw, 1.25rem);
+  .text-muted {
+    color: $text-secondary !important;
   }
 
-  // Mobile navigation toggle button
+  // Labels (uppercase subtle style)
+  .label {
+    @include m.label;
+  }
+
+  // -----------------------------------------------------------------------------
+  // LAYOUT CONTAINERS
+  // -----------------------------------------------------------------------------
+
+  .container, .container-fluid {
+    padding-left: $space-4;
+    padding-right: $space-4;
+
+    @include m.desktop {
+      padding-left: $space-6;
+      padding-right: $space-6;
+    }
+  }
+
+  // Bootstrap row override
+  .row {
+    --bs-gutter-x: #{$space-4};
+
+    @include m.desktop {
+      --bs-gutter-x: #{$space-6};
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // SIDEBAR / NAVIGATION
+  // -----------------------------------------------------------------------------
+
+  .tesseract-sidebar {
+    background: linear-gradient(180deg, $bg-surface 0%, rgba($bg-surface, 0.95) 100%);
+    border-right: 1px solid $border-subtle;
+    padding: $space-4;
+
+    @include m.mobile {
+      border-right: none;
+      border-bottom: 1px solid $border-subtle;
+      padding: $space-3;
+    }
+
+    @include m.desktop {
+      position: sticky;
+      top: $space-4;
+      max-height: calc(100vh - #{$space-8});
+      overflow-y: auto;
+      border-radius: $radius-lg;
+      margin: $space-4;
+      margin-right: 0;
+    }
+
+    .nav-link {
+      @include m.list-item;
+      color: $text-secondary !important;
+      font-weight: $font-medium;
+      margin-bottom: $space-1;
+      border: 1px solid transparent;
+
+      @include m.mobile {
+        @include m.touch-target;
+      }
+
+      &:hover {
+        color: $text-primary !important;
+        background: $bg-elevated;
+      }
+
+      &.active {
+        color: $accent-primary !important;
+        background: linear-gradient(135deg, rgba($accent-primary, 0.12), rgba($accent-primary, 0.06));
+        border-color: rgba($accent-primary, 0.3);
+        box-shadow:
+          0 0 20px rgba($accent-primary, 0.15),
+          inset 0 1px 0 rgba($accent-primary, 0.1);
+      }
+    }
+  }
+
+  // Mobile hamburger menu
   .navbar-toggler {
-    border: 1px solid $dark-border;
-    background: rgba(0, 255, 255, 0.05);
-    padding: 0.5rem 0.75rem;
+    border: 1px solid $border-default;
+    background: $bg-elevated;
+    padding: $space-2 $space-3;
+    border-radius: $radius-md;
+    @include m.touch-target;
 
     &:focus {
-      box-shadow: 0 0 0 0.2rem rgba(0, 255, 255, 0.15);
+      box-shadow: 0 0 0 3px $accent-primary-dim;
       outline: none;
     }
 
     .navbar-toggler-icon {
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%2300ffff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%2300d4ff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     }
   }
 
-  // Sidebar styling - responsive collapse
-  .tesseract-sidebar {
-    // Mobile: full width when shown
-    @media (max-width: $breakpoint-lg - 1) {
-      width: 100%;
-      margin-bottom: 1rem;
-    }
+  // -----------------------------------------------------------------------------
+  // CARDS & PANELS
+  // -----------------------------------------------------------------------------
 
-    // Desktop: fixed sidebar
-    @media (min-width: $breakpoint-lg) {
-      position: sticky;
-      top: 1rem;
-      max-height: calc(100vh - 2rem);
-      overflow-y: auto;
-    }
-
-    .nav-link {
-      color: $dark-text-secondary !important;
-      border: 1px solid transparent;
-      margin-bottom: 8px;
-      border-radius: 8px;
-      transition: all 0.2s ease;
-      padding: clamp(0.5rem, 1vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
-      font-size: clamp(0.875rem, 1.5vw, 1rem);
-
-      // Touch-friendly sizing on mobile
-      @media (max-width: $breakpoint-lg - 1) {
-        min-height: 44px; // iOS minimum tap target
-        display: flex;
-        align-items: center;
-      }
-
-      &:hover {
-        color: $dark-accent-primary !important;
-        background-color: rgba(0, 255, 255, 0.05);
-        border-color: $dark-border;
-      }
-
-      &.active {
-        color: $dark-accent-primary !important;
-        background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(0, 255, 255, 0.05) 100%);
-        border-color: $dark-accent-primary;
-        box-shadow: 0 0 15px $dark-accent-glow, inset 0 1px 2px rgba(0, 255, 255, 0.2);
-      }
-    }
-  }
-
-  // Sidebar container responsive behavior
-  .sidebar-container {
-    // Mobile: collapsible
-    @media (max-width: $breakpoint-lg - 1) {
-      position: relative;
-
-      &.collapsed {
-        .tesseract-sidebar {
-          display: none;
-        }
-      }
-    }
-
-    // Desktop: always visible
-    @media (min-width: $breakpoint-lg) {
-      .tesseract-sidebar {
-        display: flex !important;
-      }
-    }
-  }
-
-  // Cards with glass-morphism effect - responsive spacing
   .card {
-    background: linear-gradient(135deg, $dark-bg-card 0%, #1c1c28 100%);
-    border: 1px solid $dark-border;
-    border-radius: clamp(8px, 1vw, 12px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    color: $dark-text-primary;
-    margin-bottom: clamp(1rem, 2vw, 1.5rem);
+    @include m.card;
+    background: linear-gradient(145deg, $bg-surface 0%, color.adjust($bg-surface, $lightness: -2%) 100%);
+    margin-bottom: $space-4;
 
     .card-header {
-      background: linear-gradient(135deg, rgba(0, 255, 255, 0.08) 0%, rgba(0, 255, 255, 0.04) 100%);
-      border-bottom: 1px solid $dark-border;
-      color: $dark-accent-primary;
-      font-weight: bold;
-      padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.25rem);
-      font-size: clamp(0.875rem, 1.5vw, 1rem);
+      background: linear-gradient(135deg, rgba($accent-primary, 0.08) 0%, rgba($accent-primary, 0.03) 100%);
+      border-bottom: 1px solid $border-subtle;
+      padding: $space-3 $space-4;
+      color: $accent-primary;
+      font-weight: $font-semibold;
+      font-size: $text-sm;
+      letter-spacing: $tracking-wide;
+      text-transform: uppercase;
     }
 
     .card-body {
-      background: transparent;
-      padding: clamp(1rem, 2.5vw, 1.25rem);
+      padding: $space-4;
     }
 
-    // Stack cards on mobile
-    @media (max-width: $breakpoint-md - 1) {
-      width: 100%;
+    .card-footer {
+      background: $bg-elevated;
+      border-top: 1px solid $border-subtle;
+      padding: $space-3 $space-4;
     }
   }
 
-  // Buttons - responsive sizing with touch targets
+  // Interactive card variant
+  .card-interactive {
+    @include m.card-interactive;
+  }
+
+  // Selected/active card
+  .card.active,
+  .card-selected {
+    @include m.card-selected;
+  }
+
+  // -----------------------------------------------------------------------------
+  // BUTTONS
+  // -----------------------------------------------------------------------------
+
   .btn {
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 2vw, 1.5rem);
-    font-size: clamp(0.875rem, 1.5vw, 1rem);
+    @include m.btn-base;
 
-    // Ensure minimum touch target on mobile
-    @media (max-width: $breakpoint-lg - 1) {
-      min-height: 44px;
-      min-width: 44px;
-    }
-
+    // Primary button - main CTA
     &.btn-primary {
-      background: linear-gradient(135deg, $dark-accent-primary 0%, #00cccc 100%);
-      border: none;
-      color: $dark-bg-primary;
-      box-shadow: 0 2px 8px rgba(0, 255, 255, 0.3);
-
-      &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #00ffff 0%, #00e5e5 100%);
-        box-shadow: 0 4px 16px rgba(0, 255, 255, 0.5);
-        transform: translateY(-1px);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-
-      &:disabled {
-        background: linear-gradient(135deg, #333338 0%, #2a2a30 100%);
-        color: $dark-text-secondary;
-        box-shadow: none;
-      }
+      @include m.btn-primary;
     }
 
-    &.btn-outline-primary {
-      border: 1px solid $dark-accent-primary;
-      color: $dark-accent-primary;
-      background: transparent;
-
-      &:hover:not(:disabled) {
-        background: rgba(0, 255, 255, 0.1);
-        border-color: $dark-accent-primary;
-        color: $dark-accent-primary;
-        box-shadow: 0 0 12px $dark-accent-glow;
-      }
-    }
-
+    // Secondary button
     &.btn-secondary {
-      background: linear-gradient(135deg, #2a2a30 0%, #222228 100%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: $dark-text-primary;
+      @include m.btn-secondary;
+    }
+
+    // Outline variants
+    &.btn-outline-primary {
+      @include m.btn-base;
+      background: transparent;
+      border: 1px solid $accent-primary;
+      color: $accent-primary;
 
       &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #333338 0%, #2a2a30 100%);
-        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba($accent-primary, 0.1);
+        box-shadow: $glow-sm;
       }
     }
 
-    &.btn-success {
-      background: linear-gradient(135deg, $dark-success 0%, #00dd77 100%);
-      border: none;
-      color: $dark-bg-primary;
-      box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
+    &.btn-outline-secondary {
+      @include m.btn-ghost;
+      border: 1px solid $border-default;
+    }
 
-      &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #00ff99 0%, #00ee88 100%);
-        box-shadow: 0 4px 16px rgba(0, 255, 136, 0.5);
-      }
+    // Status buttons
+    &.btn-success {
+      @include m.btn-success;
     }
 
     &.btn-danger {
-      background: linear-gradient(135deg, $dark-danger 0%, #ee3355 100%);
+      @include m.btn-danger;
+    }
+
+    &.btn-warning {
+      @include m.btn-base;
+      background: $status-warning;
+      color: $bg-base;
       border: none;
-      color: white;
-      box-shadow: 0 2px 8px rgba(255, 68, 102, 0.3);
 
       &:hover:not(:disabled) {
-        background: linear-gradient(135deg, #ff5577 0%, #ff4466 100%);
-        box-shadow: 0 4px 16px rgba(255, 68, 102, 0.5);
+        background: color.adjust($status-warning, $lightness: 5%);
+        box-shadow: 0 0 16px rgba($status-warning, 0.4);
       }
     }
 
-    // Larger buttons on mobile for better touch targets
+    // Size variants
+    &.btn-sm {
+      @include m.btn-sm;
+    }
+
     &.btn-lg {
-      @media (max-width: $breakpoint-lg - 1) {
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
+      @include m.btn-lg;
+    }
+
+    // Icon-only button
+    &.btn-icon {
+      @include m.btn-icon;
+    }
+
+    // Ghost button (for toolbars, icon buttons)
+    &.btn-ghost {
+      @include m.btn-ghost;
+    }
+  }
+
+  // Button group
+  .btn-group {
+    .btn {
+      border-radius: 0;
+
+      &:first-child {
+        border-radius: $btn-radius 0 0 $btn-radius;
+      }
+
+      &:last-child {
+        border-radius: 0 $btn-radius $btn-radius 0;
+      }
+
+      &:not(:last-child) {
+        border-right: 1px solid rgba(0, 0, 0, 0.2);
       }
     }
   }
 
-  // Form controls - responsive sizing
+  // Vertical button group
+  .btn-group-vertical {
+    .btn {
+      border-radius: 0;
+      width: 100%;
+
+      &:first-child {
+        border-radius: $btn-radius $btn-radius 0 0;
+      }
+
+      &:last-child {
+        border-radius: 0 0 $btn-radius $btn-radius;
+      }
+
+      &:not(:last-child) {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // FORM CONTROLS
+  // -----------------------------------------------------------------------------
+
   .form-control {
-    background-color: $dark-bg-elevated;
-    border: 1px solid $dark-border;
-    color: $dark-text-primary;
-    border-radius: 8px;
-    padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
-    font-size: clamp(0.875rem, 1.5vw, 1rem);
+    @include m.input-base;
 
     // Prevent zoom on iOS
-    @media (max-width: $breakpoint-lg - 1) {
+    @include m.mobile {
       font-size: 16px;
-    }
-
-    &:focus {
-      background-color: $dark-bg-elevated;
-      border-color: $dark-accent-primary;
-      color: $dark-text-primary;
-      box-shadow: 0 0 0 0.2rem rgba(0, 255, 255, 0.15);
-    }
-
-    &::placeholder {
-      color: $dark-text-secondary;
-    }
-
-    &:disabled {
-      background-color: #1a1a1f;
-      color: $dark-text-secondary;
     }
   }
 
-  .form-check-input {
-    background-color: $dark-bg-elevated;
-    border: 1px solid $dark-border;
+  .form-select {
+    @include m.input-base;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2390909f' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right $space-3 center;
+    background-size: 16px 12px;
+    padding-right: $space-8;
+    appearance: none;
+  }
 
-    // Larger checkboxes on mobile
-    @media (max-width: $breakpoint-lg - 1) {
-      width: 1.25em;
-      height: 1.25em;
-    }
-
-    &:checked {
-      background-color: $dark-accent-primary;
-      border-color: $dark-accent-primary;
-      box-shadow: 0 0 8px $dark-accent-glow;
-    }
-
-    &:focus {
-      border-color: $dark-accent-primary;
-      box-shadow: 0 0 0 0.2rem rgba(0, 255, 255, 0.15);
-    }
+  textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
   }
 
   .form-label {
-    color: $dark-text-primary;
-    font-weight: 500;
-    font-size: clamp(0.875rem, 1.5vw, 1rem);
-    margin-bottom: 0.5rem;
+    display: block;
+    font-weight: $font-medium;
+    color: $text-primary;
+    margin-bottom: $space-2;
+    font-size: $text-sm;
   }
 
   .form-text {
-    color: $dark-text-secondary;
-    font-size: clamp(0.75rem, 1vw, 0.875rem);
+    font-size: $text-xs;
+    color: $text-secondary;
+    margin-top: $space-1;
   }
 
-  // Tab navigation - responsive
+  // Checkbox & Radio
+  .form-check-input {
+    width: 18px;
+    height: 18px;
+    background: $input-bg;
+    border: 1px solid $border-default;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    @include m.mobile {
+      width: 22px;
+      height: 22px;
+    }
+
+    &:checked {
+      background: $accent-primary;
+      border-color: $accent-primary;
+      box-shadow: 0 0 8px rgba($accent-primary, 0.4);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 3px $accent-primary-dim;
+      border-color: $accent-primary;
+    }
+
+    &[type="radio"] {
+      border-radius: $radius-full;
+    }
+  }
+
+  .form-check-label {
+    color: $text-primary;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  // Input group
+  .input-group {
+    .form-control {
+      border-radius: 0;
+
+      &:first-child {
+        border-radius: $input-radius 0 0 $input-radius;
+      }
+
+      &:last-child {
+        border-radius: 0 $input-radius $input-radius 0;
+      }
+    }
+
+    .input-group-text {
+      background: $bg-elevated;
+      border: 1px solid $border-default;
+      color: $text-secondary;
+      padding: 0 $space-3;
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // TAB NAVIGATION
+  // -----------------------------------------------------------------------------
+
   .nav-tabs {
-    border-bottom: 1px solid $dark-border;
-    flex-wrap: wrap;
+    border-bottom: 1px solid $border-subtle;
+    gap: $space-1;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    @include m.hide-scrollbar;
 
     .nav-link {
-      color: $dark-text-secondary;
+      color: $text-secondary;
+      font-weight: $font-medium;
+      font-size: $text-sm;
+      padding: $space-3 $space-4;
       border: none;
       border-bottom: 2px solid transparent;
-      transition: all 0.2s ease;
-      padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
-      font-size: clamp(0.875rem, 1.5vw, 1rem);
+      border-radius: 0;
+      background: transparent;
+      white-space: nowrap;
+      transition: all $transition-base;
 
-      // Touch targets on mobile
-      @media (max-width: $breakpoint-lg - 1) {
-        min-height: 44px;
-        display: flex;
-        align-items: center;
+      @include m.mobile {
+        @include m.touch-target;
+        padding: $space-3;
       }
 
       &:hover {
-        color: $dark-accent-primary;
-        border-bottom-color: rgba(0, 255, 255, 0.3);
+        color: $text-primary;
+        border-bottom-color: rgba($accent-primary, 0.3);
       }
 
       &.active {
-        color: $dark-accent-primary;
-        background: transparent;
-        border-bottom-color: $dark-accent-primary;
-        text-shadow: 0 0 8px $dark-accent-glow;
+        color: $accent-primary;
+        border-bottom-color: $accent-primary;
+        text-shadow: 0 0 12px rgba($accent-primary, 0.4);
       }
     }
   }
 
-  // Tab content with responsive padding
-  .tab-pane {
-    animation: fadeIn 0.3s ease-in;
-    padding: clamp(1rem, 2vw, 1.5rem) 0;
-  }
+  .tab-content {
+    padding-top: $space-4;
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+    .tab-pane {
+      @include m.fade-in;
     }
   }
 
-  // Tables - responsive overflow
-  .table-responsive {
-    @media (max-width: $breakpoint-lg - 1) {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
+  // Pill-style tabs
+  .nav-pills {
+    gap: $space-2;
+
+    .nav-link {
+      color: $text-secondary;
+      background: transparent;
+      border-radius: $radius-full;
+      padding: $space-2 $space-4;
+      font-weight: $font-medium;
+      transition: all $transition-base;
+
+      &:hover {
+        color: $text-primary;
+        background: $bg-elevated;
+      }
+
+      &.active {
+        color: $bg-base;
+        background: $accent-primary;
+        box-shadow: 0 0 16px rgba($accent-primary, 0.4);
+      }
     }
   }
+
+  // -----------------------------------------------------------------------------
+  // TABLES
+  // -----------------------------------------------------------------------------
 
   .table {
-    color: $dark-text-primary;
-    font-size: clamp(0.813rem, 1.5vw, 0.938rem);
+    color: $text-primary;
+    border-collapse: separate;
+    border-spacing: 0;
 
     thead {
-      border-bottom: 2px solid $dark-border;
-
       th {
-        color: $dark-accent-primary;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: clamp(0.75rem, 1.2vw, 0.85rem);
-        letter-spacing: 1px;
-        background: linear-gradient(135deg, rgba(0, 255, 255, 0.05) 0%, transparent 100%);
-        padding: clamp(0.5rem, 1.5vw, 0.75rem);
-        white-space: nowrap;
+        @include m.label;
+        background: linear-gradient(135deg, rgba($accent-primary, 0.06) 0%, transparent 100%);
+        border-bottom: 1px solid $border-default;
+        padding: $space-3 $space-4;
+        position: sticky;
+        top: 0;
+        z-index: $z-sticky;
       }
     }
 
     tbody {
       tr {
-        border-bottom: 1px solid rgba(0, 255, 255, 0.05);
-        transition: all 0.2s ease;
+        border-bottom: 1px solid $border-subtle;
+        transition: background-color $transition-fast;
 
         &:hover {
-          background-color: rgba(0, 255, 255, 0.03);
+          background: rgba($accent-primary, 0.03);
+        }
+
+        &.selected,
+        &.active {
+          background: rgba($accent-primary, 0.08);
         }
       }
 
       td {
-        color: $dark-text-primary;
-        padding: clamp(0.5rem, 1.5vw, 0.75rem);
+        padding: $space-3 $space-4;
+        vertical-align: middle;
       }
     }
 
-    // Compact table on mobile
-    @media (max-width: $breakpoint-md - 1) {
-      &.table-sm {
-        td, th {
-          padding: 0.4rem;
-        }
+    // Compact table
+    &.table-sm {
+      td, th {
+        padding: $space-2 $space-3;
       }
     }
   }
 
-  // Modals - responsive sizing
+  .table-responsive {
+    @include m.custom-scrollbar;
+  }
+
+  // -----------------------------------------------------------------------------
+  // LIST GROUPS
+  // -----------------------------------------------------------------------------
+
+  .list-group {
+    border-radius: $radius-lg;
+    overflow: hidden;
+
+    .list-group-item {
+      background: $bg-surface;
+      border: none;
+      border-bottom: 1px solid $border-subtle;
+      color: $text-primary;
+      padding: $space-3 $space-4;
+      transition: all $transition-fast;
+
+      @include m.mobile {
+        @include m.touch-target;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: $bg-elevated;
+      }
+
+      &.active {
+        background: linear-gradient(135deg, rgba($accent-primary, 0.12), rgba($accent-primary, 0.06));
+        color: $accent-primary;
+        border-left: 3px solid $accent-primary;
+        padding-left: calc(#{$space-4} - 3px);
+      }
+
+      &.list-group-item-action {
+        cursor: pointer;
+      }
+
+      // Disabled state
+      &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // MODALS
+  // -----------------------------------------------------------------------------
+
+  .modal-backdrop {
+    background: rgba($bg-void, 0.85);
+    backdrop-filter: blur(4px);
+  }
+
   .modal-content {
-    background: linear-gradient(135deg, $dark-bg-card 0%, #1c1c28 100%);
-    border: 1px solid $dark-border;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-    border-radius: clamp(8px, 1vw, 12px);
+    background: linear-gradient(145deg, $bg-overlay 0%, $bg-surface 100%);
+    border: 1px solid $border-default;
+    border-radius: $radius-xl;
+    box-shadow: $shadow-xl;
 
     .modal-header {
-      border-bottom: 1px solid $dark-border;
-      background: linear-gradient(135deg, rgba(0, 255, 255, 0.08) 0%, rgba(0, 255, 255, 0.04) 100%);
-      padding: clamp(1rem, 2vw, 1.25rem);
+      background: linear-gradient(135deg, rgba($accent-primary, 0.08) 0%, transparent 100%);
+      border-bottom: 1px solid $border-subtle;
+      padding: $space-4;
 
       .modal-title {
-        color: $dark-accent-primary;
-        font-weight: bold;
-        font-size: clamp(1rem, 2vw, 1.25rem);
+        color: $accent-primary;
+        font-weight: $font-semibold;
+        font-size: $text-lg;
       }
 
       .btn-close {
-        filter: invert(1) brightness(0.8);
+        filter: invert(1) brightness(0.7);
         opacity: 0.6;
-        min-width: 44px;
-        min-height: 44px;
+        @include m.touch-target;
 
         &:hover {
           opacity: 1;
@@ -539,278 +682,448 @@ $spacing-desktop: (
     }
 
     .modal-body {
-      color: $dark-text-primary;
-      padding: clamp(1rem, 2.5vw, 1.5rem);
+      padding: $space-5;
+      color: $text-primary;
     }
 
     .modal-footer {
-      border-top: 1px solid $dark-border;
-      padding: clamp(1rem, 2vw, 1.25rem);
+      border-top: 1px solid $border-subtle;
+      padding: $space-4;
+      gap: $space-3;
 
-      // Stack buttons on mobile
-      @media (max-width: $breakpoint-sm - 1) {
+      @include m.mobile {
         flex-direction: column;
 
         .btn {
           width: 100%;
-          margin-bottom: 0.5rem;
-
-          &:last-child {
-            margin-bottom: 0;
-          }
         }
       }
     }
   }
 
-  .modal-backdrop {
-    background-color: rgba(10, 10, 15, 0.85);
-    backdrop-filter: blur(4px);
+  // MUI Dialog overrides (for SceneModal, etc)
+  .MuiDialog-paper {
+    background: linear-gradient(145deg, $bg-overlay 0%, $bg-surface 100%) !important;
+    border: 1px solid $border-default;
+    border-radius: $radius-xl !important;
+    box-shadow: $shadow-xl !important;
+    color: $text-primary !important;
   }
 
-  // Alerts - responsive spacing
+  .MuiDialogTitle-root {
+    background: linear-gradient(135deg, rgba($accent-primary, 0.08) 0%, transparent 100%);
+    border-bottom: 1px solid $border-subtle;
+    color: $accent-primary !important;
+    font-weight: $font-semibold !important;
+  }
+
+  .MuiDialogContent-root {
+    padding: $space-5 !important;
+  }
+
+  .MuiDialogActions-root {
+    border-top: 1px solid $border-subtle;
+    padding: $space-4 !important;
+  }
+
+  // MUI TextField overrides
+  .MuiTextField-root {
+    .MuiOutlinedInput-root {
+      color: $text-primary;
+      background: $input-bg;
+
+      .MuiOutlinedInput-notchedOutline {
+        border-color: $border-default;
+      }
+
+      &:hover .MuiOutlinedInput-notchedOutline {
+        border-color: $border-strong;
+      }
+
+      &.Mui-focused .MuiOutlinedInput-notchedOutline {
+        border-color: $accent-primary;
+        box-shadow: 0 0 0 3px $accent-primary-dim;
+      }
+    }
+
+    .MuiInputLabel-root {
+      color: $text-secondary;
+
+      &.Mui-focused {
+        color: $accent-primary;
+      }
+    }
+  }
+
+  // MUI Slider overrides
+  .MuiSlider-root {
+    color: $accent-primary;
+
+    .MuiSlider-track {
+      background: linear-gradient(90deg, $accent-primary, color.adjust($accent-primary, $lightness: 10%));
+      box-shadow: 0 0 8px rgba($accent-primary, 0.4);
+    }
+
+    .MuiSlider-thumb {
+      background: $accent-primary;
+      box-shadow: 0 0 12px rgba($accent-primary, 0.5);
+
+      &:hover,
+      &.Mui-focusVisible {
+        box-shadow: 0 0 0 8px rgba($accent-primary, 0.2);
+      }
+    }
+
+    .MuiSlider-rail {
+      background: $bg-elevated;
+    }
+  }
+
+  // -----------------------------------------------------------------------------
+  // ALERTS
+  // -----------------------------------------------------------------------------
+
   .alert {
-    border-radius: 8px;
+    border-radius: $radius-lg;
     border: 1px solid;
-    padding: clamp(0.75rem, 2vw, 1rem);
-    margin-bottom: clamp(1rem, 2vw, 1.5rem);
-    font-size: clamp(0.875rem, 1.5vw, 1rem);
+    padding: $space-3 $space-4;
+    font-size: $text-sm;
 
     &.alert-success {
-      background-color: rgba(0, 255, 136, 0.1);
-      border-color: rgba(0, 255, 136, 0.3);
-      color: $dark-success;
+      background: rgba($status-success, 0.1);
+      border-color: rgba($status-success, 0.3);
+      color: $status-success;
     }
 
     &.alert-warning {
-      background-color: rgba(255, 170, 0, 0.1);
-      border-color: rgba(255, 170, 0, 0.3);
-      color: $dark-warning;
+      background: rgba($status-warning, 0.1);
+      border-color: rgba($status-warning, 0.3);
+      color: $status-warning;
     }
 
     &.alert-danger {
-      background-color: rgba(255, 68, 102, 0.1);
-      border-color: rgba(255, 68, 102, 0.3);
-      color: $dark-danger;
+      background: rgba($status-error, 0.1);
+      border-color: rgba($status-error, 0.3);
+      color: $status-error;
     }
 
     &.alert-info {
-      background-color: rgba(0, 255, 255, 0.1);
-      border-color: rgba(0, 255, 255, 0.3);
-      color: $dark-accent-primary;
+      background: rgba($accent-primary, 0.1);
+      border-color: rgba($accent-primary, 0.3);
+      color: $accent-primary;
     }
   }
 
-  // Badges - responsive sizing
+  // -----------------------------------------------------------------------------
+  // BADGES
+  // -----------------------------------------------------------------------------
+
   .badge {
-    padding: clamp(0.25rem, 0.5vw, 0.35rem) clamp(0.5rem, 1vw, 0.65rem);
-    font-size: clamp(0.75rem, 1vw, 0.875rem);
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    padding: $space-1 $space-2;
+    border-radius: $radius-full;
 
     &.bg-primary {
-      background-color: $dark-accent-primary !important;
-      color: $dark-bg-primary;
-      box-shadow: 0 0 8px $dark-accent-glow;
+      background: $accent-primary !important;
+      color: $bg-base;
+      box-shadow: 0 0 8px rgba($accent-primary, 0.4);
+    }
+
+    &.bg-secondary {
+      background: $bg-elevated !important;
+      color: $text-primary;
     }
 
     &.bg-success {
-      background-color: $dark-success !important;
-      color: $dark-bg-primary;
+      background: $status-success !important;
+      color: $bg-base;
+    }
+
+    &.bg-warning {
+      background: $status-warning !important;
+      color: $bg-base;
     }
 
     &.bg-danger {
-      background-color: $dark-danger !important;
-      color: white;
+      background: $status-error !important;
+      color: $text-bright;
     }
   }
 
-  // List groups - responsive spacing
-  .list-group {
-    .list-group-item {
-      background-color: $dark-bg-card;
-      border: 1px solid $dark-border;
-      color: $dark-text-primary;
-      padding: clamp(0.75rem, 2vw, 1rem);
-      font-size: clamp(0.875rem, 1.5vw, 1rem);
+  // -----------------------------------------------------------------------------
+  // PROGRESS BARS
+  // -----------------------------------------------------------------------------
 
-      // Touch targets on mobile
-      @media (max-width: $breakpoint-lg - 1) {
-        min-height: 44px;
-        display: flex;
-        align-items: center;
-      }
+  .progress {
+    background: $bg-elevated;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-full;
+    height: 8px;
+    overflow: hidden;
 
-      &:hover {
-        background-color: rgba(0, 255, 255, 0.05);
-        border-color: rgba(0, 255, 255, 0.2);
-      }
-
-      &.active {
-        background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(0, 255, 255, 0.1) 100%);
-        border-color: $dark-accent-primary;
-        color: $dark-accent-primary;
-        box-shadow: 0 0 12px $dark-accent-glow;
-      }
+    .progress-bar {
+      background: linear-gradient(90deg, $accent-primary 0%, color.adjust($accent-primary, $lightness: 10%) 100%);
+      box-shadow: 0 0 8px rgba($accent-primary, 0.4);
+      transition: width $transition-slow;
     }
   }
 
-  // Text utilities
-  .text-muted {
-    color: $dark-text-secondary !important;
-  }
+  // -----------------------------------------------------------------------------
+  // DROPDOWNS
+  // -----------------------------------------------------------------------------
 
-  // Border utilities
-  .border {
-    border-color: $dark-border !important;
-  }
-
-  // Background utilities
-  .bg-light {
-    background-color: $dark-bg-elevated !important;
-  }
-
-  .bg-dark {
-    background-color: $dark-bg-primary !important;
-  }
-
-  // Dropdown menus - responsive
   .dropdown-menu {
-    background-color: $dark-bg-card;
-    border: 1px solid $dark-border;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    border-radius: 8px;
+    background: $bg-overlay;
+    border: 1px solid $border-default;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-lg;
+    padding: $space-2;
 
     .dropdown-item {
-      color: $dark-text-primary;
-      padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(0.75rem, 2vw, 1rem);
-      font-size: clamp(0.875rem, 1.5vw, 1rem);
+      color: $text-primary;
+      border-radius: $radius-md;
+      padding: $space-2 $space-3;
+      transition: all $transition-fast;
 
-      // Touch targets on mobile
-      @media (max-width: $breakpoint-lg - 1) {
-        min-height: 44px;
-        display: flex;
-        align-items: center;
+      @include m.mobile {
+        @include m.touch-target;
       }
 
       &:hover {
-        background-color: rgba(0, 255, 255, 0.1);
-        color: $dark-accent-primary;
+        background: rgba($accent-primary, 0.1);
+        color: $accent-primary;
       }
 
       &.active {
-        background-color: rgba(0, 255, 255, 0.2);
-        color: $dark-accent-primary;
+        background: rgba($accent-primary, 0.2);
+        color: $accent-primary;
       }
     }
 
     .dropdown-divider {
-      border-color: $dark-border;
+      border-color: $border-subtle;
+      margin: $space-2 0;
     }
   }
 
-  // Progress bars
-  .progress {
-    background-color: $dark-bg-elevated;
-    border: 1px solid $dark-border;
-    height: clamp(1rem, 2vw, 1.25rem);
+  // -----------------------------------------------------------------------------
+  // TOOLTIPS
+  // -----------------------------------------------------------------------------
 
-    .progress-bar {
-      background: linear-gradient(90deg, $dark-accent-primary 0%, #00cccc 100%);
-      box-shadow: 0 0 10px $dark-accent-glow;
+  .tooltip {
+    .tooltip-inner {
+      background: $bg-overlay;
+      color: $text-primary;
+      border: 1px solid $border-default;
+      border-radius: $radius-md;
+      font-size: $text-xs;
+      padding: $space-2 $space-3;
+      box-shadow: $shadow-md;
+    }
+
+    .tooltip-arrow::before {
+      border-top-color: $bg-overlay;
     }
   }
 
-  // Special styling for active elements
+  // -----------------------------------------------------------------------------
+  // CUSTOM COMPONENTS
+  // -----------------------------------------------------------------------------
+
+  // Connection status indicator
+  .connection-status {
+    @include m.row($space-2);
+    padding: $space-2 $space-3;
+    border-radius: $radius-full;
+    font-size: $text-xs;
+    font-weight: $font-medium;
+
+    &.connected {
+      background: rgba($status-success, 0.15);
+      color: $status-success;
+
+      &::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: $radius-full;
+        background: $status-success;
+        box-shadow: 0 0 8px $status-success;
+        animation: pulse-glow 2s infinite;
+      }
+    }
+
+    &.disconnected {
+      background: rgba($status-error, 0.15);
+      color: $status-error;
+
+      &::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: $radius-full;
+        background: $status-error;
+      }
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 8px $status-success;
+    }
+    50% {
+      opacity: 0.6;
+      box-shadow: 0 0 16px $status-success;
+    }
+  }
+
+  // Active indicator glow effect
   .active-indicator {
     position: relative;
 
     &::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      border: 2px solid $dark-accent-primary;
-      border-radius: 8px;
+      inset: -2px;
+      border: 2px solid $accent-primary;
+      border-radius: inherit;
       pointer-events: none;
-      box-shadow: 0 0 15px $dark-accent-glow, inset 0 0 15px rgba(0, 255, 255, 0.1);
+      box-shadow:
+        0 0 20px rgba($accent-primary, 0.3),
+        inset 0 0 20px rgba($accent-primary, 0.05);
     }
   }
 
-  // Responsive spacing utilities
+  // Glow text effect
+  .glow-text {
+    color: $accent-primary;
+    text-shadow: 0 0 16px rgba($accent-primary, 0.5);
+  }
+
+  // -----------------------------------------------------------------------------
+  // UTILITY CLASSES
+  // -----------------------------------------------------------------------------
+
+  // Spacing
   .spacious {
-    padding: clamp(1rem, 3vw, 2rem);
+    padding: $space-6;
   }
 
   .compact {
-    padding: clamp(0.5rem, 1.5vw, 1rem);
+    padding: $space-3;
   }
 
-  // Mobile-specific utilities
-  @media (max-width: $breakpoint-lg - 1) {
+  // Flex helpers
+  .stack {
+    @include m.stack;
+  }
+
+  .row-layout {
+    @include m.row;
+  }
+
+  .center {
+    @include m.flex-center;
+  }
+
+  .between {
+    @include m.flex-between;
+  }
+
+  // Border utilities
+  .border {
+    border-color: $border-default !important;
+  }
+
+  // Background utilities
+  .bg-surface {
+    background: $bg-surface !important;
+  }
+
+  .bg-elevated {
+    background: $bg-elevated !important;
+  }
+
+  // Responsive visibility
+  @include m.mobile {
     .hide-mobile {
       display: none !important;
     }
-
-    .show-mobile {
-      display: block !important;
-    }
   }
 
-  // Desktop-specific utilities
-  @media (min-width: $breakpoint-lg) {
+  @include m.desktop {
     .hide-desktop {
       display: none !important;
     }
+  }
 
-    .show-desktop {
-      display: block !important;
+  // -----------------------------------------------------------------------------
+  // REACT DATA GRID OVERRIDES
+  // -----------------------------------------------------------------------------
+
+  .rdg {
+    background: $bg-surface;
+    border: 1px solid $border-default;
+    border-radius: $radius-lg;
+    color: $text-primary;
+    font-size: $text-sm;
+
+    .rdg-header-row {
+      background: linear-gradient(135deg, rgba($accent-primary, 0.06) 0%, transparent 100%);
+
+      .rdg-cell {
+        @include m.label;
+        border-bottom: 1px solid $border-default;
+        border-right: 1px solid $border-subtle;
+      }
+    }
+
+    .rdg-row {
+      border-bottom: 1px solid $border-subtle;
+      transition: background-color $transition-fast;
+
+      &:hover {
+        background: rgba($accent-primary, 0.04);
+      }
+
+      &[aria-selected="true"] {
+        background: rgba($accent-primary, 0.1);
+      }
+    }
+
+    .rdg-cell {
+      border-right: 1px solid $border-subtle;
+      padding: $space-2 $space-3;
+
+      &:focus {
+        outline: 2px solid $accent-primary;
+        outline-offset: -2px;
+      }
     }
   }
 
-  // Container spacing - responsive
-  .container, .container-fluid {
-    padding-left: clamp(1rem, 3vw, 1.5rem);
-    padding-right: clamp(1rem, 3vw, 1.5rem);
-  }
+  // -----------------------------------------------------------------------------
+  // DRAG AND DROP STYLES
+  // -----------------------------------------------------------------------------
 
-  // Row gutters - responsive
-  .row {
-    margin-left: clamp(-0.5rem, -1.5vw, -0.75rem);
-    margin-right: clamp(-0.5rem, -1.5vw, -0.75rem);
+  [data-rfd-drag-handle-draggable-id] {
+    cursor: grab;
 
-    > * {
-      padding-left: clamp(0.5rem, 1.5vw, 0.75rem);
-      padding-right: clamp(0.5rem, 1.5vw, 0.75rem);
+    &:active {
+      cursor: grabbing;
     }
   }
 
-  // Improved focus states for accessibility
-  *:focus-visible {
-    outline: 2px solid $dark-accent-primary;
-    outline-offset: 2px;
-    border-radius: 4px;
+  [data-rfd-draggable-id] {
+    &[data-rfd-draggable-context-id] {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
   }
 
-  // Ensure good contrast for readability
-  p {
-    line-height: 1.7;
-    margin-bottom: clamp(0.75rem, 1.5vw, 1rem);
-    max-width: 70ch; // Optimal reading width
-  }
-
-  // Stack layout helper
-  .stack {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(0.5rem, 1.5vw, 1rem);
-  }
-
-  // Cluster layout helper (horizontal wrapping)
-  .cluster {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(0.5rem, 1.5vw, 1rem);
-    align-items: center;
+  .dragging {
+    box-shadow: $shadow-xl;
+    z-index: $z-modal;
   }
 }

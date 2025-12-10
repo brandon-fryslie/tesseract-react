@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const commonPaths = require('./paths');
 
@@ -38,14 +39,19 @@ module.exports = {
               importLoaders: 1,
             },
           },
-          'sass-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              api: 'modern',
+            },
+          },
         ],
       }
     ],
   },
   devServer: {
     static: {
-      directory: commonPaths.outputPath,
+      directory: commonPaths.root + '/public',
     },
     compress: true,
     hot: true,
@@ -53,5 +59,11 @@ module.exports = {
   },
   plugins: [
     new ReactRefreshWebpackPlugin(),
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'public/envConfig.js', to: 'envConfig.js' },
+        { from: 'public/fonts', to: 'fonts' },
+      ],
+    }),
   ],
 };
