@@ -1,33 +1,102 @@
 .MainContent {
+  // Responsive max-width container
+  max-width: 2000px;
+  margin: 0 auto;
 
-  // make it a little move obvious when button is active vs hover
-  .btn-outline-primary:hover {
-    background-color: #99caff;
+  // Responsive sidebar column
+  .sidebar-column {
+    // Desktop: sticky sidebar
+    @media (min-width: 992px) {
+      position: sticky;
+      top: 0;
+      align-self: flex-start;
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+
+    // Mobile: full width when expanded
+    @media (max-width: 991px) {
+      position: relative;
+    }
   }
 
-  max-width: 2000px;
+  // Make button more obvious when active vs hover
+  .btn-outline-primary:hover {
+    background-color: rgba(0, 255, 255, 0.1);
+  }
+
+  // Mobile header styling
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  // Ensure hamburger icon is properly styled
+  .hamburger-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+
+  // Content area responsive spacing
+  .tab-content {
+    // Add some breathing room
+    @media (max-width: 991px) {
+      padding-top: 1rem;
+    }
+  }
+
+  // Ensure cards stack properly on mobile
+  .card, .panel {
+    @media (max-width: 767px) {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+  }
 }
 
-.fill-parent {
-  border-style: solid;
-  border-color: black;
-  //height: 100%;
-  //width: 100%;
-  border-width: 2px;
-}
-
-//.tab-pane {
-//  width: 100%;
-//}
-
-//.relativeWrapper {
-//  position: relative;
-//}
-//.absoluteWrapper {
-//  position: absolute;
-//  width: 600px;
-//}
-
+// Responsive grid container for playlist editor
 .playlistEditorGridContainer {
-  width: 815px;
+  width: 100%;
+  max-width: 815px;
+
+  // Allow horizontal scrolling on small screens
+  @media (max-width: 767px) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+// Future minimalist spacing helpers
+.spacious-container {
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.compact-container {
+  padding: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+// Responsive text sizing
+.responsive-text {
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  line-height: 1.6;
+}
+
+// Ensure good touch targets on mobile
+@media (max-width: 991px) {
+  button, .btn, a, .nav-link {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
