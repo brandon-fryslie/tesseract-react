@@ -1,0 +1,282 @@
+// =============================================================================
+// FUTURISTIC KNOB STYLES
+// =============================================================================
+// Premium knob control using design tokens
+
+@use 'sass:color';
+@use '../../styles/variables' as *;
+
+// CSS Custom Properties for dynamic values (set via inline styles)
+.futuristic-knob-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $space-4;
+  font-family: $font-family-mono;
+
+  // Size variants
+  &--sm {
+    .futuristic-knob-wrapper {
+      width: 80px;
+      height: 80px;
+    }
+
+    .futuristic-knob-indicator {
+      width: 56px;
+      height: 56px;
+      margin-left: -28px;
+      margin-top: -28px;
+    }
+
+    .futuristic-knob-indicator-line {
+      width: 3px;
+      height: 12px;
+    }
+
+    .futuristic-knob-value {
+      font-size: $text-lg;
+    }
+  }
+
+  &--lg {
+    .futuristic-knob-wrapper {
+      width: 160px;
+      height: 160px;
+    }
+
+    .futuristic-knob-indicator {
+      width: 112px;
+      height: 112px;
+      margin-left: -56px;
+      margin-top: -56px;
+    }
+
+    .futuristic-knob-indicator-line {
+      width: 6px;
+      height: 24px;
+    }
+
+    .futuristic-knob-value {
+      font-size: $text-3xl;
+    }
+  }
+}
+
+.futuristic-knob-label {
+  color: $accent-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  margin-bottom: $space-2;
+  text-transform: uppercase;
+  letter-spacing: $tracking-wider;
+  text-shadow: 0 0 12px rgba($accent-primary, 0.5);
+}
+
+.futuristic-knob-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.futuristic-knob-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+// SVG elements
+.futuristic-knob-bg-circle {
+  fill: none;
+  stroke: $bg-void;
+  stroke-width: 4;
+}
+
+.futuristic-knob-track {
+  fill: none;
+  stroke: rgba($accent-primary, 0.15);
+  stroke-width: 4;
+  stroke-dasharray: 235.6 235.6;
+  stroke-dashoffset: 58.9;
+  stroke-linecap: round;
+}
+
+.futuristic-knob-progress {
+  fill: none;
+  stroke: $accent-primary;
+  stroke-width: 4;
+  stroke-dashoffset: 58.9;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px rgba($accent-primary, 0.8));
+  transition: stroke-dasharray 0.1s ease-out;
+}
+
+.futuristic-knob-inner-circle {
+  fill: $bg-void;
+  stroke: rgba($accent-primary, 0.25);
+  stroke-width: 2;
+}
+
+// Tick marks around the knob
+.futuristic-knob-tick {
+  stroke: rgba($accent-primary, 0.3);
+  stroke-width: 1;
+
+  &--major {
+    stroke: rgba($accent-primary, 0.5);
+    stroke-width: 2;
+  }
+}
+
+.futuristic-knob-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+
+  &:focus-visible {
+    .futuristic-knob-inner-circle {
+      stroke: $accent-primary;
+      stroke-width: 3;
+    }
+  }
+}
+
+.futuristic-knob-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  margin-left: -40px;
+  margin-top: -40px;
+  transition: transform 0.08s ease-out;
+  pointer-events: none;
+}
+
+.futuristic-knob-indicator-line {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 4px;
+  height: 16px;
+  margin-left: -2px;
+  background-color: $accent-primary;
+  border-radius: 2px;
+  box-shadow:
+    0 0 10px rgba($accent-primary, 0.8),
+    0 0 20px rgba($accent-primary, 0.4);
+}
+
+.futuristic-knob-value {
+  margin-top: $space-3;
+  color: $accent-primary;
+  font-size: $text-xl;
+  font-weight: $font-bold;
+  text-align: center;
+  text-shadow: 0 0 12px rgba($accent-primary, 0.5);
+  font-family: $font-family-mono;
+  letter-spacing: $tracking-wide;
+  font-variant-numeric: tabular-nums;
+}
+
+// Hover state
+.futuristic-knob-wrapper:hover {
+  .futuristic-knob-progress {
+    filter: drop-shadow(0 0 12px rgba($accent-primary, 1));
+  }
+
+  .futuristic-knob-indicator-line {
+    box-shadow:
+      0 0 12px rgba($accent-primary, 1),
+      0 0 24px rgba($accent-primary, 0.6);
+  }
+}
+
+// Active/dragging state
+.futuristic-knob-container--active {
+  .futuristic-knob-progress {
+    stroke: color.adjust($accent-primary, $lightness: 10%);
+    filter: drop-shadow(0 0 16px rgba($accent-primary, 1));
+  }
+
+  .futuristic-knob-indicator-line {
+    background-color: color.adjust($accent-primary, $lightness: 10%);
+    box-shadow:
+      0 0 16px rgba($accent-primary, 1),
+      0 0 32px rgba($accent-primary, 0.8);
+  }
+
+  .futuristic-knob-value {
+    color: color.adjust($accent-primary, $lightness: 10%);
+  }
+}
+
+// Disabled state
+.futuristic-knob-container--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+
+  .futuristic-knob-content {
+    cursor: not-allowed;
+  }
+}
+
+// Color variants
+.futuristic-knob-container--purple {
+  .futuristic-knob-label,
+  .futuristic-knob-value {
+    color: $accent-secondary;
+    text-shadow: 0 0 12px rgba($accent-secondary, 0.5);
+  }
+
+  .futuristic-knob-track {
+    stroke: rgba($accent-secondary, 0.15);
+  }
+
+  .futuristic-knob-progress {
+    stroke: $accent-secondary;
+    filter: drop-shadow(0 0 8px rgba($accent-secondary, 0.8));
+  }
+
+  .futuristic-knob-inner-circle {
+    stroke: rgba($accent-secondary, 0.25);
+  }
+
+  .futuristic-knob-indicator-line {
+    background-color: $accent-secondary;
+    box-shadow:
+      0 0 10px rgba($accent-secondary, 0.8),
+      0 0 20px rgba($accent-secondary, 0.4);
+  }
+}
+
+.futuristic-knob-container--emerald {
+  .futuristic-knob-label,
+  .futuristic-knob-value {
+    color: $accent-tertiary;
+    text-shadow: 0 0 12px rgba($accent-tertiary, 0.5);
+  }
+
+  .futuristic-knob-track {
+    stroke: rgba($accent-tertiary, 0.15);
+  }
+
+  .futuristic-knob-progress {
+    stroke: $accent-tertiary;
+    filter: drop-shadow(0 0 8px rgba($accent-tertiary, 0.8));
+  }
+
+  .futuristic-knob-inner-circle {
+    stroke: rgba($accent-tertiary, 0.25);
+  }
+
+  .futuristic-knob-indicator-line {
+    background-color: $accent-tertiary;
+    box-shadow:
+      0 0 10px rgba($accent-tertiary, 0.8),
+      0 0 20px rgba($accent-tertiary, 0.4);
+  }
+}

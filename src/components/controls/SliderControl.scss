@@ -1,0 +1,236 @@
+// =============================================================================
+// FUTURISTIC SLIDER STYLES
+// =============================================================================
+// Premium slider control using design tokens
+
+@use 'sass:color';
+@use '../../styles/variables' as *;
+
+.futuristic-slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $space-4;
+  font-family: $font-family-mono;
+  min-width: 80px;
+}
+
+.futuristic-slider-label {
+  color: $accent-primary;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  margin-bottom: $space-2;
+  text-transform: uppercase;
+  letter-spacing: $tracking-wider;
+  text-shadow: 0 0 12px rgba($accent-primary, 0.5);
+  text-align: center;
+}
+
+.futuristic-slider-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  // Vertical slider wrapper
+  &--vertical {
+    height: 120px;
+    width: 60px;
+    justify-content: center;
+  }
+
+  // Horizontal slider wrapper
+  &--horizontal {
+    width: 100%;
+    min-width: 120px;
+  }
+}
+
+.futuristic-slider-value {
+  margin-top: $space-3;
+  color: $accent-primary;
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  text-align: center;
+  text-shadow: 0 0 12px rgba($accent-primary, 0.5);
+  font-family: $font-family-mono;
+  letter-spacing: $tracking-wide;
+  font-variant-numeric: tabular-nums;
+}
+
+// MUI Slider customization within our container
+.futuristic-slider-container {
+  .MuiSlider-root {
+    color: $accent-primary;
+
+    &.MuiSlider-vertical {
+      height: 100px;
+    }
+  }
+
+  .MuiSlider-rail {
+    background: $bg-elevated;
+    opacity: 1;
+    border: 1px solid rgba($accent-primary, 0.2);
+    border-radius: $radius-full;
+
+    // Vertical rail
+    .MuiSlider-vertical & {
+      width: 8px;
+    }
+
+    // Horizontal rail
+    &:not(.MuiSlider-vertical &) {
+      height: 8px;
+    }
+  }
+
+  .MuiSlider-track {
+    background: linear-gradient(90deg, $accent-primary, color.adjust($accent-primary, $lightness: 10%));
+    box-shadow: 0 0 12px rgba($accent-primary, 0.6);
+    border: none;
+    border-radius: $radius-full;
+
+    // Vertical track
+    .MuiSlider-vertical & {
+      width: 8px;
+      background: linear-gradient(0deg, $accent-primary, color.adjust($accent-primary, $lightness: 10%));
+    }
+
+    // Horizontal track
+    &:not(.MuiSlider-vertical &) {
+      height: 8px;
+    }
+  }
+
+  .MuiSlider-thumb {
+    width: 24px;
+    height: 24px;
+    background: $bg-void;
+    border: 3px solid $accent-primary;
+    box-shadow:
+      0 0 12px rgba($accent-primary, 0.8),
+      inset 0 0 8px rgba($accent-primary, 0.3);
+
+    &::before {
+      display: none;
+    }
+
+    &:hover,
+    &.Mui-focusVisible {
+      box-shadow:
+        0 0 0 8px rgba($accent-primary, 0.15),
+        0 0 16px rgba($accent-primary, 1),
+        inset 0 0 8px rgba($accent-primary, 0.5);
+    }
+
+    &.Mui-active {
+      box-shadow:
+        0 0 0 12px rgba($accent-primary, 0.2),
+        0 0 20px rgba($accent-primary, 1),
+        inset 0 0 12px rgba($accent-primary, 0.6);
+    }
+  }
+
+  // Value label
+  .MuiSlider-valueLabel {
+    background: $bg-overlay;
+    color: $accent-primary;
+    font-family: $font-family-mono;
+    font-size: $text-sm;
+    border: 1px solid rgba($accent-primary, 0.3);
+    border-radius: $radius-md;
+    box-shadow: 0 0 12px rgba($accent-primary, 0.3);
+  }
+}
+
+// Hover state
+.futuristic-slider-container:hover {
+  .MuiSlider-track {
+    box-shadow: 0 0 16px rgba($accent-primary, 0.8);
+  }
+}
+
+// Active/dragging state
+.futuristic-slider-container--active {
+  .MuiSlider-track {
+    background: linear-gradient(90deg, color.adjust($accent-primary, $lightness: 5%), color.adjust($accent-primary, $lightness: 15%));
+    box-shadow: 0 0 20px rgba($accent-primary, 1);
+  }
+
+  .futuristic-slider-value {
+    color: color.adjust($accent-primary, $lightness: 10%);
+  }
+}
+
+// Disabled state
+.futuristic-slider-container--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+// Color variants
+.futuristic-slider-container--purple {
+  .futuristic-slider-label,
+  .futuristic-slider-value {
+    color: $accent-secondary;
+    text-shadow: 0 0 12px rgba($accent-secondary, 0.5);
+  }
+
+  .MuiSlider-root {
+    color: $accent-secondary;
+  }
+
+  .MuiSlider-rail {
+    border-color: rgba($accent-secondary, 0.2);
+  }
+
+  .MuiSlider-track {
+    background: linear-gradient(90deg, $accent-secondary, color.adjust($accent-secondary, $lightness: 10%));
+    box-shadow: 0 0 12px rgba($accent-secondary, 0.6);
+
+    .MuiSlider-vertical & {
+      background: linear-gradient(0deg, $accent-secondary, color.adjust($accent-secondary, $lightness: 10%));
+    }
+  }
+
+  .MuiSlider-thumb {
+    border-color: $accent-secondary;
+    box-shadow:
+      0 0 12px rgba($accent-secondary, 0.8),
+      inset 0 0 8px rgba($accent-secondary, 0.3);
+  }
+}
+
+.futuristic-slider-container--emerald {
+  .futuristic-slider-label,
+  .futuristic-slider-value {
+    color: $accent-tertiary;
+    text-shadow: 0 0 12px rgba($accent-tertiary, 0.5);
+  }
+
+  .MuiSlider-root {
+    color: $accent-tertiary;
+  }
+
+  .MuiSlider-rail {
+    border-color: rgba($accent-tertiary, 0.2);
+  }
+
+  .MuiSlider-track {
+    background: linear-gradient(90deg, $accent-tertiary, color.adjust($accent-tertiary, $lightness: 10%));
+    box-shadow: 0 0 12px rgba($accent-tertiary, 0.6);
+
+    .MuiSlider-vertical & {
+      background: linear-gradient(0deg, $accent-tertiary, color.adjust($accent-tertiary, $lightness: 10%));
+    }
+  }
+
+  .MuiSlider-thumb {
+    border-color: $accent-tertiary;
+    box-shadow:
+      0 0 12px rgba($accent-tertiary, 0.8),
+      inset 0 0 8px rgba($accent-tertiary, 0.3);
+  }
+}

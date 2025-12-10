@@ -1,5 +1,6 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { KnobHeadless } from 'react-knob-headless';
+import './FuturisticKnob.scss';
 
 interface FuturisticKnobProps {
   value: number;
@@ -9,6 +10,9 @@ interface FuturisticKnobProps {
   label?: string;
   step?: number;
   dragSensitivity?: number;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'cyan' | 'purple' | 'emerald';
+  disabled?: boolean;
 }
 
 const FuturisticKnob: React.FC<FuturisticKnobProps> = ({
@@ -19,8 +23,12 @@ const FuturisticKnob: React.FC<FuturisticKnobProps> = ({
   label,
   step = 1,
   dragSensitivity = 0.006,
+  size = 'md',
+  variant = 'cyan',
+  disabled = false,
 }) => {
   const knobRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Normalize value to ensure it's within bounds
   const normalizedValue = Math.max(min, Math.min(max, Number.isNaN(value) ? min : value));
@@ -29,22 +37,30 @@ const FuturisticKnob: React.FC<FuturisticKnobProps> = ({
   const valueRatio = max !== min ? (normalizedValue - min) / (max - min) : 0;
   const angle = -135 + valueRatio * 270;
 
+  // SVG dimensions based on size
+  const svgSize = size === 'sm' ? 80 : size === 'lg' ? 160 : 120;
+  const center = svgSize / 2;
+  const outerRadius = svgSize * 0.417; // ~50 for 120px
+  const innerRadius = svgSize * 0.333; // ~40 for 120px
+  const circumference = 2 * Math.PI * outerRadius;
+  const arcLength = circumference * 0.75; // 270 degrees
+  const dashOffset = circumference * 0.25; // Start position
+
   // Handle value changes from the knob
   const handleValueChange = useCallback(
     (newValue: number) => {
-      if (onChange) {
-        // Clamp the value to min/max
+      if (onChange && !disabled) {
         const clampedValue = Math.max(min, Math.min(max, newValue));
         onChange(clampedValue);
       }
     },
-    [onChange, min, max]
+    [onChange, min, max, disabled]
   );
 
   // Handle keyboard interactions
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (!onChange) return;
+      if (!onChange || disabled) return;
 
       let handled = false;
       let newValue = normalizedValue;
@@ -60,6 +76,14 @@ const FuturisticKnob: React.FC<FuturisticKnobProps> = ({
           newValue = Math.max(min, normalizedValue - step);
           handled = true;
           break;
+        case 'Home':
+          newValue = min;
+          handled = true;
+          break;
+        case 'End':
+          newValue = max;
+          handled = true;
+          break;
         default:
           break;
       }
@@ -69,13 +93,11 @@ const FuturisticKnob: React.FC<FuturisticKnobProps> = ({
         handleValueChange(newValue);
       }
     },
-    [normalizedValue, min, max, step, handleValueChange, onChange]
+    [normalizedValue, min, max, step, handleValueChange, onChange, disabled]
   );
 
   // Round function for the knob - don't round, just clamp
   const roundValue = useCallback((val: number): number => {
-    // Don't actually round - just clamp to bounds
-    // This preserves decimal precision
     return Math.max(min, Math.min(max, val));
   }, [min, max]);
 
@@ -83,61 +105,38 @@ const FuturisticKnob: React.FC<FuturisticKnobProps> = ({
   const displayValue = useCallback((val: number): string => {
     if (Number.isNaN(val)) return '0';
 
-    // For decimals, determine appropriate precision
     if (val % 1 !== 0) {
-      // Convert to string to check precision
       const valStr = val.toString();
       const decimalPart = valStr.split('.')[1];
 
-      // If we have 3 or more decimal places in the original value, show 3
-      // This preserves values like 0.567 as "0.567" instead of rounding to "0.57"
       if (decimalPart && decimalPart.length >= 3) {
         return val.toFixed(3);
       }
 
-      // Otherwise show 2 decimal places
       return val.toFixed(2);
     }
 
     return val.toString();
   }, []);
 
+  // Build class names
+  const containerClasses = [
+    'futuristic-knob-container',
+    size !== 'md' && `futuristic-knob-container--${size}`,
+    variant !== 'cyan' && `futuristic-knob-container--${variant}`,
+    isDragging && 'futuristic-knob-container--active',
+    disabled && 'futuristic-knob-container--disabled',
+  ].filter(Boolean).join(' ');
+
   return (
-    <div
-      className="futuristic-knob-container"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        padding: '20px',
-        fontFamily: "'Courier New', monospace",
-      }}
-    >
+    <div className={containerClasses}>
       {label && (
-        <div
-          className="futuristic-knob-label"
-          style={{
-            color: '#00ffff',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            marginBottom: '10px',
-            textTransform: 'uppercase',
-            letterSpacing: '2px',
-            textShadow: '0 0 10px rgba(0, 255, 255, 0.5)',
-          }}
-        >
+        <div className="futuristic-knob-label">
           {label}
         </div>
       )}
 
-      <div
-        className="futuristic-knob-wrapper"
-        style={{
-          position: 'relative',
-          width: '120px',
-          height: '120px',
-        }}
-      >
+      <div className="futuristic-knob-wrapper">
         <KnobHeadless
           valueRaw={normalizedValue}
           valueMin={min}
@@ -147,126 +146,73 @@ const FuturisticKnob: React.FC<FuturisticKnobProps> = ({
           valueRawDisplayFn={displayValue}
           onValueRawChange={handleValueChange}
           aria-label={label || 'Knob control'}
-          includeIntoTabOrder
+          includeIntoTabOrder={!disabled}
           ref={knobRef}
           onKeyDown={handleKeyDown}
+          onPointerDown={() => setIsDragging(true)}
+          onPointerUp={() => setIsDragging(false)}
+          onPointerCancel={() => setIsDragging(false)}
         >
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              position: 'relative',
-              cursor: 'pointer',
-              outline: 'none',
-            }}
-          >
-            {/* Outer ring */}
+          <div className="futuristic-knob-content">
+            {/* SVG rings */}
             <svg
-              width="120"
-              height="120"
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-              }}
+              className="futuristic-knob-svg"
+              width={svgSize}
+              height={svgSize}
+              viewBox={`0 0 ${svgSize} ${svgSize}`}
             >
-              {/* Background arc */}
+              {/* Background circle */}
               <circle
-                cx="60"
-                cy="60"
-                r="50"
-                fill="none"
-                stroke="#0a0a0f"
-                strokeWidth="4"
-              />
-              <circle
-                cx="60"
-                cy="60"
-                r="50"
-                fill="none"
-                stroke="rgba(0, 255, 255, 0.2)"
-                strokeWidth="4"
-                strokeDasharray="235.6 235.6"
-                strokeDashoffset="58.9"
-                strokeLinecap="round"
-                transform="rotate(-135 60 60)"
+                className="futuristic-knob-bg-circle"
+                cx={center}
+                cy={center}
+                r={outerRadius}
               />
 
-              {/* Value arc */}
+              {/* Track arc (background) */}
               <circle
-                cx="60"
-                cy="60"
-                r="50"
-                fill="none"
-                stroke="#00ffff"
-                strokeWidth="4"
-                strokeDasharray={`${235.6 * valueRatio} 235.6`}
-                strokeDashoffset="58.9"
-                strokeLinecap="round"
-                transform="rotate(-135 60 60)"
-                style={{
-                  filter: 'drop-shadow(0 0 8px rgba(0, 255, 255, 0.8))',
-                  transition: 'stroke-dasharray 0.1s ease-out',
-                }}
+                className="futuristic-knob-track"
+                cx={center}
+                cy={center}
+                r={outerRadius}
+                strokeDasharray={`${arcLength} ${circumference}`}
+                strokeDashoffset={dashOffset}
+                transform={`rotate(-135 ${center} ${center})`}
               />
 
-              {/* Inner circle */}
+              {/* Progress arc */}
               <circle
-                cx="60"
-                cy="60"
-                r="40"
-                fill="#0a0a0f"
-                stroke="rgba(0, 255, 255, 0.3)"
-                strokeWidth="2"
+                className="futuristic-knob-progress"
+                cx={center}
+                cy={center}
+                r={outerRadius}
+                strokeDasharray={`${arcLength * valueRatio} ${circumference}`}
+                strokeDashoffset={dashOffset}
+                transform={`rotate(-135 ${center} ${center})`}
+              />
+
+              {/* Inner filled circle */}
+              <circle
+                className="futuristic-knob-inner-circle"
+                cx={center}
+                cy={center}
+                r={innerRadius}
               />
             </svg>
 
-            {/* Knob indicator */}
+            {/* Rotating indicator */}
             <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                width: '80px',
-                height: '80px',
-                marginLeft: '-40px',
-                marginTop: '-40px',
-                transform: `rotate(${angle}deg)`,
-                transition: 'transform 0.1s ease-out',
-              }}
+              className="futuristic-knob-indicator"
+              style={{ transform: `rotate(${angle}deg)` }}
             >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '8px',
-                  left: '50%',
-                  width: '4px',
-                  height: '16px',
-                  marginLeft: '-2px',
-                  backgroundColor: '#00ffff',
-                  borderRadius: '2px',
-                  boxShadow: '0 0 10px rgba(0, 255, 255, 0.8)',
-                }}
-              />
+              <div className="futuristic-knob-indicator-line" />
             </div>
           </div>
         </KnobHeadless>
       </div>
 
       {/* Value display */}
-      <div
-        className="futuristic-knob-value"
-        style={{
-          marginTop: '15px',
-          color: '#00ffff',
-          fontSize: '24px',
-          fontWeight: 'bold',
-          textAlign: 'center',
-          textShadow: '0 0 10px rgba(0, 255, 255, 0.5)',
-          fontFamily: "'Courier New', monospace",
-          letterSpacing: '1px',
-        }}
-      >
+      <div className="futuristic-knob-value">
         {displayValue(normalizedValue)}
       </div>
     </div>

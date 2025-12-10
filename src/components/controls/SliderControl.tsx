@@ -1,46 +1,101 @@
 import React from 'react';
-import Card from 'react-bootstrap/Card';
 import { observer } from 'mobx-react';
 import Slider from '@mui/material/Slider';
 import ControlModel from '../../models/ControlModel';
+import './SliderControl.scss';
 
 interface SliderControlProps {
   control: ControlModel;
+  orientation?: 'horizontal' | 'vertical';
+  variant?: 'cyan' | 'purple' | 'emerald';
+  disabled?: boolean;
 }
 
-class SliderControl extends React.Component<SliderControlProps> {
+interface SliderControlState {
+  isDragging: boolean;
+}
+
+class SliderControl extends React.Component<SliderControlProps, SliderControlState> {
   readonly props!: SliderControlProps;
 
   constructor(props: SliderControlProps) {
     super(props);
+    this.state = { isDragging: false };
     this.handleChange = this.handleChange.bind(this);
+    this.handleChangeCommitted = this.handleChangeCommitted.bind(this);
   }
 
   handleChange(event: Event, value: number | number[]): void {
-    // MUI Slider can return number or number[] depending on configuration
-    // For single slider (our case), it's always a number
     const numValue = Array.isArray(value) ? value[0] : value;
     this.props.control.currentValue = numValue;
+    if (!this.state.isDragging) {
+      this.setState({ isDragging: true });
+    }
+  }
+
+  handleChangeCommitted(): void {
+    this.setState({ isDragging: false });
+  }
+
+  formatValue(value: number): string {
+    if (Number.isNaN(value)) return '0';
+
+    if (value % 1 !== 0) {
+      const valStr = value.toString();
+      const decimalPart = valStr.split('.')[1];
+
+      if (decimalPart && decimalPart.length >= 3) {
+        return value.toFixed(3);
+      }
+
+      return value.toFixed(2);
+    }
+
+    return value.toString();
   }
 
   render(): React.ReactNode {
-    const roundedNumber = Math.round(Number(this.props.control.currentValue) * 1000) / 1000;
+    const { control, orientation = 'vertical', variant = 'cyan', disabled = false } = this.props;
+    const { isDragging } = this.state;
+
+    const currentValue = Number(control.currentValue);
+
+    const containerClasses = [
+      'futuristic-slider-container',
+      variant !== 'cyan' && `futuristic-slider-container--${variant}`,
+      isDragging && 'futuristic-slider-container--active',
+      disabled && 'futuristic-slider-container--disabled',
+    ].filter(Boolean).join(' ');
+
+    const wrapperClasses = [
+      'futuristic-slider-wrapper',
+      `futuristic-slider-wrapper--${orientation}`,
+    ].join(' ');
 
     return (
-      <Card>
-        <Card.Header>{this.props.control.displayName}</Card.Header>
-        <Card.Body>
-          <div>
-            <span>{roundedNumber}</span>
-          </div>
+      <div className={containerClasses}>
+        <div className="futuristic-slider-label">
+          {control.displayName}
+        </div>
+
+        <div className={wrapperClasses}>
           <Slider
-            min={this.props.control.minValue}
-            max={this.props.control.maxValue}
+            orientation={orientation}
+            min={control.minValue}
+            max={control.maxValue}
+            step={(control.maxValue - control.minValue) / 100}
             onChange={this.handleChange}
-            value={Number(this.props.control.currentValue)}
+            onChangeCommitted={this.handleChangeCommitted}
+            value={currentValue}
+            disabled={disabled}
+            aria-label={control.displayName}
           />
-        </Card.Body>
-      </Card>
+        </div>
+
+        <div className="futuristic-slider-value">
+          {this.formatValue(currentValue)}
+        </div>
+      </div>
     );
   }
 }
