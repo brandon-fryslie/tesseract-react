@@ -1,4 +1,4 @@
-import { action, makeObservable } from 'mobx';
+import { action, override, makeObservable } from 'mobx';
 import BaseStore from './BaseStore';
 import PlaylistModel, { IPlaylistData } from '../models/PlaylistModel';
 import PlaylistItemModel, { IPlaylistItemData } from '../models/PlaylistItemModel';
@@ -54,7 +54,7 @@ export default class PlaylistStore extends BaseStore<PlaylistModel> {
   }
 
   // We need to find the actual scene objects in the SceneStore for each playlist and attach them to the item
-  @action
+  @override
   refreshFromJS(arr: any[]): void {
     // hacky method to jam the SceneModel objects in
     this.hydrateScenesOnPlaylists(arr);

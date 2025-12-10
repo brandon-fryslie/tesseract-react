@@ -28,7 +28,6 @@ class Websocket extends React.Component<WebsocketProps> {
 
   constructor(props: WebsocketProps) {
     super(props);
-    this.websocket = this.createWebsocket();
     this.sendMessage = this.sendMessage.bind(this);
     this.setupWebsocket = this.setupWebsocket.bind(this);
   }

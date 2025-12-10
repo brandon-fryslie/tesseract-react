@@ -2,7 +2,7 @@
 // Data Grid for editing a playlist
 
 import * as React from 'react';
-import { action, computed, makeObservable } from 'mobx';
+import { action, makeObservable } from 'mobx';
 import ReactDataGrid from 'react-data-grid';
 import { observer } from 'mobx-react';
 import DraggableWrapper from '../dnd-wrappers/DraggableWrapper';
@@ -100,9 +100,9 @@ class PlaylistEditorGrid extends React.Component<PlaylistEditorGridProps> {
     }, 1);
   }
 
-  // 'Computed' functions are tracked by mobx, and any Component whos render method uses the computed value will be rerendered when the dependencies change
-  // Here we use it to force a rerender when any of the durations change
-  @computed get allDurations(): (number | string)[] {
+  // Get all durations - used to trigger re-render when durations change
+  // Note: Can't use @computed here because props aren't observable in MobX 6
+  get allDurations(): (number | string)[] {
     return this.props.playlist.items.map(item => item.duration);
   }
 

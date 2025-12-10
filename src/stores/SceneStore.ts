@@ -1,4 +1,4 @@
-import { action, makeObservable } from 'mobx';
+import { action, override, makeObservable } from 'mobx';
 import BaseStore from './BaseStore';
 import ClipStore from './ClipStore';
 import SceneModel, { ISceneData } from '../models/SceneModel';
@@ -49,7 +49,7 @@ export default class SceneStore extends BaseStore<SceneModel> {
     });
   }
 
-  @action
+  @override
   refreshFromJS(arr: ISceneData[]): void {
     // hacky method to jam the ClipModel objects in
     this.hydrateClipsOnScene(arr);

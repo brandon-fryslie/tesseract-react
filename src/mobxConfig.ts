@@ -13,4 +13,6 @@ configure({
   reactionRequiresObservable: false,
   // Don't require that all observable values are accessed within a reaction
   observableRequiresReaction: false,
+  // Log errors to console instead of catching them silently
+  disableErrorBoundaries: true,
 });
