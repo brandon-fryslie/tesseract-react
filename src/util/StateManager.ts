@@ -1,10 +1,10 @@
 import {
   observe, reaction, action, makeObservable, IReactionDisposer, Lambda,
 } from 'mobx';
-import { deepObserve, IDisposer } from 'mobx-utils';
 import ClipStore from '../stores/ClipStore';
 import SceneStore from '../stores/SceneStore';
 import PlaylistStore from '../stores/PlaylistStore';
+import PlaylistModel from '../models/PlaylistModel';
 import UIStore from '../stores/UIStore';
 import MediaStore from '../stores/MediaStore';
 
@@ -41,8 +41,10 @@ export default class StateManager {
   websocketController: WebsocketController | null = null;
 
   // MobX disposers for cleanup
-  sceneStoreDisposer: IDisposer | null = null;
-  playlistStoreDisposer: IDisposer | null = null;
+  sceneStoreDisposer: Lambda | null = null;
+  sceneItemDisposers: Lambda[] = [];
+  playlistStoreDisposer: Lambda | null = null;
+  playlistItemDisposers: Lambda[] = [];
   controlPanelDisposer: IReactionDisposer | null = null;
 
   constructor() {
@@ -70,7 +72,7 @@ export default class StateManager {
   // Load initial state from backend
   loadInitialState(): void {
     console.log('[StateManager] Requesting initial state from backend');
-    this.sendMessage('request_initial_state');
+    this.sendMessage('requestInitialState');
   }
 
   // Handle initial state from backend
@@ -135,15 +137,13 @@ export default class StateManager {
   setupStoreObservers(): void {
     console.log('[StateManager] Setting up store observers');
 
-    // Observe SceneStore changes
-    this.sceneStoreDisposer = deepObserve(SceneStore.get(), (change: any, path: string) => {
-      this.handleSceneStoreChange(change);
-    });
+    // Observe SceneStore changes - use shallow observation to avoid deepObserve
+    // limitation with shared object references (same clip can appear in multiple scenes)
+    this.setupSceneObservers();
 
-    // Observe PlaylistStore changes
-    this.playlistStoreDisposer = deepObserve(PlaylistStore.get(), (change: any, path: string) => {
-      this.handlePlaylistStoreChange(change);
-    });
+    // Observe PlaylistStore changes - use shallow observation to avoid deepObserve
+    // limitation with shared object references (same scene can appear in multiple playlist items)
+    this.setupPlaylistObservers();
 
     // Observe control panel changes
     this.controlPanelDisposer = reaction(
@@ -152,6 +152,92 @@ export default class StateManager {
         this.handleControlPanelChange(controlPanel);
       }
     );
+  }
+
+  // Set up scene observers without using deepObserve (which fails on shared clip references)
+  setupSceneObservers(): void {
+    // Observe the items array of SceneStore
+    this.sceneStoreDisposer = observe(SceneStore.get().items, (change: any) => {
+      this.handleSceneStoreChange(change);
+      // Re-setup item observers when scenes are added/removed
+      this.setupSceneItemObservers();
+    });
+
+    // Set up observers for each scene's properties
+    this.setupSceneItemObservers();
+  }
+
+  // Set up observers for scene properties (without traversing into shared clip objects)
+  setupSceneItemObservers(): void {
+    // Clean up existing item observers
+    this.sceneItemDisposers.forEach(dispose => dispose());
+    this.sceneItemDisposers = [];
+
+    // Observe each scene's observable properties (but not clip - it's shared)
+    SceneStore.get().items.forEach((scene: any) => {
+      // Observe displayName changes
+      const nameDisposer = observe(scene, 'displayName', (change: any) => {
+        this.handleSceneStoreChange(change);
+      });
+      this.sceneItemDisposers.push(nameDisposer);
+
+      // Observe rawClipValues changes
+      const valuesDisposer = observe(scene, 'rawClipValues', (change: any) => {
+        this.handleSceneStoreChange(change);
+      });
+      this.sceneItemDisposers.push(valuesDisposer);
+
+      // Observe clipControls array changes
+      const controlsDisposer = observe(scene.clipControls, (change: any) => {
+        this.handleSceneStoreChange(change);
+      });
+      this.sceneItemDisposers.push(controlsDisposer);
+
+      // Observe filename changes
+      const filenameDisposer = observe(scene, 'filename', (change: any) => {
+        this.handleSceneStoreChange(change);
+      });
+      this.sceneItemDisposers.push(filenameDisposer);
+    });
+  }
+
+  // Set up playlist observers without using deepObserve (which fails on shared references)
+  setupPlaylistObservers(): void {
+    // Observe the items array of PlaylistStore
+    this.playlistStoreDisposer = observe(PlaylistStore.get().items, (change: any) => {
+      this.handlePlaylistStoreChange(change);
+      // Re-setup item observers when playlists are added/removed
+      this.setupPlaylistItemObservers();
+    });
+
+    // Set up observers for each playlist's items
+    this.setupPlaylistItemObservers();
+  }
+
+  // Set up observers for playlist item arrays (without traversing into shared scene objects)
+  setupPlaylistItemObservers(): void {
+    // Clean up existing item observers
+    this.playlistItemDisposers.forEach(dispose => dispose());
+    this.playlistItemDisposers = [];
+
+    // Observe each playlist's items array
+    PlaylistStore.get().items.forEach((playlist: PlaylistModel) => {
+      const disposer = observe(playlist.items, (change: any) => {
+        this.handlePlaylistStoreChange(change);
+      });
+      this.playlistItemDisposers.push(disposer);
+
+      // Also observe displayName and defaultDuration changes
+      const nameDisposer = observe(playlist, 'displayName', (change: any) => {
+        this.handlePlaylistStoreChange(change);
+      });
+      this.playlistItemDisposers.push(nameDisposer);
+
+      const durationDisposer = observe(playlist, 'defaultDuration', (change: any) => {
+        this.handlePlaylistStoreChange(change);
+      });
+      this.playlistItemDisposers.push(durationDisposer);
+    });
   }
 
   // Handle SceneStore changes
@@ -208,10 +294,18 @@ export default class StateManager {
       this.sceneStoreDisposer = null;
     }
 
+    // Clean up scene item observers
+    this.sceneItemDisposers.forEach(dispose => dispose());
+    this.sceneItemDisposers = [];
+
     if (this.playlistStoreDisposer) {
       this.playlistStoreDisposer();
       this.playlistStoreDisposer = null;
     }
+
+    // Clean up playlist item observers
+    this.playlistItemDisposers.forEach(dispose => dispose());
+    this.playlistItemDisposers = [];
 
     if (this.controlPanelDisposer) {
       this.controlPanelDisposer();
